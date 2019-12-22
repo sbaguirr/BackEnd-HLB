@@ -1,13 +1,13 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Equipo extends Model
+class EquipoExtra extends Model
 {
-    protected $table = 'equipos';
-    protected $primaryKey = 'id_equipo';
+    protected $table = 'equipos_extras';
+    protected $primaryKey = 'id_eqext';
 
      /**
      * The attributes that are mass assignable.
@@ -15,7 +15,7 @@ class Equipo extends Model
      * @var array
      */
     protected $fillable = [
-        'fecha_registro','estado_asignacion','codigo','tipo_equipo','encargado_registro','ip'
+        'num_serie','marca','modelo','estado_operativo','descripcion','id_equipo'
     ];
 
 
