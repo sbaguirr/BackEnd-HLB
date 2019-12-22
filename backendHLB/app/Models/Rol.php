@@ -29,11 +29,11 @@ class Rol extends Model
     	'created_at', 'updated_at'
     ];
 
-/*
+
     // Relación: Rol - Usuario (1 - M)
-    public function roles()
+    public function usuarios()
     {
         return $this->hasMany('App\Models\Usuario');
-    }*/
+    }
 
 }

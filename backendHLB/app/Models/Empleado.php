@@ -42,8 +42,22 @@ class Empleado extends Model
     	'created_at', 'updated_at'
     ];
 
-
+    // Relación: Departamento - Empleado (1 - M)
+    public function departamentos()
+    {
+        return $this->belongsTo('App\Models\Departamento', 'id_departamento');
+    }
   
+    // Relación: Empleado - Correo (1 - M)
+    public function correos()
+    {
+        return $this->hasMany('App\Models\Correo');
+    }
 
+    // Relación: Empleado - Usuario (1 - 1)
+    public function usuarios()
+    {
+        return $this->hasOne('App\Models\Usuario');
+    }
 
 }

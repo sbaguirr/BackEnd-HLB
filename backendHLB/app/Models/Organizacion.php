@@ -31,7 +31,7 @@ class Organizacion extends Model
 
 
     // Relación: Organizacion - Departamento (1 - M)
-    public function organizaciones()
+    public function departamentos()
     {
         return $this->hasMany('App\Models\Departamento');
     }

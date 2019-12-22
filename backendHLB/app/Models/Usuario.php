@@ -42,11 +42,17 @@ class Usuario extends Model
     	'constrasena','created_at', 'updated_at'
     ];
 
-/*
+
     // Relación: Rol - Usuario (1 - M)
-    public function calificaciones()
+    public function roles()
     {
-        return $this->hasMany('App\Models\Relacional\Usuario');
+        return $this->belongsTo('App\Models\Roles', 'id_rol');
     }
-*/
+
+
+    // Relación: Empleado - Usuario (1 - 1)
+    public function empleados()
+    {
+        return $this->belongsTo('App\Models\Empleado', 'cedula');
+    }
 }

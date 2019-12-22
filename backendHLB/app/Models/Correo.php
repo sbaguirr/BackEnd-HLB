@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Correo extends Model
 {
-    protected $table = 'usuarios';
+    protected $table = 'correos';
     protected $primaryKey = 'id_correo';
 
 
@@ -28,4 +28,10 @@ class Correo extends Model
     protected $hidden = [
     	'constrasena','created_at', 'updated_at'
     ];
+
+    // Relación: Empleado - Correo (1 - M)
+    public function empleados()
+    {
+        return $this->belongsTo('App\Models\Empleado', 'cedula');
+    }
 }
