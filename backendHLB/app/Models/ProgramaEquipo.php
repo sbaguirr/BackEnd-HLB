@@ -27,4 +27,18 @@ class ProgramaEquipo extends Model
     protected $hidden = [
     	'created_at', 'updated_at'
     ];
+
+
+    // Relación: ProgramaInstalado - ProgramaEquipo (1 - M)
+    public function programas_instalados()
+    {
+        return $this->belongsTo('App\Models\ProgramaInstalado', 'id_programa');
+    }
+
+
+    // Relación: Equipo - ProgramaEquipo (1 - M)
+    public function equipos()
+    {
+        return $this->belongsTo('App\Models\Equipo', 'id_equipo');
+    }
 }

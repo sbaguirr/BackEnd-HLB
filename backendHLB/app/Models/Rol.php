@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,7 +33,7 @@ class Rol extends Model
     // Relación: Rol - Usuario (1 - M)
     public function usuarios()
     {
-        return $this->hasMany('App\Models\Usuario');
+        return $this->hasMany('App\Models\Usuario', 'id_rol');
     }
 
 }

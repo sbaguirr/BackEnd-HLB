@@ -15,13 +15,9 @@ class CreateImpresorasTable extends Migration
     {
         Schema::create('impresoras', function (Blueprint $table) {
             $table->bigIncrements('id_impresora');
-            $table->integer('tipo');
-            $table->string('marca');
-            $table->string('modelo');
-            $table->string('numero_serie');
+            $table->string('tipo');
             $table->string('tinta');
             $table->string('cartucho');
-            $table->string('estado_operativo');
             $table->bigInteger('id_equipo')->unsigned();
             $table->timestamps();
 

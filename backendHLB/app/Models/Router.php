@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,4 +27,11 @@ class Router extends Model
     protected $hidden = [
     	'created_at', 'updated_at'
     ];
+   
+
+    // Relación: Equipo - Router (1 - 0/1)
+    public function equipos()
+    {
+        return $this->belongsTo('App\Models\Equipo', 'id_equipo');
+    }
 }

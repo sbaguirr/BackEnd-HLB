@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,15 +30,17 @@ class Departamento extends Model
     	'created_at', 'updated_at'
     ];
 
+
     // Relación: Organizacion - Departamento (1 - M)
     public function organizaciones()
     {
         return $this->belongsTo('App\Models\Organizacion', 'id_organizacion');
     }
 
+    
     // Relación: Departamento - Empleado (1 - M)
     public function empleados()
     {
-        return $this->hasMany('App\Models\Empleado');
+        return $this->hasMany('App\Models\Empleado', 'id_departamento');
     }
 }

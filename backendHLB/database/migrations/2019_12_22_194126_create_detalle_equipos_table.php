@@ -16,7 +16,7 @@ class CreateDetalleEquiposTable extends Migration
         Schema::create('detalle_equipos', function (Blueprint $table) {
             $table->bigIncrements('id_detalle');
             $table->string('so');
-            $table->integer('services_pack');
+            $table->string('services_pack');
             $table->string('tipo_so');
             $table->string('nombre_pc');
             $table->bigInteger('id_equipo')->unsigned();

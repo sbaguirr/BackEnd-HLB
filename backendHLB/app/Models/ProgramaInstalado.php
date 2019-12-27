@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ip extends Model
+class ProgramaInstalado extends Model
 {
-    protected $table = 'ips';
-    protected $primaryKey = 'id_ip';
+    protected $table = 'programas_instalados';
+    protected $primaryKey = 'id_programa';
 
      /**
      * The attributes that are mass assignable.
@@ -15,9 +15,7 @@ class Ip extends Model
      * @var array
      */
     protected $fillable = [
-        'estado', 'fecha_asignación', 'direccion_ip', 'hostname',
-        'subred', 'fortigate', 'observacion', 'maquinas_adicionales',
-        'nombre_usuario', 'encargado_registro' 
+        'nombre', 'codigo', 'observacion', 'encargado_registro'
     ];
 
 
@@ -31,16 +29,16 @@ class Ip extends Model
     ];
 
 
-    // Relación: Usuario - Ip (1 - M)
+    // Relación: Usuario - ProgramaInstalado (1 - M)
     public function usuarios()
     {
         return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
     }
 
-    
-    // Relación: Ip - Equipo (1 - 0/1)
-    public function equipos()
+
+    // Relación: ProgramaInstalado - ProgramaEquipo (1 - M)
+    public function programa_equipos()
     {
-        return $this->hasOne('App\Models\Equipo', 'ip');
+        return $this->hasMany('App\Models\ProgramaEquipo', 'id_programa');
     }
 }

@@ -16,16 +16,26 @@ class CreateEquiposTable extends Migration
         Schema::create('equipos', function (Blueprint $table) {
             $table->bigIncrements('id_equipo');
             $table->date('fecha_registro');
-            $table->string('estado_asignacion');
+            $table->string('estado_operativo');
             $table->string('codigo');
             $table->string('tipo_equipo');
+            $table->string('marca');
+            $table->string('modelo');
+            $table->string('descripcion');
+            $table->string('numero_serie');
             $table->string('encargado_registro');
-            $table->bigInteger('ip')->unsigned();
+            $table->unsignedBigInteger('componente_principal')->nullable();
+            $table->unsignedBigInteger('ip')->nullable();
             $table->timestamps();
 
             $table->foreign('encargado_registro')
             ->references('usuario')->on('usuarios')
             ->onDelete('cascade')
+            ->onUpdate('cascade'); 
+
+            $table->foreign('componente_principal')
+            ->references('id_equipo')->on('equipos')
+            ->onDelete('set null')
             ->onUpdate('cascade'); 
 
             $table->foreign('ip')

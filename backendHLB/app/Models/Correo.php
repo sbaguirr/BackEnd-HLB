@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +29,7 @@ class Correo extends Model
     	'constrasena','created_at', 'updated_at'
     ];
 
+    
     // Relación: Empleado - Correo (1 - M)
     public function empleados()
     {

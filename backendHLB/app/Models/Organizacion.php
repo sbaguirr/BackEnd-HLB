@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,7 +33,7 @@ class Organizacion extends Model
     // Relación: Organizacion - Departamento (1 - M)
     public function departamentos()
     {
-        return $this->hasMany('App\Models\Departamento');
+        return $this->hasMany('App\Models\Departamento', 'id_organizacion');
     }
 
 }

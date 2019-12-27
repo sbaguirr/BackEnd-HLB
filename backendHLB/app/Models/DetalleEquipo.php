@@ -27,6 +27,13 @@ class DetalleEquipo extends Model
     protected $hidden = [
     	'created_at', 'updated_at'
     ];
+
+
+    // Relación: Equipo - DetalleEquipo (1 - 0/1)
+    public function equipos()
+    {
+        return $this->belongsTo('App\Models\Equipo', 'id_equipo');
+    }
 }
 
 
