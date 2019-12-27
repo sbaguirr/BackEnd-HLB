@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+/*API Correo*/
+    Route::post('correos', 'CorreoController@crear_correo');
+    Route::get('correos/{fecha_asignacion}','CorreoController@buscar_por_fecha');
+
+ /*API Empleado*/   
+    Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
+    Route::get('empleados_punto/{punto}', 'EmpleadoController@buscar_por_punto');
+    Route::get('empleados_estado/{estado}', 'EmpleadoController@buscar_por_estado');
+    Route::get('empleados_dpto/{departamento}', 'EmpleadoController@buscar_por_departamento');
