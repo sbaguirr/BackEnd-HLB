@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 class CorreoController extends Controller
 {
 
-    public function mostrar_todos()
+    public function mostrar_correos()
     {
-        return Correo::all();
+        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','correo')
+        ->join('empleados','empleados.cedula','=','correos.cedula')
+        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->orderBy('empleados.apellido', 'asc')
+        //->limit(10)
+        ->get();
     }
 
     public function crear_correo(Request $request)
@@ -33,13 +38,16 @@ class CorreoController extends Controller
         ->get();
     }
 
-    public function buscar_por_estado($estado)
+    public function buscar_por_fecha_dpto($fecha_asignacion,$dpto)
     {
-        return Empleado::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
-        ->join('correos','correos.cedula','=','empleados.cedula')
+        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
+        ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->where('estado',$estado)
+        ->where([
+            ['correos.created_at', 'like', "${fecha_asignacion}%"],
+            ['departamentos.nombre', '=', $dpto]
+        ])
         ->get();
     }
 
