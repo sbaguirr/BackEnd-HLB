@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
     Route::get('correos/{fecha_asignacion}','CorreoController@buscar_por_fecha');
     Route::get('correos/{fecha_asignacion}/{dpto}','CorreoController@buscar_por_fecha_dpto');
 
- /*API Empleado*/   
+ /*API Empleado*/
     Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('empleados_punto/{punto}', 'EmpleadoController@buscar_por_punto');
     Route::get('empleados_estado/{estado}', 'EmpleadoController@buscar_por_estado');
@@ -35,4 +35,13 @@ use Illuminate\Http\Request;
     
 /*API DEPARTAMENTO*/      
     Route::get('departamentos','DepartamentoController@mostrar_todos');
+
+
+/*API DEPARTAMENTO*/
+    Route::get('departamentos','DepartamentoController@mostrar_todos');
+
+/*API Impresora */
+    Route::post('/impresora','ImpresoraController@crear_impresora');
+    Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
+    Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
 
