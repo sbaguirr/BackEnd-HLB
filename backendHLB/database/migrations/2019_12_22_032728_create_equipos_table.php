@@ -17,12 +17,12 @@ class CreateEquiposTable extends Migration
             $table->bigIncrements('id_equipo');
             $table->date('fecha_registro');
             $table->string('estado_operativo');
-            $table->string('codigo');
+            $table->string('codigo')->nullable();
             $table->string('tipo_equipo');
-            $table->string('marca');
-            $table->string('modelo');
-            $table->string('descripcion');
-            $table->string('numero_serie');
+            $table->string('marca')->nullable();
+            $table->string('modelo')->nullable();
+            $table->string('descripcion')->nullable();
+            $table->string('numero_serie')->nullable();
             $table->string('encargado_registro');
             $table->unsignedBigInteger('componente_principal')->nullable();
             $table->unsignedBigInteger('ip')->nullable();
