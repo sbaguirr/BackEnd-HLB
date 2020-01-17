@@ -19,10 +19,15 @@ use Illuminate\Http\Request;
     Route::get('correos/{fecha_asignacion}','CorreoController@buscar_por_fecha');
     Route::get('correos/{fecha_asignacion}/{dpto}','CorreoController@buscar_por_fecha_dpto');
 
- /*API Empleado*/   
+ /*API Empleado*/
     Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
     Route::get('empleados_dpto/{departamento}', 'EmpleadoController@buscar_por_departamento');
-    
-/*API DEPARTAMENTO*/      
+
+/*API DEPARTAMENTO*/
     Route::get('departamentos','DepartamentoController@mostrar_todos');
+
+/*API Impresora */
+    Route::post('/impresora','ImpresoraController@crear_impresora');
+    Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
+    Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
