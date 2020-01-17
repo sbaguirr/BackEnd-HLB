@@ -18,6 +18,8 @@ class CreateRoutersTable extends Migration
             $table->string('nombre');
             $table->string('pass');
             $table->string('puerta_enlace');
+            $table->string('usuario');
+            $table->string('clave');
             $table->bigInteger('id_equipo')->unsigned();
             $table->timestamps();
 

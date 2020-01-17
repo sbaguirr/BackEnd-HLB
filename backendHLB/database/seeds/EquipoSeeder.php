@@ -168,5 +168,97 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'ip' => null
         ]);
+
+        Equipo::create([
+            'fecha_registro' => '2019-12-14',
+            'estado_operativo' => 'Disponible',
+            'codigo' => '',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Cisco',
+            'modelo' => 'DREHRTJSD-S',
+            'descripcion' => 'Wifi',
+            'numero_serie' => 'CND8FC904W',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2020-01-07',
+            'estado_operativo' => 'Disponible',
+            'codigo' => '20110',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Cisco',
+            'modelo' => 'e900',
+            'descripcion' => 'Tipo ASDL',
+            'numero_serie' => 'WTY8',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2019-05-07',
+            'estado_operativo' => 'Disponible',
+            'codigo' => '508798',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Cisco',
+            'modelo' => '802.11ac',
+            'descripcion' => 'Wifi, Tipo VSDL',
+            'numero_serie' => '4668EGFFX',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2017-06-13',
+            'estado_operativo' => 'Disponible',
+            'codigo' => 'a4510',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Asus',
+            'modelo' => 'DSL-AC68U',
+            'descripcion' => 'Router DSL',
+            'numero_serie' => 'AC68U48',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2018-09-25',
+            'estado_operativo' => 'Disponible',
+            'codigo' => '',
+            'tipo_equipo' => 'Router',
+            'marca' => 'D-Link', 
+            'modelo' => 'MU-MIMO',
+            'descripcion' => 'Ultra Wifi',
+            'numero_serie' => 'AC3150',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2019-05-28',
+            'estado_operativo' => 'Operativo',
+            'codigo' => '508798',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Cisco',
+            'modelo' => '802.11ac',
+            'descripcion' => 'Wifi, Tipo VSDL',
+            'numero_serie' => '4668EGFFX',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2019-12-05',
+            'estado_operativo' => 'En revisión',
+            'codigo' => '',
+            'tipo_equipo' => 'Router',
+            'marca' => 'Netgear',
+            'modelo' => 'Nighthawk Pro',
+            'descripcion' => 'Wifi, Tipo VSDL',
+            'numero_serie' => 'XR500',
+            'componente_principal' => null,
+            'encargado_registro' => 'admin',
+            'ip' => null
+        ]);
     }
 }

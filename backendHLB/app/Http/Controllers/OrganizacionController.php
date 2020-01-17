@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 class OrganizacionController extends Controller
 {
     
+    // public function mostrar_todos()
+    // {
+    //     return Organizacion::select('bspi_punto')
+    //     ->get();
+    // }
+
     public function mostrar_todos()
     {
-        return Organizacion::select('bspi_punto')
-        ->get();
+        return Organizacion::all();
     }
 }

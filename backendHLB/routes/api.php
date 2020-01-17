@@ -27,6 +27,14 @@ use Illuminate\Http\Request;
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
     Route::get('empleados_dpto/{departamento}', 'EmpleadoController@buscar_por_departamento');
 
+/*API Organización*/   
+   Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
+   Route::get('org_dpto/{punto}', 'DepartamentoController@org_dpto');
+
+/*API Routers*/
+   Route::get('listar_routers', 'RouterController@listar_router');
+   Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
+
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
