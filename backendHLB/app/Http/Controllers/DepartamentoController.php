@@ -11,6 +11,7 @@ class DepartamentoController extends Controller
     public function mostrar_todos()
     {
         return Departamento::select('nombre')
+        ->distinct()
         ->get();
     }  
 }
