@@ -50,10 +50,23 @@ class EquipoController extends Controller
             $ram_soport->id_equipo = $computador->id_equipo;
             $ram_soport->save();
 
+            $num_slots = new DetalleComponente();
+            $num_slots->campo = 'nucleos';
+            $num_slots->dato = $request->get('pc-nucleos');
+            $num_slots->id_componente = $computador->id_equipo;
+            $num_slots->save();
 
-            foreach($request->except(['pc-codigo','pc-descripcion','pc-marca','pc-modelo','pc-ram_soportada','pc-num_slots']) as $clave => $valor){
+            $ram_soport = new DetalleComponente();
+            $ram_soport->campo = 'frecuencia';
+            $ram_soport->dato = $request->get('pc-frecuencia');
+            $ram_soport->id_componente = $computador->id_equipo;
+            $ram_soport->save();
+
+
+            foreach($request->except(['pc-codigo','pc-descripcion','pc-frecuencia','pc-nucleos','pc-marca','pc-modelo','pc-ram_soportada','pc-num_slots']) as $clave => $valor){
                 $comp = new Equipo();
                 $comp->marca = $valor['marca'];
+                $comp->codigo= $valor['codigo'];
                 $comp->modelo = $valor['modelo'];
                 $comp->numero_serie = $valor['num_serie'];
                 $comp->descripcion = Arr::has($valor, 'descripcion')?$valor['descripcion']:'';
@@ -118,6 +131,7 @@ class EquipoController extends Controller
             foreach($request->except(['pc-codigo','pc-descripcion']) as $clave => $valor) {
                 
                 $comp = new Equipo();
+                $comp->codigo = $valor['codigo'];
                 $comp->marca = $valor['marca'];
                 $comp->modelo = $valor['modelo'];
                 $comp->numero_serie = $valor['num_serie'];
@@ -149,6 +163,20 @@ class EquipoController extends Controller
                     $capacidad-> save();
                 }
 
+                if(Str::contains($clave,'procesador')){
+                    $num_slots = new DetalleComponente();
+                    $num_slots->campo = 'nucleos';
+                    $num_slots->dato = $valor['nucleos'];
+                    $num_slots->id_componente = $comp->id_equipo;
+                    $num_slots->save();
+
+                    $ram_soport = new DetalleComponente();
+                    $ram_soport->campo = 'frecuencia';
+                    $ram_soport->dato = $valor['frecuencia'];
+                    $ram_soport->id_componente = $comp->id_equipo;
+                    $ram_soport->save();
+                }
+
                 if(Str::contains($clave,'tarjeta_madre')){
                     $num_slots = new DetalleComponente();
                     $num_slots->campo = 'numero_slots';
@@ -161,6 +189,12 @@ class EquipoController extends Controller
                     $ram_soport->dato = $valor['ram_soportada'];
                     $ram_soport->id_equipo = $comp->id_equipo;
                     $ram_soport->save();
+
+                    $disc_conect = new DetalleComponente();
+                    $disc_conect->campo = 'disc_conect';
+                    $disc_conect->dato = $valor['disc_conect'];
+                    $disc_conect->id_componente = $comp->id_equipo;
+                    $disc_conect->save();
                 }
                 
             }
