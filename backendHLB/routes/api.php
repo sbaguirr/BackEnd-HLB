@@ -27,7 +27,7 @@ use Illuminate\Http\Request;
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
     Route::get('empleados_dpto/{departamento}', 'EmpleadoController@buscar_por_departamento');
 
-/*API Organización*/   
+/*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
    Route::get('org_dpto/{punto}', 'DepartamentoController@org_dpto');
 
@@ -40,8 +40,8 @@ use Illuminate\Http\Request;
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');
 
-    
-/*API DEPARTAMENTO*/      
+
+/*API DEPARTAMENTO*/
     Route::get('departamentos','DepartamentoController@mostrar_todos');
 
 
@@ -52,4 +52,5 @@ use Illuminate\Http\Request;
     Route::post('/impresora','ImpresoraController@crear_impresora');
     Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
     Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
+    Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
 
