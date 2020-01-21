@@ -41,13 +41,13 @@ class EquipoController extends Controller
             $num_slots = new DetalleComponente();
             $num_slots->campo = 'numero_slots';
             $num_slots->dato = $request->get('pc-num_slots');
-            $num_slots->id_componente = $computador->id_equipo;
+            $num_slots->id_equipo = $computador->id_equipo;
             $num_slots->save();
 
             $ram_soport = new DetalleComponente();
             $ram_soport->campo = 'ram_soportada';
             $ram_soport->dato = $request->get('pc-ram_soportada');
-            $ram_soport->id_componente = $computador->id_equipo;
+            $ram_soport->id_equipo = $computador->id_equipo;
             $ram_soport->save();
 
 
@@ -67,13 +67,13 @@ class EquipoController extends Controller
                 $tipo = new DetalleComponente();
                 $tipo->campo = 'tipo';
                 $tipo->dato = $valor['tipo'];
-                $tipo->id_componente = $comp->id_equipo;
+                $tipo->id_equipo = $comp->id_equipo;
                 $tipo->save();
 
                 $capacidad = new DetalleComponente();
                 $capacidad->campo = 'capacidad';
                 $capacidad->dato = $valor['capacidad'];
-                $capacidad->id_componente = $comp->id_equipo;
+                $capacidad->id_equipo = $comp->id_equipo;
                 $capacidad-> save();
                 
             }
@@ -139,13 +139,13 @@ class EquipoController extends Controller
                     $tipo = new DetalleComponente();
                     $tipo->campo = 'tipo';
                     $tipo->dato = $valor['tipo'];
-                    $tipo->id_componente = $comp->id_equipo;
+                    $tipo->id_equipo = $comp->id_equipo;
                     $tipo->save();
 
                     $capacidad = new DetalleComponente();
                     $capacidad->campo = 'capacidad';
                     $capacidad->dato = $valor['capacidad'];
-                    $capacidad->id_componente = $comp->id_equipo;
+                    $capacidad->id_equipo = $comp->id_equipo;
                     $capacidad-> save();
                 }
 
@@ -153,13 +153,13 @@ class EquipoController extends Controller
                     $num_slots = new DetalleComponente();
                     $num_slots->campo = 'numero_slots';
                     $num_slots->dato = $valor['num_slots'];
-                    $num_slots->id_componente = $comp->id_equipo;
+                    $num_slots->id_equipo = $comp->id_equipo;
                     $num_slots->save();
 
                     $ram_soport = new DetalleComponente();
                     $ram_soport->campo = 'ram_soportada';
                     $ram_soport->dato = $valor['ram_soportada'];
-                    $ram_soport->id_componente = $comp->id_equipo;
+                    $ram_soport->id_equipo = $comp->id_equipo;
                     $ram_soport->save();
                 }
                 

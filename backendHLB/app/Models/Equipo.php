@@ -84,6 +84,7 @@ class Equipo extends Model
     }
 
     public function detalle_componentes(){
-        return $this->hasMany('App\Models\DetalleComponente', 'id_componente');
+        return $this->hasMany('App\Models\DetalleComponente', 'id_equipo');
+        
     }
 }

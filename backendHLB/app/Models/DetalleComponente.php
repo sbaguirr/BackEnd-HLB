@@ -15,7 +15,7 @@ class DetalleComponente extends Model
      * @var array
      */
     protected $fillable = [
-        'dato','campo','id_componente'
+        'dato','campo','id_equipo'
     ];
 
 
