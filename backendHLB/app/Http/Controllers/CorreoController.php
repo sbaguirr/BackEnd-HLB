@@ -10,7 +10,7 @@ class CorreoController extends Controller
 
     public function mostrar_correos()
     {
-        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','correo')
+        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
         ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->orderBy('empleados.apellido', 'asc')
@@ -28,27 +28,26 @@ class CorreoController extends Controller
         $mail->save();        
     }
 
-    public function buscar_por_fecha($fecha_asignacion)
-    {
-        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
+    public function filtrar_correos($departamento,$fecha_asignacion=null){
+        $query= Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
         ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
-        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->whereDate('correos.created_at',$fecha_asignacion)
-        ->get();
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion');
+        
+        if($departamento != "Todos" && !empty($fecha_asignacion)){
+            $query= $query->where([['correos.created_at', 'like', "${fecha_asignacion}%"],
+                ['departamentos.nombre', '=', $departamento]]);
+        }
+        if ($departamento != "Todos" && empty($fecha_asignacion)){
+            $query= $query->where('departamentos.nombre',$departamento);
+        }
+        if ($departamento == "Todos" && !empty($fecha_asignacion)){
+            $query= $query->whereDate('correos.created_at',$fecha_asignacion);
+        }
+        $query= $query->orderBy('empleados.apellido', 'asc')->get();
+        return $query;
     }
 
-    public function buscar_por_fecha_dpto($fecha_asignacion,$dpto)
-    {
-        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
-        ->join('empleados','empleados.cedula','=','correos.cedula')
-        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
-        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->where([
-            ['correos.created_at', 'like', "${fecha_asignacion}%"],
-            ['departamentos.nombre', '=', $dpto]
-        ])
-        ->get();
-    }
+   
 
 }
