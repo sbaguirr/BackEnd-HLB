@@ -221,7 +221,7 @@ class EquipoController extends Controller
 
     function validatorDesktop(Request $request){
         if(count($request->all())<11){
-            return  response()->json(['log' => [ 'Faltan Datos' ]],400);
+            return  response()->json(['log' => [ 'Faltan Datos' ],"obj"=>$request->all(),"count"=>count($request->all())],400);
         }
         foreach($request->all() as $clave => $valor) {
             if(!Str::contains($clave, 'case') && !Str::contains($clave, 'pc-codigo')&& !Str::contains($clave, 'pc-descripcion')){

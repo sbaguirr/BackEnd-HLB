@@ -23,9 +23,8 @@ class ImpresoraController extends Controller
         $equipo ->codigo=$request->get('codigo');
         $equipo ->tipo_equipo=$request->get('tipo');
         $equipo ->descripcion=$request->get('descripcion');
-//        $equipo ->encargado_registro=$request->get('encargado_registro');
+        //$equipo ->encargado_registro=$request->get('encargado_registro');
         $equipo ->encargado_registro='admin';
-
         $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->estado_operativo=$request->get('estado_operativo');
         //$equipo ->id_equipo=$request->get('id_equipo');
