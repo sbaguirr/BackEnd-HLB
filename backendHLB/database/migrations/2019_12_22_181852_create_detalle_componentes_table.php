@@ -17,11 +17,13 @@ class CreateDetalleComponentesTable extends Migration
             $table->bigIncrements('id');
             $table->string('dato');
             $table->string('campo');
-            $table->bigInteger('id_componente')->unsigned();
+           // $table->bigInteger('id_componente')->unsigned();
             $table->timestamps();
 
-            $table->foreign('id_componente')
-            ->references('id_componente')->on('componentes')
+            $table->unsignedBigInteger('id_equipo')->nullable();
+
+            $table->foreign('id_equipo')
+            ->references('id_equipo')->on('equipos')
             ->onDelete('cascade')
             ->onUpdate('cascade'); 
         });

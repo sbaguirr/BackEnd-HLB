@@ -16,7 +16,7 @@ class Correo extends Model
      * @var array
      */
     protected $fillable = [
-        'correo', 'contrasena', 'estado', 'cedula'
+        'correo', 'contrasena', 'estado', 'cedula','constrasena','created_at'
     ];
 
 
@@ -26,7 +26,7 @@ class Correo extends Model
      * @var array
      */
     protected $hidden = [
-    	'constrasena','created_at', 'updated_at'
+    	 'updated_at'
     ];
 
     

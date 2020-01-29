@@ -32,14 +32,4 @@ class EmpleadoController extends Controller
         ->whereRaw('CONCAT(empleados.nombre," ",empleados.apellido) like ?',["{$nombreEmpleado}"])  
         ->get();
     }
-
-    public function buscar_por_departamento($departamento)
-    {
-        return Empleado::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
-        ->join('correos','correos.cedula','=','empleados.cedula')
-        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
-        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->where('departamentos.nombre',$departamento)
-        ->get();
-    }   
 }

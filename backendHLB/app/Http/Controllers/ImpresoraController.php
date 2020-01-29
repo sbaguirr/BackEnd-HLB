@@ -23,7 +23,7 @@ class ImpresoraController extends Controller
         $equipo ->codigo=$request->get('codigo');
         $equipo ->tipo_equipo=$request->get('tipo');
         $equipo ->descripcion=$request->get('descripcion');
-        //$equipo ->encargado_registro=$request->get('encargado_registro');
+
         $equipo ->encargado_registro='admin';
         $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->estado_operativo=$request->get('estado_operativo');
@@ -89,8 +89,8 @@ class ImpresoraController extends Controller
         ->get();
         */
         //return response()->json($impresoras);
-        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','equipos.marca','modelo','descripcion','numero_serie','encargado_registro')
-        ->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
+        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro')
+        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->get();
 
     }
