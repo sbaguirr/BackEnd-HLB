@@ -38,4 +38,13 @@ class RouterController extends Controller
         $router->clave = $request->get('clave');
         $router->save();        
     }
+
+    public function marcas_routers(){
+        return Router::select('equipos.marca')
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->where('equipos.tipo_equipo','Router')
+        ->where('equipos.marca','!=','')
+        ->distinct()
+        ->get();
+    }
 }

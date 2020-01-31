@@ -30,7 +30,7 @@ use Illuminate\Http\Request;
 /*API Routers*/
    Route::get('listar_routers', 'RouterController@listar_router');
    Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
-
+   Route::get('marcas_routers', 'RouterController@marcas_routers');
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
