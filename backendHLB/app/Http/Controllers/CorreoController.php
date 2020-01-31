@@ -10,11 +10,12 @@ class CorreoController extends Controller
 
     public function mostrar_correos()
     {
-        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
+        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento',
+        'bspi_punto','correo','correos.estado','correos.created_at')
         ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->orderBy('empleados.apellido', 'asc')
-        //->limit(10)
         ->get();
     }
 
@@ -29,7 +30,8 @@ class CorreoController extends Controller
     }
 
     public function filtrar_correos($departamento,$fecha_asignacion=null){
-        $query= Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
+        $query= Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento',
+        'bspi_punto','correo','correos.estado','correos.created_at')
         ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion');
@@ -44,8 +46,7 @@ class CorreoController extends Controller
         if ($departamento == "Todos" && !empty($fecha_asignacion)){
             $query= $query->whereDate('correos.created_at',$fecha_asignacion);
         }
-        $query= $query->orderBy('empleados.apellido', 'asc')->get();
-        return $query;
+        return  $query->orderBy('empleados.apellido', 'asc')->get();
     }
 
    
