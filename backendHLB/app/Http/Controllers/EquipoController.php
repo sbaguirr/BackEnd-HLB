@@ -305,7 +305,7 @@ class EquipoController extends Controller
 
 
     public function getDesktop(Request $request){
-        $result = Equipo::select("*")->where("tipo_equipo","=","desktop");
+        $result = Equipo::select("*")->where("tipo_equipo","=",$request->get("tipo"));
         if($request->get("codigo")!=null && $request->get("codigo")!=""){
             $result = $result->where('codigo','like',"%".$request->get("codigo")."%");
         }
