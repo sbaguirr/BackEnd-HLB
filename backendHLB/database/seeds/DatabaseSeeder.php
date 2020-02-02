@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UsuarioSeeder::class);
         $this->call(ProgramaInstaladoSeeder::class);
         $this->call(IpSeeder::class);
+        $this->call(MarcaSeeder::class);
         $this->call(EquipoSeeder::class);
         $this->call(RouterSeeder::class);
         $this->call(ImpresoraSeeder::class);

@@ -31,6 +31,7 @@ use Illuminate\Http\Request;
    Route::get('listar_routers', 'RouterController@listar_router');
    Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
    Route::get('marcas_routers', 'RouterController@marcas_routers');
+   Route::get('filtrar_routers/{marca}/{fecha_registro?}', 'RouterController@filtrar_routers');
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
@@ -50,3 +51,6 @@ use Illuminate\Http\Request;
     Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
     Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
 
+
+ /*API Marca*/
+    Route::get('listado_marcas', 'MarcaController@listado_marcas');
