@@ -92,7 +92,7 @@ class EquipoController extends Controller
             }
             
             DB::commit();
-                return response()->json(['log'=>'exito'],200);
+            return response()->json(['log'=>'exito'],200);
         }catch(Exception $e){
             DB::rollback();
             return response()->json(['log'=>$e],400);
@@ -296,6 +296,29 @@ class EquipoController extends Controller
     public function create()
     {
         //
+    }
+
+
+    public function getEquipos(){
+        return Equipo::select("*")->wherein("tipo_equipo",["desktop","laptop","impresora","router"])->get();
+    }
+
+
+    public function getDesktop(Request $request){
+        $result = Equipo::select("*")->where("tipo_equipo","=",$request->get("tipo"));
+        if($request->get("codigo")!=null && $request->get("codigo")!=""){
+            $result = $result->where('codigo','like',"%".$request->get("codigo")."%");
+        }
+        else if($request->get("user")!=null && $request->get("user")!=""){
+            $result = $result->where('encargado_registro','like',"%".$request->get("user")."%");
+        }
+        else if($request->get("num_serie")!=null && $request->get("num_serie")!=""){
+            $result = $result->where('numero_serie','like',"%".$request->get("num_serie")."%");
+        }
+        if($request->get("fecha")!=null && $request->get("fecha")!=""){
+            $result = $result->where('fecha_registro','=',$request->get("fecha"));
+        }
+        return response()->json($result->get());
     }
 
     /**

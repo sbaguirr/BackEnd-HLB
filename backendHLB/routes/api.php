@@ -36,6 +36,8 @@ use Illuminate\Http\Request;
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');
+    Route::get('equipos','EquipoController@getEquipos');
+    Route::post('getdesktop','EquipoController@getDesktop');
 
 
 /*API DEPARTAMENTO*/
@@ -50,7 +52,8 @@ use Illuminate\Http\Request;
     Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
     Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
     Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
-
+	Route::get('/impresoras_codigo/{codigo}','ImpresoraController@impresoras_codigo');
+    Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
 
  /*API Marca*/
     Route::get('listado_marcas', 'MarcaController@listado_marcas');

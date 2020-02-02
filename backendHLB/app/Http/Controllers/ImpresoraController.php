@@ -89,8 +89,10 @@ class ImpresoraController extends Controller
         ->get();
         */
         //return response()->json($impresoras);
-        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro')
+        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->orderBy('equipos.created_at', 'desc')
+
         ->get();
 
     }
@@ -100,6 +102,69 @@ class ImpresoraController extends Controller
         ->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
         ->distinct()
         ->get();
+    }
+
+    //$mascotas = $mascotas->where('tipo_mascotas.tipo','like',"%".$request->get("busqueda")."%")->get();
+
+    /*
+    public function consultarAdopciones(Request $request){
+        $mascotas = self::auxMascotasBusq($request)->where('estado',1)
+        ->get();
+        return response()->json($mascotas);
+    }
+
+    */
+
+    public function impresoras_codigo($codigo){
+
+        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->where('equipos.codigo','like',"%".$codigo."%")
+        ->orderBy('equipos.created_at', 'desc')
+
+        ->get();
+
+    }
+
+    public function filtrar_correos($departamento,$fecha_asignacion=null){
+        $query= Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
+        ->join('empleados','empleados.cedula','=','correos.cedula')
+        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion');
+
+        if($departamento != "Todos" && !empty($fecha_asignacion)){
+            $query= $query->where([['correos.created_at', 'like', "${fecha_asignacion}%"],
+                ['departamentos.nombre', '=', $departamento]]);
+        }
+        if ($departamento != "Todos" && empty($fecha_asignacion)){
+            $query= $query->where('departamentos.nombre',$departamento);
+        }
+        if ($departamento == "Todos" && !empty($fecha_asignacion)){
+            $query= $query->whereDate('correos.created_at',$fecha_asignacion);
+        }
+        $query= $query->orderBy('empleados.apellido', 'asc')->get();
+        return $query;
+    }
+
+    public function filtrar_impresoras($marca,$fecha_asignacion=null){
+        $query= Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo');
+        //->where('equipos.codigo','like',"%".$codigo."%");
+        //->orderBy('equipos.created_at', 'desc')
+        //->get();
+
+        if($marca != "Todos" && !empty($fecha_asignacion)){
+            $query= $query->where([['equipos.created_at', 'like', "${fecha_asignacion}%"],
+                ['equipos.marca', '=', $marca]]);
+        }
+        if ($marca != "Todos" && empty($fecha_asignacion)){
+            $query= $query->where('equipos.marca',$marca);
+        }
+        if ($marca == "Todos" && !empty($fecha_asignacion)){
+            $query= $query->whereDate('equipos.created_at',$fecha_asignacion);
+        }
+        $query= $query->orderBy('equipos.created_at', 'asc')->get();
+        return $query;
     }
 
 }
