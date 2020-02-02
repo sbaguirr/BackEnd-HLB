@@ -16,19 +16,21 @@ class RouterController extends Controller
     public function crear_equipo_router(Request $request)
     {
         $equipo = new Equipo();
-        $router = new Router();     
+        $router = new Router();   
+
         $equipo->fecha_registro = $request->get('fecha_registro');
         $equipo->estado_operativo = $request->get('estado_operativo');
         $equipo->codigo = $request->get('codigo');
         $equipo->tipo_equipo = $request->get('tipo_equipo');
-        $equipo->marca = $request->get('marca');
+        $equipo->id_marca = $request->get('id_marca');
         $equipo->modelo = $request->get('modelo');
         $equipo->numero_serie = $request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->encargado_registro = $request->get('encargado_registro');
         $equipo->componente_principal = $request->get('componente_principal');
         $equipo->ip = $request->get('ip');
-        $equipo->save();  
+        $equipo->save(); 
+
         $id_equip = $equipo->id_equipo;
         $router->id_equipo = $id_equip;
         $router->nombre = $request->get('nombre');
@@ -40,11 +42,32 @@ class RouterController extends Controller
     }
 
     public function marcas_routers(){
-        return Router::select('equipos.marca')
+        return Router::select('marcas.id_marca', 'marcas.nombre')
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->where('equipos.tipo_equipo','Router')
-        ->where('equipos.marca','!=','')
         ->distinct()
         ->get();
     }
+
+    public function filtrar_routers($marca, $fecha_registro=null){
+        $query= Router::select('routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        'routers.clave', 'routers.id_equipo')
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')  
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca');
+        
+        if($marca != "Todas" && !empty($fecha_registro)){
+            $query= $query->where([['routers.created_at', 'like', "${fecha_registro}%"],
+                ['marcas.nombre', '=', $marca]]);
+        }
+        if ($marca != "Todas" && empty($fecha_registro)){
+            $query= $query->where('marcas.nombre', $marca);
+        }
+        if ($marca == "Todas" && !empty($fecha_registro)){
+            $query= $query->whereDate('routers.created_at', $fecha_registro);
+        }
+        return  $query->get();
+    }
+
+
 }

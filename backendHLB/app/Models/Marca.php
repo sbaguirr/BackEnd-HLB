@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Router extends Model
+class Marca extends Model
 {
-    protected $table = 'routers';
-    protected $primaryKey = 'id_router';
+    protected $table = 'marcas';
+    protected $primaryKey = 'id_marca';
 
      /**
      * The attributes that are mass assignable.
@@ -15,7 +15,7 @@ class Router extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre','pass','puerta_enlace','clave','estado_operativo','id_equipo', 'created_at'
+        'nombre'
     ];
 
 
@@ -25,13 +25,13 @@ class Router extends Model
      * @var array
      */
     protected $hidden = [
-    	'updated_at'
+    	'created_at', 'updated_at'
     ];
-   
 
-    // Relación: Equipo - Router (1 - 0/1)
+
+    // Relación: Marca - Equipo  (1 - M)
     public function equipos()
     {
-        return $this->belongsTo('App\Models\Equipo', 'id_equipo');
+        return $this->hasMany('App\Models\Equipo', 'id_marca');
     }
 }

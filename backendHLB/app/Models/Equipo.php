@@ -15,7 +15,9 @@ class Equipo extends Model
      * @var array
      */
     protected $fillable = [
-        'fecha_registro','estado_asignacion','codigo','tipo_equipo','encargado_registro','ip','marca','modelo','numero_serie','descripcion'
+        'fecha_registro','estado_operativo','codigo','tipo_equipo', 'modelo', 'numero_serie', 'descripcion', 'id_marca',
+        'encargado_registro', 'componente_principal', 'ip',
+      
     ];
 
 
@@ -86,5 +88,11 @@ class Equipo extends Model
     public function detalle_componentes(){
         return $this->hasMany('App\Models\DetalleComponente', 'id_equipo');
         
+    }
+
+    // Relación: Marca - Equipo  (1 - M)
+    public function marcas()
+    {
+        return $this->belongsTo('App\Models\Marca', 'id_marca');
     }
 }

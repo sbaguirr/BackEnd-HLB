@@ -19,15 +19,20 @@ class CreateEquiposTable extends Migration
             $table->string('estado_operativo');
             $table->string('codigo')->nullable();
             $table->string('tipo_equipo');
-            $table->string('marca')->nullable();
             $table->string('modelo')->nullable();
             $table->string('descripcion')->nullable();
             $table->string('numero_serie')->nullable();
+            $table->unsignedBigInteger('id_marca')->nullable();
             $table->string('encargado_registro');
             $table->unsignedBigInteger('componente_principal')->nullable();
             $table->unsignedBigInteger('ip')->nullable();
             $table->timestamps();
 
+            $table->foreign('id_marca')
+            ->references('id_marca')->on('marcas')
+            ->onDelete('cascade')
+            ->onUpdate('cascade'); 
+            
             $table->foreign('encargado_registro')
             ->references('usuario')->on('usuarios')
             ->onDelete('cascade')
