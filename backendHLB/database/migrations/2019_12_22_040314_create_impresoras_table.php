@@ -16,15 +16,19 @@ class CreateImpresorasTable extends Migration
         Schema::create('impresoras', function (Blueprint $table) {
             $table->bigIncrements('id_impresora');
             $table->string('tipo');
-            $table->string('tinta');
-            $table->string('cartucho');
+            $table->string('tinta')->nullable();
+            $table->string('cartucho')->nullable();
+            $table->string('cinta')->nullable();
+            $table->string('toner')->nullable();
+            $table->string('rollo')->nullable();
+            $table->string('rodillo')->nullable();
             $table->bigInteger('id_equipo')->unsigned();
             $table->timestamps();
 
             $table->foreign('id_equipo')
             ->references('id_equipo')->on('equipos')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
         });
     }
 

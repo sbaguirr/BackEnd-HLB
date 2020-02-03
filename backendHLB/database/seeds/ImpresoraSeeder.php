@@ -18,18 +18,19 @@ class ImpresoraSeeder extends Seeder
             'tipo' => 'Multifuncional',
             'tinta' => 'Epson 664',
             'cartucho' => '4 colores',
+            'toner' => 'Experte TN1050_2',
+            'cinta' => 'Cinta',
             'id_equipo' => 8
         ]);
         Impresora::create([
             'tipo' => 'Matricial',
-            'tinta' => 'Negro',
-            'cartucho' => 'Cinta',
+            'cinta' => 'Cinta',
             'id_equipo' => 9
         ]);
         Impresora::create([
             'tipo' => 'Brazaletes',
             'tinta' => 'Negro',
-            'cartucho' => 'Toner',
+            'rollo' => 'Brazalet ZERB',
             'id_equipo' => 10
         ]);
         Impresora::create([
@@ -40,9 +41,8 @@ class ImpresoraSeeder extends Seeder
         ]);
         Impresora::create([
             'tipo' => 'Escáner',
-            'tinta' => '',
-            'cartucho' => '',
+            'Rodillo' => 'LEX462',
             'id_equipo' => 12
-        ]);      
+        ]);
     }
 }

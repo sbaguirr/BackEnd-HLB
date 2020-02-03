@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Impresora extends Model
 {
     protected $table = 'impresoras';
+
     protected $primaryKey = 'id_impresora';
 
      /**
@@ -15,7 +16,7 @@ class Impresora extends Model
      * @var array
      */
     protected $fillable = [
-        'tipo','marca','modelo','numero_serie','tinta','cartucho','estado_operativo','id_equipo'
+        'tipo','marca','modelo','numero_serie','tinta','cartucho','cinta','toner','rollo','rodillo','estado_operativo','id_equipo'
     ];
 
 

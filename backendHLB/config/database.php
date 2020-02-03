@@ -45,12 +45,12 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('http://bapcsfevxfpmseohkidf-mysql.services.clever-cloud.com'),
-            'host' => env('DB_HOST', 'bapcsfevxfpmseohkidf-mysql.services.clever-cloud.com'),
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST', 'bhaakxxc18log5ujxa0b-mysql.services.clever-cloud.com'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'bapcsfevxfpmseohkidf'),
-            'username' => env('DB_USERNAME', 'uia8hrtgmwmfyo1n'),
-            'password' => env('DB_PASSWORD', 'b1bdhW1Vj8KbvM5D5ie2'),
+            'database' => env('DB_DATABASE', 'bhaakxxc18log5ujxa0b'),
+            'username' => env('DB_USERNAME', 'unjoorhffzzw9jdo'),
+            'password' => env('DB_PASSWORD', 'doJtUV3dBx4Pva355V07'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Impresora;
 use App\Models\Equipo;
+use App\Models\Marca;
 use DateTime;
 
 
@@ -17,8 +18,23 @@ class ImpresoraController extends Controller
         $equipo = new Equipo();
         $dt = new \DateTime();
         $dt->format('Y-m-d');
-        $equipo ->marca=$request->get('marca');
+
+
+        $value_marca=Marca::select('id_marca')
+        ->where('nombre','=',$request->get('marca'))
+        ->get();
+
+        $equipo ->id_marca=$value_marca[0]->id_marca;
+        //$v="id_marca";
+        //$equipo ->id_marca=$value_marca->$v;
+
+
+
+
         $equipo ->modelo=$request->get('modelo');
+        //if($request.get('cinta')=)
+        //console.log("RESPUESTA:",$request.get('cinta'));
+
         $equipo ->fecha_registro=$dt;
         $equipo ->codigo=$request->get('codigo');
         $equipo ->tipo_equipo=$request->get('tipo');
@@ -29,6 +45,7 @@ class ImpresoraController extends Controller
         $equipo ->estado_operativo=$request->get('estado_operativo');
         //$equipo ->id_equipo=$request->get('id_equipo');
         $equipo->save();
+
 
 
         /*
@@ -53,7 +70,23 @@ class ImpresoraController extends Controller
         $impresora ->id_equipo=$request->get('id_equipo');
         */
 
+
         $id=$equipo->id_equipo;
+
+
+        if($request->get('cinta')!==null){
+            $impresora ->cinta=$request->get('cinta');
+        }
+        if($request->get('toner')!==null){
+            $impresora ->toner=$request->get('toner');
+        }
+        if($request->get('rodillo')!==null){
+            $impresora ->rodillo=$request->get('rodillo');
+        }
+        if($request->get('rollo')!==null){
+            $impresora ->rollo=$request->get('rollo');
+        }
+
         $impresora ->tipo=$request->get('tipo');
         $impresora ->tinta=$request->get('tinta');
         $impresora ->cartucho=$request->get('cartucho');
@@ -89,8 +122,9 @@ class ImpresoraController extends Controller
         ->get();
         */
         //return response()->json($impresoras);
-        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        return Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->orderBy('equipos.created_at', 'desc')
 
         ->get();
@@ -98,11 +132,15 @@ class ImpresoraController extends Controller
     }
 
     public function marcas_impresoras(){
-        return Impresora::select('marca')
-        ->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
-        ->distinct()
+        $marcas=Marca::select('nombre as marca')
+        //->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
+        //->distinct()
         ->get();
-    }
+
+
+        return response()->json($marcas);
+
+            }
 
     //$mascotas = $mascotas->where('tipo_mascotas.tipo','like',"%".$request->get("busqueda")."%")->get();
 
@@ -117,8 +155,9 @@ class ImpresoraController extends Controller
 
     public function impresoras_codigo($codigo){
 
-        return Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        return Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->where('equipos.codigo','like',"%".$codigo."%")
         ->orderBy('equipos.created_at', 'desc')
 
@@ -147,18 +186,32 @@ class ImpresoraController extends Controller
     }
 
     public function filtrar_impresoras($marca,$fecha_asignacion=null){
-        $query= Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
-        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo');
+        //$query= Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        //->join('equipos','equipos.id_equipo','=','impresoras.id_equipo');
         //->where('equipos.codigo','like',"%".$codigo."%");
         //->orderBy('equipos.created_at', 'desc')
         //->get();
 
+        $query = Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
+        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca');
+
+
+
         if($marca != "Todos" && !empty($fecha_asignacion)){
+            $value_marca=Marca::select('id_marca')
+            ->where('nombre','=',$marca)
+            ->get();
+            //$value_marca[0]->id_marca;
+
             $query= $query->where([['equipos.created_at', 'like', "${fecha_asignacion}%"],
-                ['equipos.marca', '=', $marca]]);
+                ['equipos.id_marca', '=', $value_marca[0]->id_marca]]);
         }
         if ($marca != "Todos" && empty($fecha_asignacion)){
-            $query= $query->where('equipos.marca',$marca);
+            $value_marca=Marca::select('id_marca')
+            ->where('nombre','=',$marca)
+            ->get();
+            $query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
         }
         if ($marca == "Todos" && !empty($fecha_asignacion)){
             $query= $query->whereDate('equipos.created_at',$fecha_asignacion);
