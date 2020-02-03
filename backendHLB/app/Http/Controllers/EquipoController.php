@@ -31,7 +31,7 @@ class EquipoController extends Controller
             $computador->codigo = $request->get('pc-codigo');
             $computador->fecha_registro = Date('Y-m-d H:i:s');
             $computador->tipo_equipo = 'laptop';
-            $computador->marca = $request->get('pc-marca');
+            $computador->id_marca = $request->get('pc-marca');
             $computador->modelo = $request->get('pc-modelo');
             $computador->encargado_registro = 'admin';
             $computador->estado_operativo = 'OPERATIVO';
@@ -66,7 +66,7 @@ class EquipoController extends Controller
 
             foreach($request->except(['pc-codigo','pc-descripcion',"pc-num_serie",'pc-frecuencia','pc-nucleos','pc-marca','pc-modelo','pc-ram_soportada','pc-num_slots']) as $clave => $valor){
                 $comp = new Equipo();
-                $comp->marca = $valor['marca'];
+                $comp->id_marca = $valor['marca'];
                 $comp->codigo= $valor['codigo'];
                 $comp->modelo = $valor['modelo'];
                 $comp->numero_serie = $valor['num_serie'];
@@ -133,7 +133,7 @@ class EquipoController extends Controller
                 
                 $comp = new Equipo();
                 $comp->codigo = $valor['codigo'];
-                $comp->marca = $valor['marca'];
+                $comp->id_marca = $valor['marca'];
                 $comp->modelo = $valor['modelo'];
                 $comp->numero_serie = $valor['num_serie'];
                 $comp->descripcion = Arr::has($valor, 'descripcion')?$valor['descripcion']:'';
@@ -317,7 +317,7 @@ class EquipoController extends Controller
             $result = $result->where('numero_serie','like',"%".$request->get("num_serie")."%");
         }
         if($request->get("marca")!=null && $request->get("marca")!=""){
-            $result = $result->where('marca','like',"%".$request->get("marca")."%");
+            $result = $result->where('id_marca','=',$request->get("marca"));
         }
         if($request->get("fecha")!=null && $request->get("fecha")!=""){
             $result = $result->where('fecha_registro','=',$request->get("fecha"));
