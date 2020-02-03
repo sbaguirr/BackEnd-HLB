@@ -57,3 +57,8 @@ use Illuminate\Http\Request;
 
  /*API Marca*/
     Route::get('listado_marcas', 'MarcaController@listado_marcas');
+
+/**API Ip */
+    Route::get('listar_ips', 'IpController@listar_ips');
+    Route::post('crear_equipo_ip', 'IpController@crear_equipo_ip');
+    Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
