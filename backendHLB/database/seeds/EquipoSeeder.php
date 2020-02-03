@@ -17,10 +17,10 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'Operativo',
-            'codigo' => 'FOXCONN G41MXE-V',
+            'codigo' => 'HLB-50',
             'tipo_equipo' => 'CPU',
             'id_marca' => 1,
-            'modelo' => '330984',
+            'modelo' => 'FOXCONN G41MXE-V',
             'descripcion' => 'Asignado',
             'numero_serie' => '330984',
             'componente_principal' => null,
@@ -30,7 +30,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'Operativo',
-            'codigo' => '',
+            'codigo' => 'HLB0009',
             'tipo_equipo' => 'Monitor',
             'id_marca' => 2,
             'modelo' => 'W1742ST',
@@ -56,7 +56,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'Operativo',
-            'codigo' => '',
+            'codigo' => 'leonb5',
             'tipo_equipo' => 'Mouse',
             'id_marca' => 3,
             'modelo' => '',
@@ -122,7 +122,7 @@ class EquipoSeeder extends Seeder
         ]);Equipo::create([
             'fecha_registro' => '2019-09-21',
             'estado_operativo' => 'Reparado',
-            'codigo' => '',
+            'codigo' => 'HLB4',
             'tipo_equipo' => 'Impresora',
             'id_marca' => 7,
             'modelo' => 'Aficio MP 301 spf',
@@ -134,7 +134,7 @@ class EquipoSeeder extends Seeder
         ]);Equipo::create([
             'fecha_registro' => '2016-03-15',
             'estado_operativo' => 'De baja',
-            'codigo' => '',
+            'codigo' => 'HBL3',
             'tipo_equipo' => 'Impresora',
             'id_marca' => 8,
             'modelo' => 'MP280',
@@ -146,7 +146,7 @@ class EquipoSeeder extends Seeder
         ]);Equipo::create([
             'fecha_registro' => '2017-10-08',
             'estado_operativo' => 'Disponible',
-            'codigo' => '',
+            'codigo' => 'HLB1',
             'tipo_equipo' => 'Impresora',
             'id_marca' => 6,
             'modelo' => 'L210',
@@ -158,7 +158,7 @@ class EquipoSeeder extends Seeder
         ]);Equipo::create([
             'fecha_registro' => '2018-02-04',
             'estado_operativo' => 'Operativo',
-            'codigo' => '',
+            'codigo' => 'HLB0',
             'tipo_equipo' => 'Impresora',
             'id_marca' => 5,
             'modelo' => 'LaserJet Pro 400 Color Mfp M475dw',
@@ -172,7 +172,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-12-14',
             'estado_operativo' => 'Disponible',
-            'codigo' => '',
+            'codigo' => 'HLB-1',
             'tipo_equipo' => 'Router',
             'id_marca' => 14,
             'modelo' => 'DREHRTJSD-S',
@@ -185,7 +185,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2020-01-07',
             'estado_operativo' => 'Disponible',
-            'codigo' => '20110',
+            'codigo' => 'HLB-2010',
             'tipo_equipo' => 'Router',
             'id_marca' => 9,
             'modelo' => 'e900',
@@ -198,7 +198,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-05-07',
             'estado_operativo' => 'Disponible',
-            'codigo' => '508798',
+            'codigo' => 'HLB-8',
             'tipo_equipo' => 'Router',
             'id_marca' => 13,
             'modelo' => '802.11ac',
@@ -224,7 +224,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2018-09-25',
             'estado_operativo' => 'Disponible',
-            'codigo' => '',
+            'codigo' => 'HLB-2',
             'tipo_equipo' => 'Router',
             'id_marca' => 11, 
             'modelo' => 'MU-MIMO',
@@ -237,7 +237,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-05-28',
             'estado_operativo' => 'Operativo',
-            'codigo' => '508798',
+            'codigo' => 'HLB508798',
             'tipo_equipo' => 'Router',
             'id_marca' => 9,
             'modelo' => '802.11ac',
@@ -250,7 +250,7 @@ class EquipoSeeder extends Seeder
         Equipo::create([
             'fecha_registro' => '2019-12-05',
             'estado_operativo' => 'En revisión',
-            'codigo' => '',
+            'codigo' => 'HLEON2',
             'tipo_equipo' => 'Router',
             'id_marca' => 12,
             'modelo' => 'Nighthawk Pro',

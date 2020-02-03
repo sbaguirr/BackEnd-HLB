@@ -28,10 +28,11 @@ use Illuminate\Http\Request;
    Route::get('org_dpto/{punto}', 'DepartamentoController@org_dpto');
 
 /*API Routers*/
-   Route::get('listar_routers', 'RouterController@listar_router');
-   Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
-   Route::get('marcas_routers', 'RouterController@marcas_routers');
-   Route::get('filtrar_routers/{marca}/{fecha_registro?}', 'RouterController@filtrar_routers');
+    Route::get('listar_routers', 'RouterController@listar_router');
+    Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
+    Route::get('marcas_routers', 'RouterController@marcas_routers');
+    Route::get('filtrar_routers/{marca}/{fecha_registro?}', 'RouterController@filtrar_routers');
+    Route::get('buscar_router/{codigo}', 'RouterController@buscar_router');
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');

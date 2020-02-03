@@ -69,5 +69,13 @@ class RouterController extends Controller
         return  $query->get();
     }
 
+    public function buscar_router($codigo){
+        return Router::select('equipos.codigo','routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        'routers.clave', 'routers.id_equipo')
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->where('equipos.codigo','like',"%".strtolower($codigo)."%")
+        ->orderBy('equipos.created_at', 'desc')
+        ->get();
+    }
 
 }
