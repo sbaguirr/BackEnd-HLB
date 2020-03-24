@@ -10,7 +10,18 @@ class RouterController extends Controller
 {
     public function listar_router()
     {
-        return Router::all();
+        return Router::select('routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        'routers.clave', 'routers.id_equipo', 'marcas.id_marca', 'marcas.nombre as marca', 'equipos.id_equipo', 'equipos.modelo', 
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('usuarios', 'usuarios.usuario', '=', 'equipos.encargado_registro')
+        ->join('empleados','empleados.cedula', '=', 'usuarios.cedula')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->get();
+        //, DB::raw('CONCAT(empleados.nombre,empleados.apellido) as empleado')
     }
 
     public function crear_equipo_router(Request $request)

@@ -14,6 +14,14 @@ class IpController extends Controller
         return Ip::all();
     }
 
+    public function buscar_ip_por_codigo($id_ip)
+    {
+        return Ip::select('*')
+        ->where('id_ip',$id_ip)
+        ->get();
+        return Ip::all();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
