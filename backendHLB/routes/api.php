@@ -66,3 +66,14 @@ use Illuminate\Http\Request;
     Route::post('crear_equipo_ip', 'IpController@crear_equipo_ip');
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
+
+
+
+
+
+
+
+
+    /*API Tipo Equipo*/
+    Route::get('ver_tipos', 'TipoController@mostrar_todos');
+    Route::post('crear_tipo', 'TipoController@crear_tipo');
