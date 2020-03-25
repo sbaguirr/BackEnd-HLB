@@ -20,8 +20,8 @@ class RouterController extends Controller
         ->join('empleados','empleados.cedula', '=', 'usuarios.cedula')
         ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
         ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->orderBy('routers.id_router', 'DESC')
         ->get();
-        //, DB::raw('CONCAT(empleados.nombre,empleados.apellido) as empleado')
     }
 
     public function crear_equipo_router(Request $request)
