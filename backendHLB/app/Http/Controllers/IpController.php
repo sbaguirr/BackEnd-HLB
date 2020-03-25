@@ -19,7 +19,6 @@ class IpController extends Controller
         return Ip::select('*')
         ->where('id_ip',$id_ip)
         ->get();
-        return Ip::all();
     }
 
     /**
@@ -105,5 +104,19 @@ class IpController extends Controller
         $ip->nombre_usuario=$request->get('nombre_usuario');
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
+    }
+
+    public function ips_libres()
+    {
+      return Ip::select('id_ip', 'direccion_ip')
+      ->where('estado','=','Libre')
+      ->get();
+    }
+
+    public function ip_asignada($id_ip)
+    {
+      $ip = Ip::find($id_ip);
+      $ip->estado = 'En uso';
+      $ip->save();
     }
 }

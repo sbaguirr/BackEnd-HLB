@@ -63,11 +63,12 @@ use Illuminate\Http\Request;
 
 /**API Ip */
     Route::get('listar_ips', 'IpController@listar_ips');
+    Route::get('ips_libres', 'IpController@ips_libres');
     Route::post('crear_equipo_ip', 'IpController@crear_equipo_ip');
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
+    Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
     Route::post('crear_ip','IpController@crear_ip');
-
 
 
 
