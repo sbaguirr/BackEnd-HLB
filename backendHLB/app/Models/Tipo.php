@@ -14,7 +14,7 @@ class Tipo extends Model
      * @var array
      */
     protected $fillable = [
-        'tipo','uso_ip'
+        'tipo','usa_ip'
     ];
 
      /**

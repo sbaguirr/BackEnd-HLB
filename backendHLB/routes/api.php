@@ -66,7 +66,7 @@ use Illuminate\Http\Request;
     Route::post('crear_equipo_ip', 'IpController@crear_equipo_ip');
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
-
+    Route::post('crear_ip','IpController@crear_ip');
 
 
 

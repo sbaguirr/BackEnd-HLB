@@ -91,4 +91,19 @@ class IpController extends Controller
             ->where('direccion_ip', 'like', "%" . $direccion_ip . "%")
             ->get();
     }
+
+    public function crear_ip(Request $request)
+    {
+        $ip= new Ip();
+        $ip->direccion_ip=$request->get('direccion_ip');
+        $ip->hostname=$request->get('hostname');
+        $ip->subred=$request->get('subred');
+        $ip->estado=$request->get('estado');
+        $ip->fortigate=$request->get('fortigate');
+        $ip->observacion=$request->get('observacion');
+        $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
+        $ip->nombre_usuario=$request->get('nombre_usuario');
+        $ip->encargado_registro=$request->get('encargado_registro');
+        $ip->save();
+    }
 }
