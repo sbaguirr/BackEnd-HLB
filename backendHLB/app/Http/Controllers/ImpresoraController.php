@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Impresora;
 use App\Models\Equipo;
 use App\Models\Marca;
+use App\Models\Ip;
 use DateTime;
 
 
@@ -19,62 +20,33 @@ class ImpresoraController extends Controller
         $dt = new \DateTime();
         $dt->format('Y-m-d');
 
-
-        $value_marca=Marca::select('id_marca')
+       /*  $value_marca=Marca::select('id_marca')
         ->where('nombre','=',$request->get('marca'))
         ->get();
 
-        $equipo ->id_marca=$value_marca[0]->id_marca;
+        $equipo ->id_marca=$value_marca[0]->id_marca; */
+
         //$v="id_marca";
         //$equipo ->id_marca=$value_marca->$v;
 
 
-
-
         $equipo ->modelo=$request->get('modelo');
-        //if($request.get('cinta')=)
-        //console.log("RESPUESTA:",$request.get('cinta'));
 
         $equipo ->fecha_registro=$dt;
         $equipo ->codigo=$request->get('codigo');
-        $equipo ->tipo_equipo=$request->get('tipo');
+        $equipo ->tipo_equipo="impresora";
         $equipo ->descripcion=$request->get('descripcion');
-
-        $equipo ->encargado_registro='admin';
+        $equipo ->id_marca=$request->get('id_marca');
+        $equipo ->asignado=$request->get('asignado');
         $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->estado_operativo=$request->get('estado_operativo');
-        //$equipo ->id_equipo=$request->get('id_equipo');
+
         $equipo->save();
-
-
-
-        /*
-        $impresora ->tipo=$request->input('tipo');
-        $impresora ->marca=$request->input('marca');
-        $impresora ->modelo=$request->input('modelo');
-        $impresora ->numero_serie=$request->input('numero_serie');
-        $impresora ->tinta=$request->input('tinta');
-        $impresora ->cartucho=$request->input('cartucho');
-        $impresora ->estado_operativo=$request->input('estado_operativo');
-        $impresora ->id_equipo=$request->input('id_equipo');
-        */
-
-        /*
-        $impresora ->tipo=$request->get('tipo');
-        $impresora ->marca=$request->get('marca');
-        $impresora ->modelo=$request->get('modelo');
-        $impresora ->numero_serie=$request->get('numero_serie');
-        $impresora ->tinta=$request->get('tinta');
-        $impresora ->cartucho=$request->get('cartucho');
-        $impresora ->estado_operativo=$request->get('estado_operativo');
-        $impresora ->id_equipo=$request->get('id_equipo');
-        */
-
 
         $id=$equipo->id_equipo;
 
 
-        if($request->get('cinta')!==null){
+        if($request->get('cinta')!==null ){
             $impresora ->cinta=$request->get('cinta');
         }
         if($request->get('toner')!==null){
@@ -96,8 +68,14 @@ class ImpresoraController extends Controller
         $impresora->save();
         return response()->json($impresora);
 
-
-
+        /*Si el usuario elige una ip para la impresora, el
+        estado de la ip debe cambiar a En uso */
+        $id= $request->get('ip');
+        if($id!==null){
+            $ip= Ip::find($id);
+            $ip->estado= "e";
+            $ip->save();
+        }
     }
 
     public function mostrar_impresoras(){
