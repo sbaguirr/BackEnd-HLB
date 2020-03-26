@@ -89,4 +89,12 @@ class RouterController extends Controller
         ->get();
     }
 
+    public function eliminar_router($id)
+    {
+      $router = Router::find($id);
+      $equipo = Equipo::find($router->id_equipo);
+      $equipo->estado_operativo = 'De baja';
+      $equipo->save();
+    }
+
 }

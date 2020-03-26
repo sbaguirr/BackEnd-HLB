@@ -33,6 +33,7 @@ use Illuminate\Http\Request;
     Route::get('marcas_routers', 'RouterController@marcas_routers');
     Route::get('filtrar_routers/{marca}/{fecha_registro?}', 'RouterController@filtrar_routers');
     Route::get('buscar_router/{codigo}', 'RouterController@buscar_router');
+    Route::put('eliminar_router/{id}', 'RouterController@eliminar_router');
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
