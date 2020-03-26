@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
  /*API Empleado*/
     Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
-
+    Route::get('mostrar_empleados','EmpleadoController@mostrar_todos');
 
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');

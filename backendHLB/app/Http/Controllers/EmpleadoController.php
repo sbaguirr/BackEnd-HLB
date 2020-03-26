@@ -10,7 +10,8 @@ class EmpleadoController extends Controller
     
     public function mostrar_todos()
     {
-        return Empleado::all();
+        return Empleado::select('empleados.nombre','empleados.apellido','cedula as id')
+        ->get();
     }
 
     public function buscar_por_nombre($nombreEmpleado)

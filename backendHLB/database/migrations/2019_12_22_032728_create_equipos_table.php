@@ -23,7 +23,7 @@ class CreateEquiposTable extends Migration
             $table->string('descripcion')->nullable();
             $table->string('numero_serie')->nullable();
             $table->unsignedBigInteger('id_marca')->nullable();
-            $table->string('encargado_registro');
+            $table->string('asignado')->nullable();
             $table->unsignedBigInteger('componente_principal')->nullable();
             $table->unsignedBigInteger('ip')->nullable();
             $table->timestamps();
@@ -33,10 +33,15 @@ class CreateEquiposTable extends Migration
             ->onDelete('cascade')
             ->onUpdate('cascade'); 
             
-            $table->foreign('encargado_registro')
+           /*  $table->foreign('encargado_registro')
             ->references('usuario')->on('usuarios')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');  */
+
+            $table->foreign('asignado')
+            ->references('cedula')->on('empleados')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('componente_principal')
             ->references('id_equipo')->on('equipos')

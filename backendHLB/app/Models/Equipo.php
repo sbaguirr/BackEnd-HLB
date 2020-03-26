@@ -16,7 +16,7 @@ class Equipo extends Model
      */
     protected $fillable = [
         'fecha_registro','estado_operativo','codigo','tipo_equipo', 'modelo', 'numero_serie', 'descripcion', 'id_marca',
-        'encargado_registro', 'componente_principal', 'ip',
+        'asignado', 'componente_principal', 'ip',
       
     ];
 
@@ -59,11 +59,15 @@ class Equipo extends Model
 
 
     // Relación: Usuario - Equipo (1 - M)
-    public function usuarios()
+    /* public function usuarios()
     {
         return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
     }
-
+ */
+    public function usuarios()
+    {
+        return $this->belongsTo('App\Models\Empleado', 'asignado');
+    }
 
     // Relación: Equipo - Router (1 - 0/1)
     public function routers()
