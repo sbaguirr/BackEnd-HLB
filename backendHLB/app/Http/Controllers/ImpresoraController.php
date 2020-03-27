@@ -94,12 +94,6 @@ class ImpresoraController extends Controller
     }
 
     public function mostrar_impresoras_all(){
-        /*
-        $impresoras = Impresora::select('id_impresora','tipo','tinta','cartucho','id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro')
-        ->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
-        ->get();
-        */
-        //return response()->json($impresoras);
         return Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
@@ -111,25 +105,9 @@ class ImpresoraController extends Controller
 
     public function marcas_impresoras(){
         $marcas=Marca::select('nombre as marca')
-        //->join('equipos','equipos.id_equipo','=','impresoras.id_impresora')
-        //->distinct()
         ->get();
-
-
         return response()->json($marcas);
-
             }
-
-    //$mascotas = $mascotas->where('tipo_mascotas.tipo','like',"%".$request->get("busqueda")."%")->get();
-
-    /*
-    public function consultarAdopciones(Request $request){
-        $mascotas = self::auxMascotasBusq($request)->where('estado',1)
-        ->get();
-        return response()->json($mascotas);
-    }
-
-    */
 
     public function impresoras_codigo($codigo){
 
@@ -143,33 +121,7 @@ class ImpresoraController extends Controller
 
     }
 
-    public function filtrar_correos($departamento,$fecha_asignacion=null){
-        $query= Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo','correos.created_at')
-        ->join('empleados','empleados.cedula','=','correos.cedula')
-        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
-        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion');
-
-        if($departamento != "Todos" && !empty($fecha_asignacion)){
-            $query= $query->where([['correos.created_at', 'like', "${fecha_asignacion}%"],
-                ['departamentos.nombre', '=', $departamento]]);
-        }
-        if ($departamento != "Todos" && empty($fecha_asignacion)){
-            $query= $query->where('departamentos.nombre',$departamento);
-        }
-        if ($departamento == "Todos" && !empty($fecha_asignacion)){
-            $query= $query->whereDate('correos.created_at',$fecha_asignacion);
-        }
-        $query= $query->orderBy('empleados.apellido', 'asc')->get();
-        return $query;
-    }
-
     public function filtrar_impresoras($marca,$fecha_asignacion=null){
-        //$query= Impresora::select('id_impresora','tipo','tinta','cartucho','equipos.id_equipo','estado_operativo','codigo','marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
-        //->join('equipos','equipos.id_equipo','=','impresoras.id_equipo');
-        //->where('equipos.codigo','like',"%".$codigo."%");
-        //->orderBy('equipos.created_at', 'desc')
-        //->get();
-
         $query = Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca');
@@ -198,4 +150,21 @@ class ImpresoraController extends Controller
         return $query;
     }
 
+
+    public function impresoras_equipo(){
+        return Impresora::selectRaw('*, marcas.nombre as marca, empleados.nombre as empleado')
+        ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('empleados','asignado','=','cedula')
+        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->get();
+
+    }
+    
 }
+/*select('id_impresora','tipo','tinta','cinta', 'rodillo','rollo','toner',
+        'cartucho','equipos.id_equipo','estado_operativo',
+         'codigo','marcas.nombre as marca','modelo',
+         'descripcion','numero_serie','encargado_registro',
+          'equipos.created_at','asignado','departamento.nombre as dpto','bspi_punto') */

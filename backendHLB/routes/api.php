@@ -49,9 +49,6 @@ use Illuminate\Http\Request;
     Route::get('departamentos','DepartamentoController@mostrar_todos');
 
 
-/*API DEPARTAMENTO*/
-    Route::get('departamentos','DepartamentoController@mostrar_todos');
-
 /*API Impresora */
     Route::post('/impresora','ImpresoraController@crear_impresora');
     Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
@@ -59,7 +56,7 @@ use Illuminate\Http\Request;
     Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
 	Route::get('/impresoras_codigo/{codigo}','ImpresoraController@impresoras_codigo');
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
-
+    Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
  /*API Marca*/
     Route::get('listado_marcas', 'MarcaController@listado_marcas');
 
