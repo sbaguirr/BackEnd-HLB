@@ -76,7 +76,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Asignado',
             'numero_serie' => '',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '1589635784',
             'ip' => 1
         ]);
         Equipo::create([
@@ -102,7 +102,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Asignado',
             'numero_serie' => 'LISNIRI',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '0784361981',
             'ip' => 2
         ]);
 
@@ -153,7 +153,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => '',
             'numero_serie' => 'S25K692178',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '0325896347',
             'ip' => null
         ]);Equipo::create([
             'fecha_registro' => '2018-02-04',
@@ -165,7 +165,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Color blanca',
             'numero_serie' => 'CND8FC904W',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '1478523458',
             'ip' => null
         ]);
 
@@ -179,8 +179,8 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Wifi',
             'numero_serie' => 'CND8FC904W',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'asignado' => '0584721925',
+            'ip' => 1
         ]);
         Equipo::create([
             'fecha_registro' => '2020-01-07',
@@ -192,7 +192,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Tipo ASDL',
             'numero_serie' => 'WTY8',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '1358978564',
             'ip' => null
         ]);
         Equipo::create([
@@ -205,8 +205,8 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Wifi, Tipo VSDL',
             'numero_serie' => '4668EGFFX',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'asignado' => '1328169874',
+            'ip' => 3
         ]);
         Equipo::create([
             'fecha_registro' => '2017-06-13',
@@ -218,7 +218,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Router DSL',
             'numero_serie' => 'AC68U48',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '1205478963',
             'ip' => null
         ]);
         Equipo::create([
@@ -231,7 +231,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '0258463258',
             'ip' => null
         ]);
         Equipo::create([
@@ -257,7 +257,7 @@ class EquipoSeeder extends Seeder
             'descripcion' => 'Wifi, Tipo VSDL',
             'numero_serie' => 'XR500',
             'componente_principal' => null,
-            'asignado' => null,
+            'asignado' => '1630258746',
             'ip' => null
         ]);
     }

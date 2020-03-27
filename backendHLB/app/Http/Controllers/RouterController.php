@@ -16,8 +16,7 @@ class RouterController extends Controller
         'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
-        ->join('usuarios', 'usuarios.usuario', '=', 'equipos.encargado_registro')
-        ->join('empleados','empleados.cedula', '=', 'usuarios.cedula')
+        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
         ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
         ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
         ->orderBy('routers.id_router', 'DESC')
@@ -37,7 +36,7 @@ class RouterController extends Controller
         $equipo->modelo = $request->get('modelo');
         $equipo->numero_serie = $request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
-        $equipo->encargado_registro = $request->get('encargado_registro');
+        $equipo->asignado = $request->get('asignado');
         $equipo->componente_principal = $request->get('componente_principal');
         $equipo->ip = $request->get('ip');
         $equipo->save(); 
@@ -95,6 +94,33 @@ class RouterController extends Controller
       $equipo = Equipo::find($router->id_equipo);
       $equipo->estado_operativo = 'De baja';
       $equipo->save();
+    }
+
+    public function editar_equipo_router(Request $request)
+    {
+      $router = Router::find($request->id_router);
+      $equipo = Equipo::find($router->id_equipo);
+      
+      $equipo->estado_operativo = $request->get('estado_operativo');
+      $equipo->codigo = $request->get('codigo');
+      $equipo->tipo_equipo = $request->get('tipo_equipo');
+      $equipo->id_marca = $request->get('id_marca');
+      $equipo->modelo = $request->get('modelo');
+      $equipo->numero_serie = $request->get('numero_serie');
+      $equipo->descripcion = $request->get('descripcion');
+      $equipo->asignado = $request->get('asignado');
+      $equipo->componente_principal = $request->get('componente_principal');
+      $equipo->ip = $request->get('ip');
+      $equipo->save(); 
+
+      $id_equip = $equipo->id_equipo;
+      $router->id_equipo = $id_equip;
+      $router->nombre = $request->get('nombre');
+      $router->pass = $request->get('pass');
+      $router->puerta_enlace = $request->get('puerta_enlace');
+      $router->usuario = $request->get('usuario');
+      $router->clave = $request->get('clave');
+      $router->save();        
     }
 
 }
