@@ -72,8 +72,8 @@ class Usuario extends Model
 
 
     // Relación: Usuario - Equipo (1 - M)
-    /* public function equipos()
+     public function equipos()
     {
         return $this->hasMany('App\Models\Equipo', 'encargado_registro');
-    } */
+    } 
 }
