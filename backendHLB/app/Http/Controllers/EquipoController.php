@@ -404,4 +404,11 @@ class EquipoController extends Controller
     {
         //
     }
+
+
+    public function mostrar_codigos()
+    {
+        return Equipo::select('id','codigo as dato')
+        ->get();
+    }
 }

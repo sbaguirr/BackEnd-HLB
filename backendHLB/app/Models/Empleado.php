@@ -64,7 +64,7 @@ class Empleado extends Model
     }
 
     // Relación: Usuario - Equipo (1 - M)
-    public function equipos()
+    public function asignado()
     {
         return $this->hasMany('App\Models\Equipo', 'asignado');
     }

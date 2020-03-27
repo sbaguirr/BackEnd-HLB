@@ -42,6 +42,7 @@ use Illuminate\Http\Request;
     Route::post('getdesktop','EquipoController@getDesktop');
     Route::get('getEquipoByID/{idequipo}','EquipoController@getEquipoByID');
     Route::post('getDetalleComp','EquipoController@getDetalleComp');
+    Route::get('mostrar_codigos','EquipoController@mostrar_codigos');
 
 
 /*API DEPARTAMENTO*/

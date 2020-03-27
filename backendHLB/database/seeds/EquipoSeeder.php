@@ -23,9 +23,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'FOXCONN G41MXE-V',
             'descripcion' => 'Asignado',
             'numero_serie' => '330984',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
+            'ip' => 5,
             'asignado' => null,
-            'ip' => 5
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
@@ -36,9 +37,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'W1742ST',
             'descripcion' => 'Asignado',
             'numero_serie' => 'OO6TPTM2B393',
+            'encargado_registro' => 'admin',
             'componente_principal' => 1,
+            'ip' => null,
             'asignado' => null,
-            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
@@ -49,9 +51,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '',
             'descripcion' => 'Letras borrosas',
             'numero_serie' => '1561941011009',
+            'encargado_registro' => 'soporte',
             'componente_principal' => 1,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
@@ -62,9 +65,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '',
             'descripcion' => 'Asignado',
             'numero_serie' => 'X75784406542',
+            'encargado_registro' => 'admin',
             'componente_principal' => 1,
+            'ip' => null,
             'asignado' => null,
-            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2018-11-15',
@@ -75,9 +79,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '',
             'descripcion' => 'Asignado',
             'numero_serie' => '',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => 1
+            'ip' => 1,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2018-02-21',
@@ -88,9 +93,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '1702',
             'descripcion' => 'Asignado',
             'numero_serie' => '',
+            'encargado_registro' => 'admin',
             'componente_principal' => 5,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2017-08-27',
@@ -101,9 +107,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '331984',
             'descripcion' => 'Asignado',
             'numero_serie' => 'LISNIRI',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => 2
+            'ip' => 2,
+            'asignado' => null
         ]);
 
 
@@ -116,9 +123,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'L210',
             'descripcion' => 'Equipo asignado',
             'numero_serie' => 'S25K558074',
+            'encargado_registro' => 'admin',
             'componente_principal' => 1,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);Equipo::create([
             'fecha_registro' => '2019-09-21',
             'estado_operativo' => 'R',
@@ -128,9 +136,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'Aficio MP 301 spf',
             'descripcion' => 'Asignado',
             'numero_serie' => 'C87005280',
+            'encargado_registro' => 'admin',
             'componente_principal' => 5,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);Equipo::create([
             'fecha_registro' => '2016-03-15',
             'estado_operativo' => 'B',
@@ -140,9 +149,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'MP280',
             'descripcion' => '',
             'numero_serie' => 'ACBT16169',
+            'encargado_registro' => 'admin',
             'componente_principal' => 7,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);Equipo::create([
             'fecha_registro' => '2017-10-08',
             'estado_operativo' => 'D',
@@ -152,9 +162,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'L210',
             'descripcion' => '',
             'numero_serie' => 'S25K692178',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);Equipo::create([
             'fecha_registro' => '2018-02-04',
             'estado_operativo' => 'O',
@@ -164,9 +175,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'LaserJet Pro 400 Color Mfp M475dw',
             'descripcion' => 'Color blanca',
             'numero_serie' => 'CND8FC904W',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
 
         Equipo::create([
@@ -178,9 +190,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'DREHRTJSD-S',
             'descripcion' => 'Wifi',
             'numero_serie' => 'CND8FC904W',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2020-01-07',
@@ -191,9 +204,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'e900',
             'descripcion' => 'Tipo ASDL',
             'numero_serie' => 'WTY8',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
@@ -204,9 +218,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '802.11ac',
             'descripcion' => 'Wifi, Tipo VSDL',
             'numero_serie' => '4668EGFFX',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2017-06-13',
@@ -217,9 +232,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'DSL-AC68U',
             'descripcion' => 'Router DSL',
             'numero_serie' => 'AC68U48',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2018-09-25',
@@ -230,9 +246,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-28',
@@ -243,9 +260,10 @@ class EquipoSeeder extends Seeder
             'modelo' => '802.11ac',
             'descripcion' => 'Wifi, Tipo VSDL',
             'numero_serie' => '4668EGFFX',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2019-12-05',
@@ -256,9 +274,10 @@ class EquipoSeeder extends Seeder
             'modelo' => 'Nighthawk Pro',
             'descripcion' => 'Wifi, Tipo VSDL',
             'numero_serie' => 'XR500',
+            'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'asignado' => null,
-            'ip' => null
+            'ip' => null,
+            'asignado' => null
         ]);
     }
 }

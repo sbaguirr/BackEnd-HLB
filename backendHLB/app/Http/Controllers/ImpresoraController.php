@@ -40,7 +40,7 @@ class ImpresoraController extends Controller
         $equipo ->asignado=$request->get('asignado');
         $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->estado_operativo=$request->get('estado_operativo');
-
+        $equipo ->componente_principal=$request->get('componente_principal');
         $equipo->save();
 
         $id=$equipo->id_equipo;
