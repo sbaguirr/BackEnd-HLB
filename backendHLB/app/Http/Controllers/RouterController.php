@@ -23,6 +23,16 @@ class RouterController extends Controller
         ->get();
     }
 
+    public function buscar_router_por_id($id)
+    {
+      return Router::select('routers.nombre', 'routers.pass', 'routers.usuario', 'routers.clave', 
+      'routers.puerta_enlace', 'equipos.id_marca', 'equipos.modelo', 'equipos.numero_serie',
+      'equipos.estado_operativo', 'equipos.descripcion', 'equipos.ip', 'equipos.asignado')
+      ->where('routers.id_router','=',$id)
+      ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+      ->get();
+    }
+
     public function crear_equipo_router(Request $request)
     {
         $equipo = new Equipo();
@@ -37,6 +47,7 @@ class RouterController extends Controller
         $equipo->numero_serie = $request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->asignado = $request->get('asignado');
+        $equipo->encargado_registro = $request->get('encargado_registro');
         $equipo->componente_principal = $request->get('componente_principal');
         $equipo->ip = $request->get('ip');
         $equipo->save(); 
@@ -98,9 +109,10 @@ class RouterController extends Controller
 
     public function editar_equipo_router(Request $request)
     {
-      $router = Router::find($request->id_router);
+      $router = Router::find($request->codigo);
       $equipo = Equipo::find($router->id_equipo);
       
+      $equipo->fecha_registro = $request->get('fecha_registro');      
       $equipo->estado_operativo = $request->get('estado_operativo');
       $equipo->codigo = $request->get('codigo');
       $equipo->tipo_equipo = $request->get('tipo_equipo');
@@ -109,12 +121,11 @@ class RouterController extends Controller
       $equipo->numero_serie = $request->get('numero_serie');
       $equipo->descripcion = $request->get('descripcion');
       $equipo->asignado = $request->get('asignado');
+      $equipo->encargado_registro = $request->get('encargado_registro');
       $equipo->componente_principal = $request->get('componente_principal');
       $equipo->ip = $request->get('ip');
       $equipo->save(); 
 
-      $id_equip = $equipo->id_equipo;
-      $router->id_equipo = $id_equip;
       $router->nombre = $request->get('nombre');
       $router->pass = $request->get('pass');
       $router->puerta_enlace = $request->get('puerta_enlace');
@@ -122,5 +133,4 @@ class RouterController extends Controller
       $router->clave = $request->get('clave');
       $router->save();        
     }
-
 }
