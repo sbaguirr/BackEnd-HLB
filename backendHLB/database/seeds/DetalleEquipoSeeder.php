@@ -13,27 +13,41 @@ class DetalleEquipoSeeder extends Seeder
     public function run()
     {
         DB::table('detalle_equipos')->delete();
-
         DetalleEquipo::create([
-            'services_pack' => 'si',
+            'services_pack' => '1',
+            'licencia' => '0', 
             'so' => 'Windows 7 Professional',
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'Admin-PC',
-            'id_equipo' => 1
+            'usuario_pc' => 'ADMINHLB',
+            'id_equipo' => 20
         ]);
         DetalleEquipo::create([
-            'services_pack' => 'si',
+            'services_pack' => '0',            
+            'licencia' => '0', 
             'so' => 'Windows 10 Professional',
             'tipo_so' => '64 Bits',
-            'nombre_pc' => 'Laboratorio 1-PC',
-            'id_equipo' => 5
+            'nombre_pc' => 'Laboratorio 1-PC',            
+            'usuario_pc' => 'LAB-HLB',
+            'id_equipo' => 21
         ]);
         DetalleEquipo::create([
-            'services_pack' => 'si',
+            'services_pack' => '0',           
+            'licencia' => '1', 
             'so' => 'Windows 7 Professional',
             'tipo_so' => '32 Bits',
-            'nombre_pc' => 'Soporte-PC',
-            'id_equipo' => 7
+            'nombre_pc' => 'Soporte-PC',           
+            'usuario_pc' => 'SOPORTE-HLB',
+            'id_equipo' => 22
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '1',           
+            'licencia' => '0', 
+            'so' => 'Windows 7 Professional',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'UCI-PC',           
+            'usuario_pc' => 'UCI-HLB',
+            'id_equipo' => 23
         ]);
     }
 }
