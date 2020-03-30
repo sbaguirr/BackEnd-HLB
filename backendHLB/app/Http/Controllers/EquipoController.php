@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use DateTime;
 
 class EquipoController extends Controller
 {
@@ -409,6 +410,46 @@ class EquipoController extends Controller
     public function mostrar_codigos()
     {
         return Equipo::select('id_equipo','codigo as dato')
+        ->get();
+    }
+
+    public function crear_otro_equipo(Request $request)
+    {
+        $equipo = new Equipo();
+        $dt = new \DateTime();
+        $dt->format('Y-m-d');
+        $equipo ->modelo=$request->get('modelo');
+        $equipo ->fecha_registro=$dt;
+        $equipo ->codigo=$request->get('codigo');
+        $equipo ->descripcion=$request->get('descripcion');
+        $equipo ->id_marca=$request->get('id_marca');
+        $equipo ->asignado=$request->get('asignado');
+        $equipo ->numero_serie=$request->get('numero_serie');
+        $equipo ->estado_operativo=$request->get('estado_operativo');
+        $equipo ->componente_principal=$request->get('componente_principal');
+        $equipo ->encargado_registro=$request->get('encargado_registro');
+        $equipo ->ip=$request->get('ip');
+        $tipo=$request->get('tipo_equipo');
+        if(strcasecmp($tipo,"otro")==0){
+        $equipo ->tipo_equipo=$request->get('tipo');
+        }else{
+        $equipo ->tipo_equipo=$tipo;
+        }
+        $equipo->save();
+    }
+
+    public function mostrar_tipo_equipo()
+    {
+        return Equipo::Select('tipo_equipo')
+        ->distinct()
+        ->orderBy('tipo_equipo', 'asc')
+        ->get();
+    }
+
+    public function mostrar_equipos()
+    {
+        return Equipo::SelectRaw('*, marcas.nombre as marca')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->get();
     }
 }

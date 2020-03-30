@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+/*-------------APP ROUTES-------------*/
 
 /*API Correo*/
     Route::get('mostrar_correos', 'CorreoController@mostrar_correos');
@@ -21,7 +22,7 @@ use Illuminate\Http\Request;
  /*API Empleado*/
     Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
-    Route::get('mostrar_empleados','EmpleadoController@mostrar_todos');
+
 
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
@@ -44,12 +45,6 @@ use Illuminate\Http\Request;
     Route::post('getdesktop','EquipoController@getDesktop');
     Route::get('getEquipoByID/{idequipo}','EquipoController@getEquipoByID');
     Route::post('getDetalleComp','EquipoController@getDetalleComp');
-    Route::get('mostrar_codigos','EquipoController@mostrar_codigos');
-
-
-/*API DEPARTAMENTO*/
-    Route::get('departamentos','DepartamentoController@mostrar_todos');
-
 
 /*API Impresora */
     Route::post('/impresora','ImpresoraController@crear_impresora');
@@ -58,9 +53,8 @@ use Illuminate\Http\Request;
     Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
 	Route::get('/impresoras_codigo/{codigo}','ImpresoraController@impresoras_codigo');
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
-    Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
- /*API Marca*/
-    Route::get('listado_marcas', 'MarcaController@listado_marcas');
+    
+ 
 
 /**API Ip */
     Route::get('listar_ips', 'IpController@listar_ips');
@@ -69,13 +63,41 @@ use Illuminate\Http\Request;
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
     Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
+    
+
+
+/*-------------WEB ROUTES-------------*/
+
+/* API Empleados */
+    Route::get('mostrar_empleados','EmpleadoController@mostrar_todos');
+Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
+
+ 
+/* API DEPARTAMENTO*/
+    Route::get('departamentos','DepartamentoController@mostrar_todos');
+
+
+/* API Marca*/
+    Route::get('listado_marcas', 'MarcaController@listado_marcas');
+
+
+/* API Equipo */
+    Route::get('mostrar_codigos','EquipoController@mostrar_codigos');
+    Route::post('otro_equipo','EquipoController@crear_otro_equipo');
+    Route::get('tipo_equipo','EquipoController@mostrar_tipo_equipo');
+    Route::get('mostrar_equipos','EquipoController@mostrar_equipos');
+
+
+
+
+
+
+
+/* API IP */
     Route::post('crear_ip','IpController@crear_ip');
 
 
 
 
-
-
-    /*API Tipo Equipo*/
-    Route::get('ver_tipos', 'TipoController@mostrar_todos');
-    Route::post('crear_tipo', 'TipoController@crear_tipo');
+/*  API IMPRESORA*/
+    Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
