@@ -279,5 +279,76 @@ class EquipoSeeder extends Seeder
             'asignado' => '1630258746',
             'ip' => null
         ]);
+
+        Equipo::create([
+            'fecha_registro' => '2019-05-07',
+            'estado_operativo' => 'D',
+            'codigo' => 'HLB-833',
+            'tipo_equipo' => 'Laptop',
+            'id_marca' => 13,
+            'modelo' => '802ew.11ac',
+            'descripcion' => 'NN',
+            'numero_serie' => '4668EGFFX',
+            'encargado_registro' => 'admin',
+            'componente_principal' => null,
+            'asignado' => '1328169874',
+            'ip' => 3
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2017-06-13',
+            'estado_operativo' => 'D',
+            'codigo' => 'a4510',
+            'tipo_equipo' => 'Laptop',
+            'id_marca' => 10,
+            'modelo' => 'DSL-AC68U',
+            'descripcion' => 'Router DSL',
+            'numero_serie' => 'AC68U48',
+            'encargado_registro' => 'admin',
+            'componente_principal' => null,
+            'asignado' => '1205478963',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2018-09-25',
+            'estado_operativo' => 'D',
+            'codigo' => 'HLB-2',
+            'tipo_equipo' => 'Laptop',
+            'id_marca' => 11, 
+            'modelo' => 'MU-MIMO',
+            'descripcion' => 'Ultra Wifi',
+            'numero_serie' => 'AC3150',
+            'encargado_registro' => 'admin',
+            'componente_principal' => null,
+            'asignado' => '0258463258',
+            'ip' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2019-05-28',
+            'estado_operativo' => 'O',
+            'codigo' => 'HLB508798',
+            'tipo_equipo' => 'Laptop',
+            'id_marca' => 9,
+            'modelo' => '802.11ac',
+            'descripcion' => 'Wifi, Tipo VSDL',
+            'numero_serie' => '4668EGFFX',
+            'encargado_registro' => 'admin',
+            'componente_principal' => null,
+            'ip' => null,
+            'asignado' => null
+        ]);
+        Equipo::create([
+            'fecha_registro' => '2019-12-05',
+            'estado_operativo' => 'ER',
+            'codigo' => 'HLEON2',
+            'tipo_equipo' => 'Laptop',
+            'id_marca' => 12,
+            'modelo' => 'Nighthawk Pro',
+            'descripcion' => 'Wifi, Tipo VSDL',
+            'numero_serie' => 'XR500',
+            'encargado_registro' => 'admin',
+            'componente_principal' => null,
+            'asignado' => '1630258746',
+            'ip' => null
+        ]);
     }
 }

@@ -411,4 +411,21 @@ class EquipoController extends Controller
         return Equipo::select('id_equipo','codigo as dato')
         ->get();
     }
+
+    public function listar_laptops()
+    {
+        return Equipo::select('equipos.id_equipo', 'equipos.codigo', 'equipos.modelo', 'marcas.nombre as marca',
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'detalle_equipos.so',
+        'detalle_equipos.services_pack', 'detalle_equipos.tipo_so', 'detalle_equipos.nombre_pc', 'detalle_equipos.usuario_pc',
+        'departamentos.nombre as departamento', 'detalle_equipos.licencia',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
+        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->where('equipos.tipo_equipo', '=', 'Laptop')
+        ->orderBy('equipos.id_equipo', 'DESC')
+        ->get();
+    }
 }
