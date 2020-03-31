@@ -430,6 +430,30 @@ class EquipoController extends Controller
         ->get();
     }
 
+    public function listar_desktops()
+    {
+        return Equipo::select('equipos.id_equipo', 'equipos.codigo', 'equipos.modelo', 'marcas.nombre as marca',
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'detalle_equipos.so',
+        'detalle_equipos.services_pack', 'detalle_equipos.tipo_so', 'detalle_equipos.nombre_pc', 'detalle_equipos.usuario_pc',
+        'departamentos.nombre as departamento', 'detalle_equipos.licencia',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
+        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->where('equipos.tipo_equipo', '=', 'CPU')
+        ->orderBy('equipos.id_equipo', 'DESC')
+        ->get();
+    }
+
+    public function eliminar_pc($id)
+    {
+      $equipo = Equipo::find($id_equipo);
+      $equipo->estado_operativo = 'De baja';
+      $equipo->save();
+    }
+
     public function crear_otro_equipo(Request $request)
     {
         $equipo = new Equipo();

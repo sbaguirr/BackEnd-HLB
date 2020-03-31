@@ -46,7 +46,8 @@ use Illuminate\Http\Request;
     Route::get('getEquipoByID/{idequipo}','EquipoController@getEquipoByID');
     Route::post('getDetalleComp','EquipoController@getDetalleComp');
     Route::get('listar_laptops','EquipoController@listar_laptops');
-
+    Route::get('listar_desktops','EquipoController@listar_desktops');
+    Route::put('eliminar_pc/{id}', 'RouterController@eliminar_pc');
 
 /*API DEPARTAMENTO*/
     Route::get('departamentos','DepartamentoController@mostrar_todos');

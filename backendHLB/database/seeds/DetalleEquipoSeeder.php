@@ -49,5 +49,32 @@ class DetalleEquipoSeeder extends Seeder
             'usuario_pc' => 'UCI-HLB',
             'id_equipo' => 23
         ]);
+        DetalleEquipo::create([
+            'services_pack' => '0',            
+            'licencia' => '0', 
+            'so' => 'Windows 10 Professional',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'Laboratorio 1-PC',            
+            'usuario_pc' => 'LAB-HLB',
+            'id_equipo' => 1
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '0',           
+            'licencia' => '1', 
+            'so' => 'Windows 7 Professional',
+            'tipo_so' => '32 Bits',
+            'nombre_pc' => 'Soporte-PC',           
+            'usuario_pc' => 'SOPORTE-HLB',
+            'id_equipo' => 5
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '1',           
+            'licencia' => '0', 
+            'so' => 'Windows 7 Professional',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'UCI-PC',           
+            'usuario_pc' => 'UCI-HLB',
+            'id_equipo' => 7
+        ]);
     }
 }
