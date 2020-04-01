@@ -102,7 +102,7 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
 
 /* API IP */
     Route::post('crear_ip','IpController@crear_ip');
-
+    Route::put('editar_ip','IpController@editar_ip');
 
 
 

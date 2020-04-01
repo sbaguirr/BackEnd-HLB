@@ -476,6 +476,15 @@ class EquipoController extends Controller
         }else{
         $equipo ->tipo_equipo=$tipo;
         }
+        
+         /*Si el usuario elige una ip para la impresora, el
+        estado de la ip debe cambiar a En uso */
+        $id= $request->get('ip');
+        if($id!==null){
+            $ip= Ip::find($id);
+            $ip->estado= "EU";
+            $ip->save();
+        }
         $equipo->save();
     }
 

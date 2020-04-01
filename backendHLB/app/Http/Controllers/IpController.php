@@ -109,14 +109,33 @@ class IpController extends Controller
     public function ips_libres()
     {
       return Ip::select('id_ip', 'direccion_ip')
-      ->where('estado','=','Libre')
+      ->where('estado','=','L')
       ->get();
     }
 
     public function ip_asignada($id_ip)
     {
       $ip = Ip::find($id_ip);
-      $ip->estado = 'En uso';
+      $ip->estado = 'EU';
       $ip->save();
     }
+
+    public function editar_ip(Request $request)
+    {
+        /*anterior_ip es necesaria, ya que al no tratarse del ID de la tabla,
+        esta también puede cambiar*/
+        Ip::where('direccion_ip',$request->get('anterior_ip'))
+        ->update([
+            'direccion_ip'=>$request->get('direccion_ip'),
+            'hostname'=>$request->get('hostname'),
+            'subred'=>$request->get('subred'),
+            'estado'=>$request->get('estado'),
+            'fortigate'=>$request->get('fortigate'),
+            'observacion'=>$request->get('observacion'),
+            'maquinas_adicionales'=>$request->get('maquinas_adicionales'),
+            'nombre_usuario'=>$request->get('nombre_usuario'),
+            'encargado_registro'=>$request->get('encargado_registro')
+        ]);
+    }
+
 }
