@@ -122,20 +122,16 @@ class IpController extends Controller
 
     public function editar_ip(Request $request)
     {
-        /*anterior_ip es necesaria, ya que al no tratarse del ID de la tabla,
-        esta también puede cambiar*/
-        Ip::where('direccion_ip',$request->get('anterior_ip'))
-        ->update([
-            'direccion_ip'=>$request->get('direccion_ip'),
-            'hostname'=>$request->get('hostname'),
-            'subred'=>$request->get('subred'),
-            'estado'=>$request->get('estado'),
-            'fortigate'=>$request->get('fortigate'),
-            'observacion'=>$request->get('observacion'),
-            'maquinas_adicionales'=>$request->get('maquinas_adicionales'),
-            'nombre_usuario'=>$request->get('nombre_usuario'),
-            'encargado_registro'=>$request->get('encargado_registro')
-        ]);
+        $ip= Ip::find($request->get('key'));
+        $ip->direccion_ip=$request->get('direccion_ip');
+        $ip->hostname=$request->get('hostname');
+        $ip->subred=$request->get('subred');
+        $ip->estado=$request->get('estado');
+        $ip->fortigate=$request->get('fortigate');
+        $ip->observacion=$request->get('observacion');
+        $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
+        $ip->nombre_usuario=$request->get('nombre_usuario');
+        $ip->encargado_registro=$request->get('encargado_registro');
+        $ip->save();
     }
-
 }

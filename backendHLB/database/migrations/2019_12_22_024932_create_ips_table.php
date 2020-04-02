@@ -20,7 +20,7 @@ class CreateIpsTable extends Migration
             $table->string('hostname');
             $table->string('subred');
             $table->string('fortigate');
-            $table->string('observacion');
+            $table->string('observacion')->nullable();
             $table->integer('maquinas_adicionales');
             $table->string('nombre_usuario')->nullable();
             $table->string('encargado_registro');

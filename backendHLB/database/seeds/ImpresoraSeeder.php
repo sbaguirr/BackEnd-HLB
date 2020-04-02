@@ -28,16 +28,10 @@ class ImpresoraSeeder extends Seeder
             'id_equipo' => 9
         ]);
         Impresora::create([
-            'tipo' => 'Brazaletes',
+            'tipo' => 'Brazalete',
             'tinta' => 'Negro',
             'rollo' => 'Brazalet ZERB',
             'id_equipo' => 10
-        ]);
-        Impresora::create([
-            'tipo' => 'Impresora',
-            'tinta' => '210-211',
-            'cartucho' => 'Negro y color',
-            'id_equipo' =>11
         ]);
         Impresora::create([
             'tipo' => 'Escáner',
