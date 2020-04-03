@@ -16,14 +16,13 @@ class CreateIpsTable extends Migration
         Schema::create('ips', function (Blueprint $table) {
             $table->bigIncrements('id_ip');
             $table->string('estado');
-            $table->date('fecha_asignacion');
             $table->string('direccion_ip');
             $table->string('hostname');
             $table->string('subred');
             $table->string('fortigate');
-            $table->string('observacion');
+            $table->string('observacion')->nullable();
             $table->integer('maquinas_adicionales');
-            $table->string('nombre_usuario');
+            $table->string('nombre_usuario')->nullable();
             $table->string('encargado_registro');
             $table->timestamps();
 

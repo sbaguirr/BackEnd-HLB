@@ -14,6 +14,13 @@ class IpController extends Controller
         return Ip::all();
     }
 
+    public function buscar_ip_por_codigo($id_ip)
+    {
+        return Ip::select('*')
+        ->where('id_ip',$id_ip)
+        ->get();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -82,5 +89,49 @@ class IpController extends Controller
         return Ip::select('*')
             ->where('direccion_ip', 'like', "%" . $direccion_ip . "%")
             ->get();
+    }
+
+    public function crear_ip(Request $request)
+    {
+        $ip= new Ip();
+        $ip->direccion_ip=$request->get('direccion_ip');
+        $ip->hostname=$request->get('hostname');
+        $ip->subred=$request->get('subred');
+        $ip->estado=$request->get('estado');
+        $ip->fortigate=$request->get('fortigate');
+        $ip->observacion=$request->get('observacion');
+        $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
+        $ip->nombre_usuario=$request->get('nombre_usuario');
+        $ip->encargado_registro=$request->get('encargado_registro');
+        $ip->save();
+    }
+
+    public function ips_libres()
+    {
+      return Ip::select('id_ip', 'direccion_ip')
+      ->where('estado','=','L')
+      ->get();
+    }
+
+    public function ip_asignada($id_ip)
+    {
+      $ip = Ip::find($id_ip);
+      $ip->estado = 'EU';
+      $ip->save();
+    }
+
+    public function editar_ip(Request $request)
+    {
+        $ip= Ip::find($request->get('key'));
+        $ip->direccion_ip=$request->get('direccion_ip');
+        $ip->hostname=$request->get('hostname');
+        $ip->subred=$request->get('subred');
+        $ip->estado=$request->get('estado');
+        $ip->fortigate=$request->get('fortigate');
+        $ip->observacion=$request->get('observacion');
+        $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
+        $ip->nombre_usuario=$request->get('nombre_usuario');
+        $ip->encargado_registro=$request->get('encargado_registro');
+        $ip->save();
     }
 }

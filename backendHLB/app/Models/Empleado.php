@@ -63,4 +63,10 @@ class Empleado extends Model
         return $this->hasOne('App\Models\Usuario', 'cedula');
     }
 
+    // Relación: Usuario - Equipo (1 - M)
+    public function asignado()
+    {
+        return $this->hasMany('App\Models\Equipo', 'asignado');
+    }
+
 }

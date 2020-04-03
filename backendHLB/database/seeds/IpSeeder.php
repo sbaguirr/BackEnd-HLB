@@ -15,8 +15,7 @@ class IpSeeder extends Seeder
         DB::table('ips')->delete();
 
         Ip::create([
-            'estado' => 'En uso',
-            'fecha_asignacion' => '2019-12-12 10:10:00',
+            'estado' => 'EU',
             'direccion_ip' => '192.168.1.1',
             'hostname' => '',
             'subred' => '',
@@ -27,8 +26,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'admin'
         ]);
         Ip::create([
-            'estado' => 'Libre',
-            'fecha_asignacion' => '2017-03-29 12:10:00',
+            'estado' => 'L',
             'direccion_ip' => '192.168.1.2',
             'hostname' => 'Asistente_finan',
             'subred' => '',
@@ -39,8 +37,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'admin'
         ]);
         Ip::create([
-            'estado' => 'En uso',
-            'fecha_asignacion' => '2017-08-17 15:10:00',
+            'estado' => 'EU',
             'direccion_ip' => '192.168.1.3',
             'hostname' => 'GrupoPrivado',
             'subred' => '192.168.0.0',
@@ -51,8 +48,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'soporte'
         ]);
         Ip::create([
-            'estado' => 'En uso',
-            'fecha_asignacion' => '2018-10-22 11:15:00',
+            'estado' => 'EU',
             'direccion_ip' => '192.168.1.4',
             'hostname' => 'UCI',
             'subred' => '192.168.0.0',
@@ -63,8 +59,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'admin'
         ]);
         Ip::create([
-            'estado' => 'En uso',
-            'fecha_asignacion' => '2014-10-27 18:00:00',
+            'estado' => 'EU',
             'direccion_ip' => '192.168.1.5',
             'hostname' => 'BSPI_1-PC',
             'subred' => '',

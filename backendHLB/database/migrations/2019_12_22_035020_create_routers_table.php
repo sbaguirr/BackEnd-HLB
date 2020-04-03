@@ -17,7 +17,7 @@ class CreateRoutersTable extends Migration
             $table->bigIncrements('id_router');
             $table->string('nombre');
             $table->string('pass');
-            $table->string('puerta_enlace');
+            $table->string('puerta_enlace')->nullable();
             $table->string('usuario');
             $table->string('clave');
             $table->bigInteger('id_equipo')->unsigned();

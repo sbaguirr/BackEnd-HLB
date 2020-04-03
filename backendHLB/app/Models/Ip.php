@@ -15,9 +15,9 @@ class Ip extends Model
      * @var array
      */
     protected $fillable = [
-        'estado', 'fecha_asignación', 'direccion_ip', 'hostname',
+        'estado', 'direccion_ip', 'hostname',
         'subred', 'fortigate', 'observacion', 'maquinas_adicionales',
-        'nombre_usuario', 'encargado_registro' 
+        'nombre_usuario', 'encargado_registro', 'created_at'
     ];
 
 
@@ -27,7 +27,7 @@ class Ip extends Model
      * @var array
      */
     protected $hidden = [
-    	'created_at', 'updated_at'
+    	 'updated_at'
     ];
 
 

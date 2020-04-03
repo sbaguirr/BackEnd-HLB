@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use DateTime;
 
 class EquipoController extends Controller
 {
@@ -71,30 +72,30 @@ class EquipoController extends Controller
                 $comp->save();
 
                if( Str::contains($clave,'disco_duro')||Str::contains($clave,'ram')){
-                $tipo = new DetalleComponente();
-                $tipo->campo = 'tipo';
-                $tipo->dato = $valor['tipo'];
-                $tipo->id_equipo = $comp->id_equipo;
-                $tipo->save();
+                    $tipo = new DetalleComponente();
+                    $tipo->campo = 'tipo';
+                    $tipo->dato = $valor['tipo'];
+                    $tipo->id_equipo = $comp->id_equipo;
+                    $tipo->save();
 
-                $capacidad = new DetalleComponente();
-                $capacidad->campo = 'capacidad';
-                $capacidad->dato = $valor['capacidad'];
-                $capacidad->id_equipo = $comp->id_equipo;
-                $capacidad-> save();
+                    $capacidad = new DetalleComponente();
+                    $capacidad->campo = 'capacidad';
+                    $capacidad->dato = $valor['capacidad'];
+                    $capacidad->id_equipo = $comp->id_equipo;
+                    $capacidad-> save();
                }
                if(Str::contains($clave,'procesador')){
-                $num_slots = new DetalleComponente();
-                $num_slots->campo = 'nucleos';
-                $num_slots->dato = $valor['nucleos'];
-                $num_slots->id_equipo = $comp->id_equipo;
-                $num_slots->save();
+                    $num_slots = new DetalleComponente();
+                    $num_slots->campo = 'nucleos';
+                    $num_slots->dato = $valor['nucleos'];
+                    $num_slots->id_equipo = $comp->id_equipo;
+                    $num_slots->save();
 
-                $ram_soport = new DetalleComponente();
-                $ram_soport->campo = 'frecuencia';
-                $ram_soport->dato = $valor['frecuencia'];
-                $ram_soport->id_equipo = $comp->id_equipo;
-                $ram_soport->save();
+                    $ram_soport = new DetalleComponente();
+                    $ram_soport->campo = 'frecuencia';
+                    $ram_soport->dato = $valor['frecuencia'];
+                    $ram_soport->id_equipo = $comp->id_equipo;
+                    $ram_soport->save();
             }
 
                
@@ -505,4 +506,100 @@ class EquipoController extends Controller
 
     
    
+
+    public function mostrar_codigos()
+    {
+        return Equipo::select('id_equipo as id','codigo as dato')
+        ->get();
+    }
+
+    public function listar_laptops()
+    {
+        return Equipo::select('equipos.id_equipo', 'equipos.codigo', 'equipos.modelo', 'marcas.nombre as marca',
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'detalle_equipos.so',
+        'detalle_equipos.services_pack', 'detalle_equipos.tipo_so', 'detalle_equipos.nombre_pc', 'detalle_equipos.usuario_pc',
+        'departamentos.nombre as departamento', 'detalle_equipos.licencia',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
+        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->where('equipos.tipo_equipo', '=', 'Laptop')
+        ->orderBy('equipos.id_equipo', 'DESC')
+        ->get();
+    }
+
+    public function listar_desktops()
+    {
+        return Equipo::select('equipos.id_equipo', 'equipos.codigo', 'equipos.modelo', 'marcas.nombre as marca',
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'detalle_equipos.so',
+        'detalle_equipos.services_pack', 'detalle_equipos.tipo_so', 'detalle_equipos.nombre_pc', 'detalle_equipos.usuario_pc',
+        'departamentos.nombre as departamento', 'detalle_equipos.licencia',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
+        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->where('equipos.tipo_equipo', '=', 'CPU')
+        ->orderBy('equipos.id_equipo', 'DESC')
+        ->get();
+    }
+
+    public function eliminar_pc($id)
+    {
+      $equipo = Equipo::find($id_equipo);
+      $equipo->estado_operativo = 'De baja';
+      $equipo->save();
+    }
+
+    public function crear_otro_equipo(Request $request)
+    {
+        $equipo = new Equipo();
+        $dt = new \DateTime();
+        $dt->format('Y-m-d');
+        $equipo ->modelo=$request->get('modelo');
+        $equipo ->fecha_registro=$dt;
+        $equipo ->codigo=$request->get('codigo');
+        $equipo ->descripcion=$request->get('descripcion');
+        $equipo ->id_marca=$request->get('id_marca');
+        $equipo ->asignado=$request->get('asignado');
+        $equipo ->numero_serie=$request->get('numero_serie');
+        $equipo ->estado_operativo=$request->get('estado_operativo');
+        $equipo ->componente_principal=$request->get('componente_principal');
+        $equipo ->encargado_registro=$request->get('encargado_registro');
+        $equipo ->ip=$request->get('ip');
+        $tipo=$request->get('tipo_equipo');
+        if(strcasecmp($tipo,"otro")==0){
+        $equipo ->tipo_equipo=$request->get('tipo');
+        }else{
+        $equipo ->tipo_equipo=$tipo;
+        }
+        
+         /*Si el usuario elige una ip para la impresora, el
+        estado de la ip debe cambiar a En uso */
+        $id= $request->get('ip');
+        if($id!==null){
+            $ip= Ip::find($id);
+            $ip->estado= "EU";
+            $ip->save();
+        }
+        $equipo->save();
+    }
+
+    public function mostrar_tipo_equipo()
+    {
+        return Equipo::Select('tipo_equipo')
+        ->distinct()
+        ->orderBy('tipo_equipo', 'asc')
+        ->get();
+    }
+
+    public function mostrar_equipos()
+    {
+        return Equipo::SelectRaw('*, marcas.nombre as marca')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->get();
+    }
 }
