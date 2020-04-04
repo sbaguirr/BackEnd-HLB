@@ -99,7 +99,7 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
     Route::post('otro_equipo','EquipoController@crear_otro_equipo');
     Route::get('tipo_equipo','EquipoController@mostrar_tipo_equipo');
     Route::get('mostrar_equipos','EquipoController@mostrar_equipos');
-
+    Route::put('editar_equipo','EquipoController@editar_equipo');
 
 
 
