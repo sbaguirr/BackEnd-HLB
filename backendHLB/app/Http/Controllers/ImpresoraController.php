@@ -180,7 +180,7 @@ class ImpresoraController extends Controller
         $equipo->numero_serie = $request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->encargado_registro = $request->get('encargado_registro');
-        $equipo->componente_principal = $request->get('componente_principal');
+       
 
         /*En modo edición, cuando se cargan los datos desde el formulario, el front  
         no envia el id de: marca, empleados, e ip. Pero, si el usuario hace un cambio 
@@ -190,11 +190,21 @@ class ImpresoraController extends Controller
         $marca=$request->get('id_marca');
         if(!is_numeric($marca)){
             $id_marca=Marca::select('id_marca')
-            ->where('nombre','=',$request->get('id_marca'))
+            ->where('nombre','=',$marca)
             ->get();
             $marca= $id_marca[0]->id_marca;
         }
         $equipo->id_marca = $marca;
+
+        
+        $componente= $request->get('componente_principal');
+        if(!is_numeric($componente)){
+            $id_componente=Equipo::select('id_equipo')
+            ->where('codigo','=',$componente)
+            ->get();
+            $componente= $id_componente[0]->id_equipo;
+        }
+        $equipo->componente_principal = $componente;
         
 
         $asignado = $request->get('asignado');
