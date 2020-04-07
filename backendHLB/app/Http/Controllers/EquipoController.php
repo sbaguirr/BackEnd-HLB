@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipo;
 use App\Models\Ip;
+use App\Models\Marca;
+use App\Models\Empleado;
+use App\Models\Departamento;
+use App\Models\Organizacion;
 use App\Models\DetalleComponente;
 use App\Models\DetalleEquipo;
 use Illuminate\Http\Request;
@@ -547,77 +551,62 @@ class EquipoController extends Controller
     {
         return Equipo::select('id_equipo as id','codigo as dato')->get();
     }
-
-    public function listar_laptops()
-    {
-        return Equipo::select(
-            'equipos.id_equipo',
-            'equipos.codigo',
-            'equipos.modelo',
-            'marcas.nombre as marca',
-            'equipos.numero_serie',
-            'equipos.estado_operativo',
-            'equipos.descripcion',
-            'detalle_equipos.so',
-            'detalle_equipos.services_pack',
-            'detalle_equipos.tipo_so',
-            'detalle_equipos.nombre_pc',
-            'detalle_equipos.usuario_pc',
-            'departamentos.nombre as departamento',
-            'detalle_equipos.licencia',
-            'organizaciones.bspi_punto',
-            'equipos.ip',
-            'empleados.nombre as nempleado',
-            'empleados.apellido'
-        )
-            ->join('marcas', 'marcas.id_marca', '=', 'equipos.id_marca')
-            ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
-            ->join('empleados', 'empleados.cedula', '=', 'equipos.asignado')
-            ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
-            ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
-            ->where('equipos.tipo_equipo', '=', 'Laptop')
-            ->orderBy('equipos.id_equipo', 'DESC')
-            ->get();
+    
+    /*Listar laptops Web Version*/
+    public function codigos_laptops(){
+        return Equipo::select('id_equipo')
+        ->where('tipo_equipo','=','laptop')
+        ->get();
     }
 
-    public function listar_desktops()
-    {
-        return Equipo::select(
-            'equipos.id_equipo',
-            'equipos.codigo',
-            'equipos.modelo',
-            'marcas.nombre as marca',
-            'equipos.numero_serie',
-            'equipos.estado_operativo',
-            'equipos.descripcion',
-            'detalle_equipos.so',
-            'detalle_equipos.services_pack',
-            'detalle_equipos.tipo_so',
-            'detalle_equipos.nombre_pc',
-            'detalle_equipos.usuario_pc',
-            'departamentos.nombre as departamento',
-            'detalle_equipos.licencia',
-            'organizaciones.bspi_punto',
-            'equipos.ip',
-            'empleados.nombre as nempleado',
-            'empleados.apellido'
-        )
-            ->join('marcas', 'marcas.id_marca', '=', 'equipos.id_marca')
-            ->join('detalle_equipos', 'detalle_equipos.id_equipo', '=', 'equipos.id_equipo')
-            ->join('empleados', 'empleados.cedula', '=', 'equipos.asignado')
-            ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
-            ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
-            ->where('equipos.tipo_equipo', '=', 'CPU')
-            ->orderBy('equipos.id_equipo', 'DESC')
-            ->get();
+    public function obtenerInfoLaptop($idequipo){
+        $laptops= Equipo::Where("id_equipo","=",$idequipo)->orWhere("componente_principal","=",$idequipo);
+        $marca = Marca::WhereIn("id_marca",$laptops->get(['id_marca']));
+        $empleado = Empleado::WhereIn("cedula",$laptops->get(['asignado']));
+        $dpto = Departamento::WhereIn("id_departamento",$empleado->get(['id_departamento']));
+        $punto = Organizacion::WhereIn("id_organizacion",$dpto->get(['id_organizacion']));
+        $compenentes = DetalleComponente::WhereIn("id_equipo",$laptops->get(['id_equipo']));  
+        $detEq= DetalleEquipo::Where("id_equipo","=",$idequipo)->get();
+        $var = self::generarDetalleLaptop($laptops->get()->toArray(),$compenentes->get()->toArray(),$detEq,
+        $empleado->get()->toArray(), $dpto->get()->toArray(), $punto->get()->toArray(),$marca->get()->toArray());
+        return response()->json($var);
     }
 
-    public function eliminar_pc($id)
+    private function generarDetalleLaptop($equipos, $detalles, $detEq, $empleado, $dpto, $punto, $marca)
     {
-        $equipo = Equipo::find($id_equipo);
-        $equipo->estado_operativo = 'De baja';
-        $equipo->save();
+        $laptop =  self::fil_obj($equipos,"tipo_equipo","laptop");
+        $ram_soport = self::fil_obj($detalles,"campo","ram_soportada");
+        $num_slots = self::fil_obj($detalles,"campo","numero_slots");
+        $final = [
+            "codigo"=>$laptop["codigo"], 
+            "id_marca"=>$laptop["id_marca"],
+            "marca" => $marca['0']['nombre'],
+            "modelo"=> $laptop["modelo"],
+            "id_equipo"=>$laptop["id_equipo"],
+            "numero_serie"=>$laptop["numero_serie"],
+            'ram_soportada'=> $ram_soport["dato"],
+            'ip'=>$laptop["ip"],
+            'asignado'=>$laptop["asignado"],
+            'estado_operativo'=>$laptop["estado_operativo"],
+            'numero_slots'=>$num_slots["dato"],
+            "descripcion"=>$laptop["descripcion"],
+            'id-ram_soportada'=> $ram_soport["id"],
+            "so"=>$detEq['0']["so"],
+            "tipo_so"=>$detEq['0']["tipo_so"],
+            "nombre_pc"=>$detEq['0']["nombre_pc"],
+            "usuario_pc"=>$detEq['0']["usuario_pc"],
+            "licencia"=>$detEq['0']["licencia"],
+            "office"=>$detEq['0']["office"],
+            "service_pack"=>$detEq['0']["services_pack"],
+            'id-numero_slots'=>$num_slots["id"],
+            "empleado"=> $empleado['0']["nombre"],
+            "apellido" => $empleado['0']["apellido"],
+            "departamento"=>$dpto['0']["nombre"],
+            "bspi"=>$punto['0']["bspi_punto"]
+        ];
+        return self::filtro_dinamico_plus($final,$equipos,$detalles,["pc-disco_duro","cpu-memoria_ram","pc-procesador"]);
     }
+    /*Fin listar laptops Web Version*/
 
     public function crear_otro_equipo(Request $request)
     {

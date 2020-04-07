@@ -10,7 +10,7 @@ class RouterController extends Controller
 {
     public function listar_router()
     {
-        return Router::select('routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        return Router::select('routers.id_router', 'equipos.codigo', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
         'routers.clave', 'routers.id_equipo', 'marcas.id_marca', 'marcas.nombre as marca', 'equipos.id_equipo', 'equipos.modelo', 
         'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento',
         'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')

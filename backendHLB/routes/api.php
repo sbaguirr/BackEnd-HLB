@@ -46,13 +46,8 @@ use Illuminate\Http\Request;
     Route::get('getDesktopByID/{idequipo}','EquipoController@getDesktopByID');
     Route::get('getLaptopByID/{idequipo}','EquipoController@getLaptopByID');
     Route::post('getDetalleComp','EquipoController@getDetalleComp');
-
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
-
-    Route::get('listar_laptops','EquipoController@listar_laptops');
-    Route::get('listar_desktops','EquipoController@listar_desktops');
-    Route::put('eliminar_pc/{id}', 'RouterController@eliminar_pc');
 
 
 /*API DEPARTAMENTO*/
@@ -101,8 +96,11 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
     Route::get('mostrar_equipos','EquipoController@mostrar_equipos');
     Route::put('editar_equipo','EquipoController@editar_equipo');
 
+    Route::get('obtenerInfoLaptop/{idequipo}','EquipoController@obtenerInfoLaptop');
+    Route::get('codigos_laptops','EquipoController@codigos_laptops');
 
-
+/* API DetalleEquipo */   
+    Route::get('listar_so','DetalleEquipoController@listar_so');
 
 
 /* API IP */

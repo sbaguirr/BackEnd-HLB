@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ImpresoraSeeder::class);
         $this->call(ProgramaEquipoSeeder::class);
         $this->call(DetalleEquipoSeeder::class);
+        $this->call(DetalleComponenteSeeder::class);
     }
 }
