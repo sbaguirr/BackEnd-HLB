@@ -663,28 +663,34 @@ class EquipoController extends Controller
 
     public function mostrar_equipos()
     {
-        return Equipo::SelectRaw('*, marcas.nombre as marca, empleados.nombre as empleado')
+            return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado, 
+            empleados.apellido,
+             equipos.encargado_registro as encargado, p.codigo as principal,
+             ips.direccion_ip')
             ->join('marcas', 'marcas.id_marca', '=', 'equipos.id_marca')
             ->leftjoin('ips','id_ip','=','equipos.ip')
-            ->leftjoin('empleados','asignado','=','cedula')
-            ->get();
+            ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal') 
+            ->leftjoin('empleados','equipos.asignado','=','cedula')
+            ->get();             
     }
 
     public function editar_equipo(Request $request)
     {
-        $equipo = Equipo::find($request->get('key'));
+        $equipo = Equipo::find($request->get('key')); 
         $ip_anterior = $equipo->ip; //id de la dir ip;
 
         DB::beginTransaction();
-        try {
+        try  {
             $equipo->modelo = $request->get('modelo');
-            $equipo->codigo = $request->get('codigo');
+            
             $equipo->descripcion = $request->get('descripcion');
             $equipo->numero_serie = $request->get('numero_serie');
             $equipo->estado_operativo = $request->get('estado_operativo');
-            $equipo->componente_principal = $request->get('componente_principal');
-            $equipo->encargado_registro = $request->get('encargado_registro');
-
+            $equipo->componente_principal = $request->get('componente_principal'); 
+            $equipo->codigo = $request->get('codigo');
+            
+            /*Comprobación necesaria de acuerdo a lo establecido en el formulario del 
+            frontend */
             $tipo = $request->get('tipo_equipo');
             if (strcasecmp($tipo, "otro") == 0) {
                 $equipo->tipo_equipo = $request->get('tipo');
@@ -699,16 +705,20 @@ class EquipoController extends Controller
                     ->get();
                 $marca = $id_marca[0]->id_marca;
             }
-            $equipo->id_marca = $marca;
+            $equipo->id_marca = $marca; 
 
 
-            $componente= $request->get('componente_principal');
-            if(!is_numeric($componente)){
-                $id_componente=Equipo::select('id_equipo')
-                ->where('codigo','=',$componente)
-                ->get();
-                $componente= $id_componente[0]->id_equipo;
-            }
+             $componente= $request->get('componente_principal');
+             if ($componente !== null) {
+                if(!is_numeric($componente)){
+                    $id_componente=Equipo::select('id_equipo')
+                    ->where('codigo','=',$componente)
+                    ->get();
+                    $componente= $id_componente[0]->id_equipo;
+                }
+            }else {
+                    $componente = null;
+                }
             $equipo->componente_principal = $componente;
 
 
@@ -725,7 +735,8 @@ class EquipoController extends Controller
             }
             $equipo->asignado = $asignado;
 
-            
+            /*Debido a que el back recibe en sí la direccion ip como tal, 
+            se debe hacer una consulta para obtener el id */
             $ip = $request->get('ip');
             if (!is_numeric($ip)) {
                 if ($ip !== null) {
@@ -733,10 +744,10 @@ class EquipoController extends Controller
                         ->where('direccion_ip', '=', $ip)
                         ->get();
                     $ip = $ip_actual[0]->id_ip;
-
-                    /*Si el usuario elige una nueva ip para la impresora,
-                *el estado de esta debe cambiar a En uso y la anterior debe
-                quedar libre. */
+ 
+                     /*Si el usuario elige una nueva ip para la impresora,
+                    *el estado de esta debe cambiar a En uso y la anterior debe
+                    quedar libre. */
                     if ($ip_anterior !== $ip_actual) {
                         $ip = Ip::find($ip_actual[0]->id_ip);
                         $ip->estado = "EU";
@@ -746,15 +757,15 @@ class EquipoController extends Controller
                     $ip = null;
                 }
             }
-            $equipo->ip = $ip;
+            $equipo->ip = $ip; 
+            
             /*Si la direccion IP anterior era distinta de null,
-        *esta debe cambiar a libre*/
-            if ($ip_anterior !== null) {
+            *esta debe cambiar a libre*/
+             if ($ip_anterior !== null) {
                 $anterior = Ip::find($ip_anterior);
                 $anterior->estado = "L";
                 $anterior->save();
-            }
-
+            } 
             $equipo->save();
 
             DB::commit();
@@ -762,6 +773,6 @@ class EquipoController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
-        }
+        } 
     }
 }

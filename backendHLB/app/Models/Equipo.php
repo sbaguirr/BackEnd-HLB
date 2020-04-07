@@ -99,10 +99,4 @@ class Equipo extends Model
     {
         return $this->belongsTo('App\Models\Marca', 'id_marca');
     }
-
-    // Relación: Tipo equipo - Equipo (1 - 1)
-    public function tipo()
-    {
-        return $this->belongsTo('App\Models\Tipo', 'id_tipo');
-    }
 }
