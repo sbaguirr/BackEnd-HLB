@@ -156,7 +156,7 @@ class ImpresoraController extends Controller
 
 
     public function impresoras_equipo(){
-        return Impresora::selectRaw('*, marcas.nombre as marca, empleados.nombre as empleado')
+        return Impresora::selectRaw('*, marcas.nombre as marca, empleados.nombre as empleado, equipos.encargado_registro as encargado' )
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
@@ -198,12 +198,16 @@ class ImpresoraController extends Controller
 
         
         $componente= $request->get('componente_principal');
+        if ($componente !== null) {
         if(!is_numeric($componente)){
             $id_componente=Equipo::select('id_equipo')
             ->where('codigo','=',$componente)
             ->get();
             $componente= $id_componente[0]->id_equipo;
-        }
+            }
+        }else {
+            $componente = null;
+            }
         $equipo->componente_principal = $componente;
         
 
@@ -219,13 +223,6 @@ class ImpresoraController extends Controller
             $asignado=null;
         }
         $equipo->asignado = $asignado;
-
-        /* if($request->get('componente_principal')!==null){
-            $equipo=Equipo::select('codigo')
-            ->where('')
-            ->get();
-            $equipo->asignado = $cedula[0]->cedula;
-        } */
 
         /*Debido a que el back recibe en sí la direccion ip como tal, 
         se debe hacer una consulta para obtener el id */
