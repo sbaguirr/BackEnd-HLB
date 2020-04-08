@@ -41,11 +41,11 @@ use Illuminate\Http\Request;
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');
-    Route::put('deleteequipo/{idequipo}','EquipoController@deleteEquipoByID');
+    Route::put('deleteequipo/{idequipo}/{tipo}','EquipoController@deleteEquipoByID');
     Route::post('getequipos','EquipoController@getEquipos');
     Route::get('getDesktopByID/{idequipo}','EquipoController@getDesktopByID');
     Route::get('getLaptopByID/{idequipo}','EquipoController@getLaptopByID');
-    Route::post('getDetalleComp','EquipoController@getDetalleComp');
+   // Route::post('getDetalleComp','EquipoController@getDetalleComp');
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
 

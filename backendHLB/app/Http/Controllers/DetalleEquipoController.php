@@ -9,6 +9,6 @@ class DetalleEquipoController extends Controller
 {
     public function listar_so()
     {
-        return DetalleEquipo::select('so')->get();
+        return DetalleEquipo::select('so')->distinct()->get();
     }
 }
