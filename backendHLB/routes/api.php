@@ -78,7 +78,7 @@ use Illuminate\Http\Request;
 
 /* API Empleados */
     Route::get('mostrar_empleados','EmpleadoController@mostrar_todos');
-Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
+    Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
 
  
 /* API DEPARTAMENTO*/
@@ -112,3 +112,4 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
 /*  API IMPRESORA*/
     Route::get('impresoraxequipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
+    Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
