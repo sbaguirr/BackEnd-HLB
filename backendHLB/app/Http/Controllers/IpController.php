@@ -134,4 +134,11 @@ class IpController extends Controller
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
     }
+
+    public function es_ip_enuso($ip){
+        $reg_ip = Ip::find($ip);
+        if($reg_ip->estado === 'EU'){
+            return $reg_ip->direccion_ip;
+        }
+    }
 }

@@ -553,10 +553,14 @@ class EquipoController extends Controller
     }
     
     /*Listar laptops Web Version*/
-    public function codigos_laptops(){
-        return Equipo::select('id_equipo')
-        ->where('tipo_equipo','=','laptop')
-        ->get();
+    public function listar_laptops(){
+        $final = array();
+        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','laptop')->get();
+        for ( $i=0; $i<count($eq); $i++ ){
+            $varr = self::obtenerInfoLaptop($eq[$i]["id_equipo"]);
+            array_push($final, $varr);
+        }
+        return ($final);
     }
 
     public function obtenerInfoLaptop($idequipo){
@@ -574,10 +578,29 @@ class EquipoController extends Controller
 
     private function generarDetalleLaptop($equipos, $detalles, $detEq, $empleado, $dpto, $punto, $marca)
     {
+        $rams = array();
+        $discos = array();
+        $arr = array();
+        for ( $i=0; $i<count($equipos); $i++ ){
+            if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
+                // $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+                // array_push($equipos[$i], $marca['0']["nombre"]);
+                // array_push($rams, $equipos[$i]);
+                array_push($rams, $equipos[$i]['codigo']);
+            }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
+                array_push($discos, $equipos[$i]["codigo"]);
+            }
+        }
         $laptop =  self::fil_obj($equipos,"tipo_equipo","laptop");
+        $procesador = self::fil_obj($equipos, "tipo_equipo","procesador");
+        $frecuencia = self::fil_obj($detalles,"campo","frecuencia");
+        $nucleos = self::fil_obj($detalles,"campo","nucleos");
         $ram_soport = self::fil_obj($detalles,"campo","ram_soportada");
         $num_slots = self::fil_obj($detalles,"campo","numero_slots");
         $final = [
+            "id_procesador" => $procesador["codigo"],
+            "rams"=> $rams,
+            "discos" => $discos,
             "codigo"=>$laptop["codigo"], 
             "id_marca"=>$laptop["id_marca"],
             "marca" => $marca['0']['nombre'],
@@ -585,12 +608,13 @@ class EquipoController extends Controller
             "id_equipo"=>$laptop["id_equipo"],
             "numero_serie"=>$laptop["numero_serie"],
             'ram_soportada'=> $ram_soport["dato"],
+            'numero_slots'=>$num_slots["dato"],
+            "frecuencia" => $frecuencia["dato"],
+            "nnucleos" => $nucleos["dato"],
             'ip'=>$laptop["ip"],
             'asignado'=>$laptop["asignado"],
             'estado_operativo'=>$laptop["estado_operativo"],
-            'numero_slots'=>$num_slots["dato"],
             "descripcion"=>$laptop["descripcion"],
-            'id-ram_soportada'=> $ram_soport["id"],
             "so"=>$detEq['0']["so"],
             "tipo_so"=>$detEq['0']["tipo_so"],
             "nombre_pc"=>$detEq['0']["nombre_pc"],
@@ -598,14 +622,38 @@ class EquipoController extends Controller
             "licencia"=>$detEq['0']["licencia"],
             "office"=>$detEq['0']["office"],
             "service_pack"=>$detEq['0']["services_pack"],
-            'id-numero_slots'=>$num_slots["id"],
             "empleado"=> $empleado['0']["nombre"],
             "apellido" => $empleado['0']["apellido"],
             "departamento"=>$dpto['0']["nombre"],
             "bspi"=>$punto['0']["bspi_punto"]
         ];
-        return self::filtro_dinamico_plus($final,$equipos,$detalles,["pc-disco_duro","cpu-memoria_ram","pc-procesador"]);
+        return self::filtro_dinamico_plus1($final,$equipos,$detalles,["pc_disco_duro","cpu_memoria_ram","pc_procesador"]);
     }
+
+        private function filtro_dinamico_plus1($final,$equipos,$detalles,$claves){
+            for($k=0;$k<count($claves);$k++){
+                $arr = array_values(array_filter($equipos, function($obj) use($claves,$k){return Str::contains($obj["tipo_equipo"],explode('_',$claves[$k])[1]);}));
+                $result = array();
+                $val = Str::contains($claves[$k],"memoria_ram")||Str::contains($claves[$k],"disco_duro");
+                if($val){
+                    $final= array_merge($final,[("num_".(Str::contains($claves[$k],"memoria_ram")?"memoria_ram":"disco_duro"))=>count($arr)]);
+                }
+                for ( $i=0;$i<count($arr);$i++){
+                    $detalle =array_values(array_filter($detalles, function($obj) use ($arr,$i){return $obj["id_equipo"]===$arr[$i]["id_equipo"];}));
+                    $element = ($arr[$i]);
+                    for( $j=0;$j<count($detalle);$j++){
+                        $d = $detalle[$j];
+                        $element = array_merge($element,[$d["campo"]=> $d["dato"],("id-".$d["campo"])=>$d["id"]]);
+                    }
+                    $obj_final = [$claves[$k].($val?("_".($i+1)):"")=>$element];
+                    $result = array_merge($result,$obj_final);
+                }
+                $final = array_merge($final,$result);
+            }
+    
+            return $final;
+        }
+
     /*Fin listar laptops Web Version*/
 
     public function crear_otro_equipo(Request $request)

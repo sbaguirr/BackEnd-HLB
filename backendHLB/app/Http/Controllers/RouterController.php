@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Router;
 use App\Models\Equipo;
+use App\Models\Ip;
 
 class RouterController extends Controller
 {
@@ -59,7 +60,13 @@ class RouterController extends Controller
         $router->puerta_enlace = $request->get('puerta_enlace');
         $router->usuario = $request->get('usuario');
         $router->clave = $request->get('clave');
-        $router->save();        
+        $id = $request->get('ip');
+        if($id!==null){
+            $ip= Ip::find($id);
+            $ip->estado= "EU";
+            $ip->save();
+        }   
+        $router->save();    
     }
 
     public function marcas_routers(){
@@ -109,9 +116,9 @@ class RouterController extends Controller
 
     public function editar_equipo_router(Request $request)
     {
-      $router = Router::find($request->codigo);
-      $equipo = Equipo::find($router->id_equipo);
-      
+      $router = Router::find($request->id_equipo);
+      $equipo = Equipo::find($router->id_equipo);   
+      $ip_anterior= $equipo->ip; 
       $equipo->fecha_registro = $request->get('fecha_registro');      
       $equipo->estado_operativo = $request->get('estado_operativo');
       $equipo->codigo = $request->get('codigo');
@@ -123,7 +130,24 @@ class RouterController extends Controller
       $equipo->asignado = $request->get('asignado');
       $equipo->encargado_registro = $request->get('encargado_registro');
       $equipo->componente_principal = $request->get('componente_principal');
-      $equipo->ip = $request->get('ip');
+      
+      $ip_actual = $request->get('ip');
+        if($ip_actual!==null){
+            if($ip_anterior!==$ip_actual){
+                $ip= Ip::find($ip_actual);
+                $ip->estado= "EU";
+                $ip->save();
+            }
+        }else{
+            $ip_actual=null;
+        }
+      
+        $equipo->ip = $request->get('ip'); 
+        if($ip_anterior!==null){
+            $anterior= Ip::find($ip_anterior);
+            $anterior->estado= "L";
+            $anterior->save();
+        }
       $equipo->save(); 
 
       $router->nombre = $request->get('nombre');
@@ -131,6 +155,8 @@ class RouterController extends Controller
       $router->puerta_enlace = $request->get('puerta_enlace');
       $router->usuario = $request->get('usuario');
       $router->clave = $request->get('clave');
-      $router->save();        
+      $router->save();   
+      
+      
     }
 }

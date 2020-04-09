@@ -95,9 +95,9 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
     Route::get('tipo_equipo','EquipoController@mostrar_tipo_equipo');
     Route::get('mostrar_equipos','EquipoController@mostrar_equipos');
     Route::put('editar_equipo','EquipoController@editar_equipo');
-
+    Route::get('detalle_procesador/{codigo}','EquipoController@detalle_procesador');
     Route::get('obtenerInfoLaptop/{idequipo}','EquipoController@obtenerInfoLaptop');
-    Route::get('codigos_laptops','EquipoController@codigos_laptops');
+    Route::get('listar_laptops','EquipoController@listar_laptops');
 
 /* API DetalleEquipo */   
     Route::get('listar_so','DetalleEquipoController@listar_so');
@@ -106,7 +106,7 @@ Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
 /* API IP */
     Route::post('crear_ip','IpController@crear_ip');
     Route::put('editar_ip','IpController@editar_ip');
-
+    Route::get('es_ip_enuso/{ip}','IpController@es_ip_enuso');
 
 
 /*  API IMPRESORA*/
