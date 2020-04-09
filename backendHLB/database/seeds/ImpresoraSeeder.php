@@ -38,5 +38,10 @@ class ImpresoraSeeder extends Seeder
             'Rodillo' => 'LEX462',
             'id_equipo' => 12
         ]);
+        Impresora::create([
+            'tipo' => 'Escáner',
+            'Rodillo' => 'LEX461',
+            'id_equipo' => 11
+        ]);
     }
 }
