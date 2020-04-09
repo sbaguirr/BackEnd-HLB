@@ -25,7 +25,7 @@ class EquipoSeeder extends Seeder
             'numero_serie' => '330984',
             'encargado_registro' => 'admin',
             'componente_principal' => null,
-            'ip' => 5,
+            'ip' =>null,
             'asignado' => null,
         ]);
         Equipo::create([
@@ -48,7 +48,7 @@ class EquipoSeeder extends Seeder
             'codigo' => 'HLB_TEC_001',
             'tipo_equipo' => 'Teclado',
             'id_marca' => 2,
-            'modelo' => '',
+            'modelo' => 'AA-001',
             'descripcion' => 'Letras borrosas',
             'numero_serie' => '1561941011009',
             'encargado_registro' => 'soporte',
@@ -62,7 +62,7 @@ class EquipoSeeder extends Seeder
             'codigo' => 'HLB_MOU_001',
             'tipo_equipo' => 'Mouse',
             'id_marca' => 3,
-            'modelo' => '',
+            'modelo' => 'BB-001',
             'descripcion' => 'Asignado',
             'numero_serie' => 'X75784406542',
             'encargado_registro' => 'admin',
@@ -92,7 +92,7 @@ class EquipoSeeder extends Seeder
             'id_marca' => 5,
             'modelo' => '1702',
             'descripcion' => 'Asignado',
-            'numero_serie' => '',
+            'numero_serie' => '11111',
             'encargado_registro' => 'admin',
             'componente_principal' => 5,
             'ip' => null,
@@ -193,7 +193,7 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'asignado' => '0584721925',
-            'ip' => 1
+            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2020-01-07',
@@ -292,7 +292,7 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'asignado' => '1328169874',
-            'ip' => 3
+            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2017-06-13',
@@ -363,7 +363,7 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'componente_principal' => 20,
             'asignado' => '1328169874',
-            'ip' => 3
+            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2017-06-13',
@@ -391,7 +391,7 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'componente_principal' => 22,
             'asignado' => '0258463258',
-            'ip' => 4
+            'ip' => null
         ]);
         Equipo::create([
             'fecha_registro' => '2018-09-25',

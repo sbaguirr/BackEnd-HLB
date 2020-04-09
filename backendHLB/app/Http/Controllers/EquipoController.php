@@ -709,6 +709,7 @@ class EquipoController extends Controller
             ->get();             
     }
 
+    /* Servicio para editar otros equipos */
     public function editar_equipo(Request $request)
     {
         $equipo = Equipo::find($request->get('key')); 
@@ -809,5 +810,21 @@ class EquipoController extends Controller
             DB::rollback();
             return response()->json(['log' => $e], 400);
         } 
+    }
+
+    /*Obtener los datos de un equipo a partir de su ID */
+    public function equipo_id($id_equipo){
+        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, 
+        empleados.nombre as empleado, empleados.apellido as apellido, p.codigo as componente_principal,
+         bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
+        ->leftjoin('ips','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->where('equipos.id_equipo',$id_equipo)
+        ->get();
+
     }
 }
