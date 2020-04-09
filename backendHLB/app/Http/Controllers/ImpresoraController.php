@@ -283,12 +283,17 @@ class ImpresoraController extends Controller
 
     /*Obtener los datos de una impresora a partir del id_equipo */
     function impresora_id($id_equipo){
-        return Impresora::selectRaw('impresoras.*, equipos.*, marcas.nombre as marca, empleados.nombre as empleado, 
-        equipos.encargado_registro as encargado, ips.direccion_ip' )
+        return Impresora::selectRaw('impresoras.*, equipos.*, marcas.nombre as id_marca, 
+        empleados.nombre as empleado, equipos.encargado_registro as encargado, ips.direccion_ip as ip,
+         empleados.apellido as apellido, p.codigo as componente_principal,
+         bspi_punto, departamentos.nombre as departamento' )
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
         ->leftjoin('ips','id_ip','=','equipos.ip')
-        ->leftjoin('empleados','asignado','=','cedula')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->where('impresoras.id_equipo',$id_equipo)
         ->get();
     }

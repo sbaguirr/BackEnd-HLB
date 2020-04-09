@@ -98,6 +98,11 @@ use Illuminate\Http\Request;
     Route::get('detalle_procesador/{codigo}','EquipoController@detalle_procesador');
     Route::get('obtenerInfoLaptop/{idequipo}','EquipoController@obtenerInfoLaptop');
     Route::get('listar_laptops','EquipoController@listar_laptops');
+    Route::get('equipo_id/{id_equipo}','EquipoController@equipo_id');
+
+
+
+
 
 /* API DetalleEquipo */   
     Route::get('listar_so','DetalleEquipoController@listar_so');
@@ -107,7 +112,7 @@ use Illuminate\Http\Request;
     Route::post('crear_ip','IpController@crear_ip');
     Route::put('editar_ip','IpController@editar_ip');
     Route::get('es_ip_enuso/{ip}','IpController@es_ip_enuso');
-
+    Route::get('ip_id/{id_ip}','IpController@ip_id');
 
 /*  API IMPRESORA*/
     Route::get('impresoraxequipo','ImpresoraController@impresoras_equipo');

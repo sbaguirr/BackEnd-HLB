@@ -26,7 +26,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'admin'
         ]);
         Ip::create([
-            'estado' => 'L',
+            'estado' => 'EU',
             'direccion_ip' => '192.168.1.2',
             'hostname' => 'Asistente_finan',
             'subred' => '',
@@ -59,7 +59,7 @@ class IpSeeder extends Seeder
             'encargado_registro' => 'admin'
         ]);
         Ip::create([
-            'estado' => 'EU',
+            'estado' => 'L',
             'direccion_ip' => '192.168.1.5',
             'hostname' => 'BSPI_1-PC',
             'subred' => '',

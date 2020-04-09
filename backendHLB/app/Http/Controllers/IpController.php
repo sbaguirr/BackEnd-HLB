@@ -141,4 +141,16 @@ class IpController extends Controller
             return $reg_ip->direccion_ip;
         }
     }
+
+    /* Servicio para obtener datos de la ip a partir de su ID */
+    public function ip_id($id_ip){
+        return Ip::SelectRaw('ips.*, bspi_punto, departamentos.nombre as departamento,
+         empleados.nombre, empleados.apellido, equipos.codigo, equipos.tipo_equipo')
+        ->leftjoin('equipos','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','cedula','=','asignado')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->where('ips.id_ip',$id_ip)
+        ->get();
+    }
 }
