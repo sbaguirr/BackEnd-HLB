@@ -20,7 +20,8 @@ class CreateDetalleEquiposTable extends Migration
             $table->char('licencia');
             $table->char('services_pack');
             $table->string('nombre_pc');            
-            $table->string('usuario_pc');
+            $table->string('usuario_pc');            
+            $table->string('office');
             $table->bigInteger('id_equipo')->unsigned();
             $table->timestamps();
 

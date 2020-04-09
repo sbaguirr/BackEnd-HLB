@@ -334,7 +334,7 @@ class EquipoSeeder extends Seeder
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'ip' => null,
-            'asignado' => null
+            'asignado' => '1205478963'
         ]);
         Equipo::create([
             'fecha_registro' => '2019-12-05',

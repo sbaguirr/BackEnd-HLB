@@ -20,6 +20,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'Admin-PC',
             'usuario_pc' => 'ADMINHLB',
+            'office' => '2007',
             'id_equipo' => 20
         ]);
         DetalleEquipo::create([
@@ -27,7 +28,8 @@ class DetalleEquipoSeeder extends Seeder
             'licencia' => '0', 
             'so' => 'Windows 7 Professional',
             'tipo_so' => '64 Bits',
-            'nombre_pc' => 'Laboratorio 1-PC',            
+            'nombre_pc' => 'Laboratorio 1-PC',             
+            'office' => '2007',           
             'usuario_pc' => 'LAB-HLB',
             'id_equipo' => 21
         ]);
@@ -38,6 +40,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '32 Bits',
             'nombre_pc' => 'Soporte-PC',           
             'usuario_pc' => 'SOPORTE-HLB',
+            'office' => '2010',
             'id_equipo' => 22
         ]);
         DetalleEquipo::create([
@@ -47,7 +50,18 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'UCI-PC',           
             'usuario_pc' => 'UCI-HLB',
+            'office' => '2013',
             'id_equipo' => 23
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '0',           
+            'licencia' => '0', 
+            'so' => 'Windows 10 Pro',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'UCI-PC5',           
+            'usuario_pc' => 'UCI-HLB48',
+            'office' => '2007',
+            'id_equipo' => 24
         ]);
         DetalleEquipo::create([
             'services_pack' => '0',            
@@ -56,6 +70,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'Laboratorio 1-PC',            
             'usuario_pc' => 'LAB-HLB',
+            'office' => '2016',
             'id_equipo' => 1
         ]);
         DetalleEquipo::create([
@@ -65,6 +80,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '32 Bits',
             'nombre_pc' => 'Soporte-PC',           
             'usuario_pc' => 'SOPORTE-HLB',
+            'office' => '2019',
             'id_equipo' => 5
         ]);
         DetalleEquipo::create([
@@ -74,6 +90,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'UCI-PC',           
             'usuario_pc' => 'UCI-HLB',
+            'office' => '2010',
             'id_equipo' => 7
         ]);
         DetalleEquipo::create([
@@ -83,6 +100,7 @@ class DetalleEquipoSeeder extends Seeder
             'tipo_so' => '32 Bits',
             'nombre_pc' => 'Soporte-PC',           
             'usuario_pc' => 'SOPORTE-HLB',
+            'office' => '2010',
             'id_equipo' => 5
         ]);
         DetalleEquipo::create([
@@ -91,7 +109,8 @@ class DetalleEquipoSeeder extends Seeder
             'so' => 'Windows XP Professional',
             'tipo_so' => '64 Bits',
             'nombre_pc' => 'UCI-PC',           
-            'usuario_pc' => 'UCI-HLB',
+            'usuario_pc' => 'UCI-HLB',            
+            'office' => '2016',
             'id_equipo' => 7
         ]);
     }
