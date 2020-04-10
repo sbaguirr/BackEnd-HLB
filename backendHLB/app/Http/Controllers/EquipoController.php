@@ -571,10 +571,12 @@ class EquipoController extends Controller
 
 
 
-
+    /*Muestra el código de los equipos que pueden ser un componente principal*/
     public function mostrar_codigos()
     {
-        return Equipo::select('id_equipo as id','codigo as dato')->get();
+        return Equipo::select('id_equipo as id','codigo as dato')
+        ->where('estado_operativo','<>','B')
+        ->get();
     }
     
     /*Listar laptops Web Version*/

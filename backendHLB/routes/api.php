@@ -87,7 +87,8 @@ use Illuminate\Http\Request;
 
 /* API Marca*/
     Route::get('listado_marcas', 'MarcaController@listado_marcas');
-
+    Route::post('crear_marca','MarcaController@crear_marca');
+    Route::put('editar_marca','MarcaController@editar_marca');
 
 /* API Equipo */
     Route::get('mostrar_codigos','EquipoController@mostrar_codigos');
@@ -113,8 +114,12 @@ use Illuminate\Http\Request;
     Route::put('editar_ip','IpController@editar_ip');
     Route::get('es_ip_enuso/{ip}','IpController@es_ip_enuso');
     Route::get('ip_id/{id_ip}','IpController@ip_id');
+    Route::delete('eliminar_ip/{id_ip}', 'IpController@eliminar_ip');
+
+
 
 /*  API IMPRESORA*/
     Route::get('impresoraxequipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
     Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
+    
