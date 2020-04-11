@@ -74,9 +74,9 @@ class ImpresoraController extends Controller
 
         /*Si el usuario elige una ip para la impresora, el
         estado de la ip debe cambiar a En uso */
-        $id= $request->get('ip');
-        if($id!==null){
-            $ip= Ip::find($id);
+        $ipp= $request->get('ip');
+        if($ipp!==null){
+            $ip= Ip::find($ipp);
             $ip->estado= "EU";
             $ip->save();
         }
@@ -156,11 +156,14 @@ class ImpresoraController extends Controller
 
 
     public function impresoras_equipo(){
-        return Impresora::selectRaw('*, marcas.nombre as marca, empleados.nombre as empleado, equipos.encargado_registro as encargado' )
+        return Impresora::selectRaw('impresoras.*, equipos.*, marcas.nombre as marca, empleados.nombre as empleado, 
+        empleados.apellido, equipos.encargado_registro as encargado, p.codigo as componente_principal,
+        ips.direccion_ip' )
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
-        ->leftjoin('empleados','asignado','=','cedula')
+        ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->get();
@@ -238,9 +241,9 @@ class ImpresoraController extends Controller
                 *el estado de esta debe cambiar a En uso y la anterior debe
                 quedar libre. */
                 if($ip_anterior!==$ip_actual){
-                    $ip= Ip::find($ip_actual[0]->id_ip);
-                    $ip->estado= "EU";
-                    $ip->save();
+                    $ips= Ip::find($ip_actual[0]->id_ip);
+                    $ips->estado= "EU";
+                    $ips->save();
                 }
             }else{
                 $ip=null;

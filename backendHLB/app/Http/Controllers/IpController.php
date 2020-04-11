@@ -154,15 +154,9 @@ class IpController extends Controller
         ->get();
     }
 
-    /* No sé cómo manejar esto, así que lo dejaré así por el momento :v */
+ 
     public function eliminar_ip($id_ip){
         try{
-            # Primero cambio a null el equipo que tenga dicha dirección Ip.
-            # Parece que no pasa nada si no existe algún equipo con la Ip dada.
-         $equipo =  DB::table('equipos')
-                    ->where('ip', $id_ip)
-                    ->update(['ip' => null]);
-
              # Elimino la Ip
             $ip= Ip::find($id_ip);
             $ip->delete();

@@ -100,7 +100,7 @@ use Illuminate\Http\Request;
     Route::get('obtenerInfoLaptop/{idequipo}','EquipoController@obtenerInfoLaptop');
     Route::get('listar_laptops','EquipoController@listar_laptops');
     Route::get('equipo_id/{id_equipo}','EquipoController@equipo_id');
-
+    Route::put('eliminar_equipo/{id_equipo}','EquipoController@eliminar_equipo');
 
 
 
@@ -118,8 +118,8 @@ use Illuminate\Http\Request;
 
 
 
-/*  API IMPRESORA*/
-    Route::get('impresoraxequipo','ImpresoraController@impresoras_equipo');
+/*  API Impresora*/
+    Route::get('impresora_equipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
     Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
     

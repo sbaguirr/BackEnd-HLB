@@ -787,9 +787,9 @@ class EquipoController extends Controller
                     *el estado de esta debe cambiar a En uso y la anterior debe
                     quedar libre. */
                     if ($ip_anterior !== $ip_actual) {
-                        $ip = Ip::find($ip_actual[0]->id_ip);
-                        $ip->estado = "EU";
-                        $ip->save();
+                        $ips = Ip::find($ip_actual[0]->id_ip);
+                        $ips->estado = "EU";
+                        $ips->save();
                     }
                 } else {
                     $ip = null;
@@ -829,4 +829,11 @@ class EquipoController extends Controller
         ->get();
 
     }
+
+    function eliminar_equipo($id_equipo){
+        $equipo = Equipo::find($id_equipo);
+        $equipo->estado_operativo = 'B';
+        $equipo->save();
+    } #por ver: que pasa si ya está de baja y le doy eliminar otra vez xd
+
 }
