@@ -51,7 +51,7 @@ class CreateEquiposTable extends Migration
 
             $table->foreign('ip')
             ->references('id_ip')->on('ips')
-            ->onDelete('cascade')
+            ->onDelete('set null')
             ->onUpdate('cascade'); 
 
         });
