@@ -577,7 +577,7 @@ class EquipoController extends Controller
         return Equipo::select('id_equipo as id','codigo as dato')->get();
     }
     
-    /*Listar laptops Web Version*/
+    /*Listar computadoras y laptops Web Version*/
     public function listar_laptops(){
         $final = array();
         $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','laptop')->get();
@@ -607,52 +607,122 @@ class EquipoController extends Controller
         $discos = array();
         $procesador = array();
         for ( $i=0; $i<count($equipos); $i++ ){
-            if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
-                $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+            $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+            $equipos[$i]['marca'] = $marca['0']["nombre"];
+            if ($equipos[$i]["tipo_equipo"] === "memoria_ram" || $equipos[$i]["tipo_equipo"] === "disco_duro"){
                 $capacidad = self::fil_obj($detalles,"campo","capacidad");
                 $tipo = self::fil_obj($detalles,"campo","tipo");
-                $equipos[$i]['marca'] = $marca['0']["nombre"];
                 $equipos[$i]['capacidad'] = $capacidad["dato"];                
                 $equipos[$i]['tipo'] = $tipo["dato"];
-                array_push($rams, $equipos[$i]);
-            }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
-                $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
-                $capacidad = self::fil_obj($detalles,"campo","capacidad");
-                $tipo = self::fil_obj($detalles,"campo","tipo");
-                $equipos[$i]['marca'] = $marca['0']["nombre"];
-                $equipos[$i]['capacidad'] = $capacidad["dato"];                
-                $equipos[$i]['tipo'] = $tipo["dato"];
-                array_push($discos, $equipos[$i]);
+                if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
+                    array_push($rams, $equipos[$i]);
+                }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
+                    array_push($discos, $equipos[$i]);
+                }
             }elseif ($equipos[$i]["tipo_equipo"] === "procesador"){
-                $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
                 $frecuencia = self::fil_obj($detalles,"campo","frecuencia");
                 $nucleos = self::fil_obj($detalles,"campo","nucleos");
-                $equipos[$i]['marca'] = $marca['0']["nombre"];
                 $equipos[$i]['frecuencia'] = $frecuencia["dato"];                
-                $equipos[$i]['nnucleos'] = $nucleos["dato"];
+                $equipos[$i]['nucleos'] = $nucleos["dato"];
                 array_push($procesador, $equipos[$i]);
-                }
+            }
         }
         $laptop =  self::fil_obj($equipos,"tipo_equipo","laptop");
         $laptop["marca"] = $marca['0']['nombre'];
         $ram_soport = self::fil_obj($detalles,"campo","ram_soportada");
         $num_slots = self::fil_obj($detalles,"campo","numero_slots");
+        if($empleado !== []){
+            $laptop["empleado"] = $empleado['0']["nombre"];            
+            $laptop["apellido"] = $empleado['0']["apellido"];
+            $laptop["departamento"] = $dpto['0']["nombre"];
+            $laptop["bspi"] = $punto['0']["bspi_punto"];
+        };
         $final = [   
-            "empleado" => $empleado['0']["nombre"],
-            "apellido" => $empleado['0']["apellido"],
-            "departamento" => $dpto['0']["nombre"],
-            "bspi" => $punto['0']["bspi_punto"],
             "ram_soportada" => $ram_soport["dato"],
             "numero_slots" => $num_slots["dato"],
             "general" => $laptop,
             "so" => $detEq['0'],
-            "procesador" => $procesador,
+            "procesador" => $procesador[0],
             "rams" => $rams,
             "discos" => $discos,
         ];
         return $final;
     }
-    /*Fin listar laptops Web Version*/
+    
+    /*************************************************** */
+    public function listar_desktops(){
+        $final = array();
+        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','desktop')->get();
+        for ( $i=0; $i<count($eq); $i++ ){
+            $varr = self::obtenerInfoDesktop($eq[$i]["id_equipo"]);
+            array_push($final, $varr);
+        }
+        return ($final);
+    }
+
+    public function obtenerInfoDesktop($idequipo){
+        $laptops= Equipo::Where("id_equipo","=",$idequipo)->orWhere("componente_principal","=",$idequipo);
+        $marca = Marca::WhereIn("id_marca",$laptops->get(['id_marca']));
+        $empleado = Empleado::WhereIn("cedula",$laptops->get(['asignado']));
+        $dpto = Departamento::WhereIn("id_departamento",$empleado->get(['id_departamento']));
+        $punto = Organizacion::WhereIn("id_organizacion",$dpto->get(['id_organizacion']));
+        $compenentes = DetalleComponente::WhereIn("id_equipo",$laptops->get(['id_equipo']));  
+        $detEq= DetalleEquipo::Where("id_equipo","=",$idequipo)->get();
+        $var = self::generarDetalleDesktop($laptops->get()->toArray(),$compenentes->get()->toArray(),$detEq,
+        $empleado->get()->toArray(), $dpto->get()->toArray(), $punto->get()->toArray(),$marca->get()->toArray());
+        return response()->json($var);
+    }
+
+    private function generarDetalleDesktop($equipos, $detalles, $detEq, $empleado, $dpto, $punto, $marca)
+    {
+        $rams = array();
+        $discos = array();
+        $fuente_alimentacion = array();
+        for ( $i=0; $i<count($equipos); $i++ ){
+            $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+            $equipos[$i]['marca'] = $marca['0']["nombre"];
+            if ($equipos[$i]["tipo_equipo"] === "memoria_ram" || $equipos[$i]["tipo_equipo"] === "disco_duro"){
+                $capacidad = self::fil_obj($detalles,"campo","capacidad");
+                $tipo = self::fil_obj($detalles,"campo","tipo");
+                $equipos[$i]['capacidad'] = $capacidad["dato"];                
+                $equipos[$i]['tipo'] = $tipo["dato"];
+                if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
+                    array_push($rams, $equipos[$i]);
+                }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
+                    array_push($discos, $equipos[$i]);
+                }
+            }elseif ($equipos[$i]["tipo_equipo"] === "ups"){
+                array_push($fuente_alimentacion, $equipos[$i]);
+            }elseif ($equipos[$i]["tipo_equipo"] === "regulador"){
+                array_push($fuente_alimentacion, $equipos[$i]);
+            }
+        }
+        $laptop =  self::fil_obj($equipos,"tipo_equipo","desktop");
+        $laptop["marca"] = $marca['0']['nombre'];
+        if($empleado !== []){
+            $laptop["empleado"] = $empleado['0']["nombre"];            
+            $laptop["apellido"] = $empleado['0']["apellido"];
+            $laptop["departamento"] = $dpto['0']["nombre"];
+            $laptop["bspi"] = $punto['0']["bspi_punto"];
+        };
+        $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
+        if($fuente_alimentacion !== []){
+            $final['f_alim'] = $fuente_alimentacion[0];
+        }
+        $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
+        'pc-ups', 'pc-regulador', 'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
+        $final['monitor'] = $obj['pc-monitor'];
+        $final['teclado'] = $obj['pc-teclado'];
+        $final['mouse'] = $obj['pc-mouse'];
+        $final['parlantes'] = $obj['pc-parlantes'];
+        $final['tarjeta_red'] = $obj['cpu-tarjeta_red'];
+        $final['tarjeta_madre'] = $obj['cpu-tarjeta_madre'];        
+        $final['case'] = $obj['cpu-case'];
+        $final['fuente_poder'] = $obj['cpu-fuente_poder'];               
+        $final['procesador'] = $obj['cpu-procesador'];
+        return $final ;
+    }
+    /*Fin - listar computadoras y laptops - Web Version*/
 
     public function crear_otro_equipo(Request $request)
     {

@@ -113,5 +113,35 @@ class DetalleEquipoSeeder extends Seeder
             'office' => '2016',
             'id_equipo' => 7
         ]);
+        DetalleEquipo::create([
+            'services_pack' => '1',           
+            'licencia' => '0', 
+            'so' => 'Windows 8 Pro with Media Center',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'UCI-PC',           
+            'usuario_pc' => 'UCI-HLB',
+            'office' => '2010',
+            'id_equipo' => 43
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '0',           
+            'licencia' => '1', 
+            'so' => 'Windows 8.1 Pro',
+            'tipo_so' => '32 Bits',
+            'nombre_pc' => 'Soporte-PC',           
+            'usuario_pc' => 'SOPORTE-HLB',
+            'office' => '2010',
+            'id_equipo' => 44
+        ]);
+        DetalleEquipo::create([
+            'services_pack' => '1',           
+            'licencia' => '0', 
+            'so' => 'Windows XP Professional',
+            'tipo_so' => '64 Bits',
+            'nombre_pc' => 'LABL-PC',           
+            'usuario_pc' => 'LABFARM-HLB',            
+            'office' => '2016',
+            'id_equipo' => 45
+        ]);
     }
 }

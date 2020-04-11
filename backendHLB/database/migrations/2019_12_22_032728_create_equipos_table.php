@@ -17,7 +17,7 @@ class CreateEquiposTable extends Migration
             $table->bigIncrements('id_equipo');
             $table->date('fecha_registro');
             $table->string('estado_operativo');
-            $table->string('codigo');
+            $table->string('codigo')->unique();
             $table->string('tipo_equipo');
             $table->string('modelo')->nullable();
             $table->string('descripcion')->nullable();

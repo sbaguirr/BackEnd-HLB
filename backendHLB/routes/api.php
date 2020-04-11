@@ -95,9 +95,10 @@ use Illuminate\Http\Request;
     Route::get('tipo_equipo','EquipoController@mostrar_tipo_equipo');
     Route::get('mostrar_equipos','EquipoController@mostrar_equipos');
     Route::put('editar_equipo','EquipoController@editar_equipo');
-    Route::get('detalle_procesador/{codigo}','EquipoController@detalle_procesador');
     Route::get('obtenerInfoLaptop/{idequipo}','EquipoController@obtenerInfoLaptop');
     Route::get('listar_laptops','EquipoController@listar_laptops');
+    Route::get('obtenerInfoDesktop/{idequipo}','EquipoController@obtenerInfoDesktop');
+    Route::get('listar_desktops','EquipoController@listar_desktops');
     Route::get('equipo_id/{id_equipo}','EquipoController@equipo_id');
 
 

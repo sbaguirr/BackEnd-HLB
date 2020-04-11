@@ -17,9 +17,9 @@ class RouterController extends Controller
         'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
-        ->join('empleados','empleados.cedula', '=', 'equipos.asignado')
-        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
-        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->leftjoin('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
         ->orderBy('routers.id_router', 'DESC')
         ->get();
     }
@@ -110,8 +110,12 @@ class RouterController extends Controller
     {
       $router = Router::find($id);
       $equipo = Equipo::find($router->id_equipo);
-      $equipo->estado_operativo = 'De baja';
-      $equipo->save();
+      if ($equipo->estado_operativo !== 'B'){
+        $equipo->estado_operativo = 'B';
+        $equipo->save();
+      }else{
+        return response()->json(['message' => 'Imposible eliminar. El registro ya ha sido dado de baja'], 400);
+      }      
     }
 
     public function editar_equipo_router(Request $request)
