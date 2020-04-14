@@ -639,15 +639,8 @@ class EquipoController extends Controller
             $laptop["departamento"] = $dpto['0']["nombre"];
             $laptop["bspi"] = $punto['0']["bspi_punto"];
         };
-        $final = [   
-            "ram_soportada" => $ram_soport["dato"],
-            "numero_slots" => $num_slots["dato"],
-            "general" => $laptop,
-            "so" => $detEq['0'],
-            "procesador" => $procesador[0],
-            "rams" => $rams,
-            "discos" => $discos,
-        ];
+        $final = [ "ram_soportada" => $ram_soport["dato"], "numero_slots" => $num_slots["dato"], "general" => $laptop, 
+                   "so" => $detEq['0'], "procesador" => $procesador[0], "rams" => $rams, "discos" => $discos ];
         return $final;
     }
     
@@ -708,9 +701,7 @@ class EquipoController extends Controller
             $laptop["bspi"] = $punto['0']["bspi_punto"];
         };
         $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
-        if($fuente_alimentacion !== []){
-            $final['f_alim'] = $fuente_alimentacion[0];
-        }
+        if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
         $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
         'pc-ups', 'pc-regulador', 'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
         $final['monitor'] = $obj['pc-monitor'];

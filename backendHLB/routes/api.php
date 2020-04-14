@@ -108,6 +108,7 @@ use Illuminate\Http\Request;
 
 /* API DetalleEquipo */   
     Route::get('listar_so','DetalleEquipoController@listar_so');
+    Route::get('listar_office','DetalleEquipoController@listar_office');
 
 
 /* API IP */
