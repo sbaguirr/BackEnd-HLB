@@ -834,37 +834,38 @@ class EquipoController extends Controller
             }
             $equipo->asignado = $asignado;
 
-            /*Debido a que el back recibe en sí la direccion ip como tal, 
-            se debe hacer una consulta para obtener el id */
-            $ip = $request->get('ip');
-            if (!is_numeric($ip)) {
-                if ($ip !== null) {
-                    $ip_actual = Ip::select('id_ip')
-                        ->where('direccion_ip', '=', $ip)
-                        ->get();
-                    $ip = $ip_actual[0]->id_ip;
- 
-                     /*Si el usuario elige una nueva ip para la impresora,
-                    *el estado de esta debe cambiar a En uso y la anterior debe
-                    quedar libre. */
-                    if ($ip_anterior !== $ip_actual) {
-                        $ips = Ip::find($ip_actual[0]->id_ip);
-                        $ips->estado = "EU";
-                        $ips->save();
-                    }
-                } else {
-                    $ip = null;
+        /*Debido a que hay ocasiones en que el back recibe un string como direccion ip, 
+        se debe hacer una consulta para obtener el id */
+        $ip_actual=$request->get('ip');
+        if(!is_numeric($ip_actual)){
+            if($ip_actual!==null){
+                $ip=Ip::select('id_ip')
+                ->where('direccion_ip','=',$ip_actual)
+                ->get();
+                $ip_actual = $ip[0]->id_ip;
+            }else{
+                $ip_actual=null;
+            }
+        }
+        $equipo->ip = $ip_actual;     
+        
+         /*Si el usuario elige una nueva ip para la impresora,
+         *el estado de esta debe cambiar a En uso y la anterior debe
+         quedar libre. */
+            if($ip_anterior!==$ip_actual){
+                if($ip_actual!==null){
+                    $ips= Ip::find($ip_actual);
+                    $ips->estado= "EU";
+                    $ips->save();
+                }
+            
+                if($ip_anterior!==null){
+                    $anterior= Ip::find($ip_anterior);
+                    $anterior->estado= "L";
+                    $anterior->save();
                 }
             }
-            $equipo->ip = $ip; 
-            
-            /*Si la direccion IP anterior era distinta de null,
-            *esta debe cambiar a libre*/
-             if ($ip_anterior !== null) {
-                $anterior = Ip::find($ip_anterior);
-                $anterior->estado = "L";
-                $anterior->save();
-            } 
+    
             $equipo->save();
 
             DB::commit();
