@@ -163,4 +163,20 @@ class RouterController extends Controller
       
       
     }
+
+    /* Obtener datos de un router dado el id del equipo */
+    public function router_id($id_equipo){
+        return Router::selectRaw('routers.*, equipos.*, marcas.nombre as marca, 
+        empleados.nombre as empleado, empleados.apellido as apellido,
+         organizaciones.bspi_punto, departamentos.nombre as departamento' )
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->where('routers.id_equipo',$id_equipo)
+        ->get();
+
+
+    }
 }

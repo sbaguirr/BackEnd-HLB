@@ -658,15 +658,8 @@ class EquipoController extends Controller
             $laptop["departamento"] = $dpto['0']["nombre"];
             $laptop["bspi"] = $punto['0']["bspi_punto"];
         };
-        $final = [   
-            "ram_soportada" => $ram_soport["dato"],
-            "slots_ram" => $num_slots["dato"],
-            "general" => $laptop,
-            "so" => $detEq['0'],
-            "procesador" => $procesador[0],
-            "rams" => $rams,
-            "discos" => $discos,
-        ];
+        $final = [ "ram_soportada" => $ram_soport["dato"], "numero_slots" => $num_slots["dato"], "general" => $laptop, 
+                   "so" => $detEq['0'], "procesador" => $procesador[0], "rams" => $rams, "discos" => $discos ];
         return $final;
     }
     
@@ -727,9 +720,7 @@ class EquipoController extends Controller
             $laptop["bspi"] = $punto['0']["bspi_punto"];
         };
         $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
-        if($fuente_alimentacion !== []){
-            $final['f_alim'] = $fuente_alimentacion[0];
-        }
+        if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
         $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
         'pc-ups', 'pc-regulador', 'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
         $final['monitor'] = $obj['pc-monitor'];
@@ -862,37 +853,38 @@ class EquipoController extends Controller
             }
             $equipo->asignado = $asignado;
 
-            /*Debido a que el back recibe en sí la direccion ip como tal, 
-            se debe hacer una consulta para obtener el id */
-            $ip = $request->get('ip');
-            if (!is_numeric($ip)) {
-                if ($ip !== null) {
-                    $ip_actual = Ip::select('id_ip')
-                        ->where('direccion_ip', '=', $ip)
-                        ->get();
-                    $ip = $ip_actual[0]->id_ip;
- 
-                     /*Si el usuario elige una nueva ip para la impresora,
-                    *el estado de esta debe cambiar a En uso y la anterior debe
-                    quedar libre. */
-                    if ($ip_anterior !== $ip_actual) {
-                        $ips = Ip::find($ip_actual[0]->id_ip);
-                        $ips->estado = "EU";
-                        $ips->save();
-                    }
-                } else {
-                    $ip = null;
+        /*Debido a que hay ocasiones en que el back recibe un string como direccion ip, 
+        se debe hacer una consulta para obtener el id */
+        $ip_actual=$request->get('ip');
+        if(!is_numeric($ip_actual)){
+            if($ip_actual!==null){
+                $ip=Ip::select('id_ip')
+                ->where('direccion_ip','=',$ip_actual)
+                ->get();
+                $ip_actual = $ip[0]->id_ip;
+            }else{
+                $ip_actual=null;
+            }
+        }
+        $equipo->ip = $ip_actual;     
+        
+         /*Si el usuario elige una nueva ip para la impresora,
+         *el estado de esta debe cambiar a En uso y la anterior debe
+         quedar libre. */
+            if($ip_anterior!==$ip_actual){
+                if($ip_actual!==null){
+                    $ips= Ip::find($ip_actual);
+                    $ips->estado= "EU";
+                    $ips->save();
+                }
+            
+                if($ip_anterior!==null){
+                    $anterior= Ip::find($ip_anterior);
+                    $anterior->estado= "L";
+                    $anterior->save();
                 }
             }
-            $equipo->ip = $ip; 
-            
-            /*Si la direccion IP anterior era distinta de null,
-            *esta debe cambiar a libre*/
-             if ($ip_anterior !== null) {
-                $anterior = Ip::find($ip_anterior);
-                $anterior->estado = "L";
-                $anterior->save();
-            } 
+    
             $equipo->save();
 
             DB::commit();
