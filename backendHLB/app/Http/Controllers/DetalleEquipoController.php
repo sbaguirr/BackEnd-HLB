@@ -11,4 +11,9 @@ class DetalleEquipoController extends Controller
     {
         return DetalleEquipo::select('so')->distinct()->get();
     }
+
+    public function listar_office()
+    {
+        return DetalleEquipo::select('office')->distinct()->get();
+    }
 }

@@ -45,7 +45,6 @@ use Illuminate\Http\Request;
     Route::post('getequipos','EquipoController@getEquipos');
     Route::get('getDesktopByID/{idequipo}','EquipoController@getDesktopByID');
     Route::get('getLaptopByID/{idequipo}','EquipoController@getLaptopByID');
-   // Route::post('getDetalleComp','EquipoController@getDetalleComp');
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
 
@@ -108,7 +107,7 @@ use Illuminate\Http\Request;
 
 /* API DetalleEquipo */   
     Route::get('listar_so','DetalleEquipoController@listar_so');
-
+    Route::get('listar_office','DetalleEquipoController@listar_office');
 
 /* API IP */
     Route::post('crear_ip','IpController@crear_ip');
