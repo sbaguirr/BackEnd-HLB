@@ -773,6 +773,7 @@ class EquipoController extends Controller
     public function mostrar_tipo_equipo()
     {
         return Equipo::Select('tipo_equipo')
+            ->whereNotIn('tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
             ->distinct()
             ->orderBy('tipo_equipo', 'asc')
             ->get();
@@ -788,6 +789,8 @@ class EquipoController extends Controller
             ->leftjoin('ips','id_ip','=','equipos.ip')
             ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal') 
             ->leftjoin('empleados','equipos.asignado','=','cedula')
+            ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
+            ->orderBy('equipos.tipo_equipo', 'asc')
             ->get();             
     }
 
@@ -915,7 +918,33 @@ class EquipoController extends Controller
         $equipo = Equipo::find($id_equipo);
         $equipo->estado_operativo = 'B';
         $equipo->save();
-    } #por ver: que pasa si ya está de baja y le doy eliminar otra vez xd
-    # creo que si ya está de baja debería deshabilotarse la opción de eliminar ?
+    } 
+
+    /*Esto fue creado en base al formato de excel llamado "Inventario Final Ok" */
+    function reporte_general(){
+        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, 
+        empleados.nombre as empleado, empleados.apellido as apellido, 
+         bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
+         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('ips','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->whereNotNull('asignado')
+        ->orderBy('departamento')
+        ->get()
+        /* ->groupBy('departamento') */;  
+    }
+
+     /*Esto fue creado en base al formato de excel llamado "Inventario equipos Sistemas (baja)" */
+     function reporte_bajas(){
+        return Equipo::SelectRaw('id_equipo, codigo, tipo_equipo, modelo,numero_serie,estado_operativo,
+        descripcion, marcas.nombre as marca')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->orderBy('tipo_equipo')
+        ->where('estado_operativo','B')
+        ->get()
+        /* ->groupBy('tipo_equipo') */;
+    }
 
 }
