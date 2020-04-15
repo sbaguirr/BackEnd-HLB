@@ -651,7 +651,7 @@ class EquipoController extends Controller
         $laptop =  self::fil_obj($equipos,"tipo_equipo","laptop");
         $laptop["marca"] = $marca['0']['nombre'];
         $ram_soport = self::fil_obj($detalles,"campo","ram_soportada");
-        $num_slots = self::fil_obj($detalles,"campo","slots_ram");
+        $num_slots = self::fil_obj($detalles,"campo","numero_slots");
         if($empleado !== []){
             $laptop["empleado"] = $empleado['0']["nombre"];            
             $laptop["apellido"] = $empleado['0']["apellido"];
