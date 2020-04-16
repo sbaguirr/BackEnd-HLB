@@ -123,5 +123,8 @@ use Illuminate\Http\Request;
 /*  API Impresora*/
     Route::get('impresora_equipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
-    Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
+    Route::get('/impresora_id/{id_impresora}','ImpresoraController@impresora_id');
 
+
+/*API Routers*/   
+    Route::get('router_id/{id_equipo}', 'RouterController@router_id');    
