@@ -103,7 +103,7 @@ use Illuminate\Http\Request;
     Route::put('eliminar_equipo/{id_equipo}','EquipoController@eliminar_equipo');
     Route::get('reporte-general','EquipoController@reporte_general');
     Route::get('reporte-bajas','EquipoController@reporte_bajas');
-
+    Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
 
 
 
