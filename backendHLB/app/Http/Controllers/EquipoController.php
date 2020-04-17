@@ -751,6 +751,110 @@ class EquipoController extends Controller
         $final['procesador'] = $obj['cpu-procesador'];
         return $final ;
     }
+
+    public function crear_laptop(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $computador = new Equipo();
+            $computador->codigo = $request->get('general_fields')['codigo'];
+            $computador->fecha_registro = Date('Y-m-d H:i:s');
+            $computador->tipo_equipo = 'laptop';
+            $computador->id_marca = $request->get('general_fields')['marca'];
+            $computador->modelo = $request->get('general_fields')['modelo'];
+            $computador->encargado_registro = 'admin';
+            $computador->estado_operativo = 'O';
+            // $computador->descripcion = $request->get('general_fields.descripcion');
+            // $computador->numero_serie = $request->get('general_fields.nserie');
+            // $computador->ip = $request->get("general_fields.ip");
+            // $computador->asignado=$request->get("general_fields.asignar");
+            $computador->save();
+            // if($request->get("general_fields.ip")!=null && $request->get("general_fields.ip")!=""){
+            //     Ip::Where("id_ip","=",$request->get("general_fields.ip"))->update(['estado' => "EU"]);
+            // }
+            // $num_slots = new DetalleComponente();
+            // $num_slots->campo = 'slots_ram';
+            // $num_slots->dato = $request->get('ram_fields.slots_ram');
+            // $num_slots->id_equipo = $computador->id_equipo;
+            // $num_slots->save();
+
+            // $ram_soport = new DetalleComponente();
+            // $ram_soport->campo = 'ram_soportada';
+            // $ram_soport->dato = $request->get('ram_fields.ram_soportada');
+            // $ram_soport->id_equipo = $computador->id_equipo;
+            // $ram_soport->save();//no conexiones disco en front
+
+            // $detEq = new DetalleEquipo();
+            // $detEq->nombre_pc=$request->get('general_fields.nombre_pc');
+            // $detEq->usuario_pc=$request->get('general_fields.usuario_pc');
+            // $detEq->so=$request->get('so_fields.so');
+            // $detEq->office=$request->get('so_fields.office');
+            // $detEq->tipo_so=$request->get('so_fields.tipo_so');
+            // $detEq->services_pack=$request->get('so_fields.sp');
+            // $detEq->licencia=$request->get('so_fields.licencia');
+            // $detEq->id_equipo= $computador->id_equipo;
+            // $detEq->save();
+
+
+            // foreach($request->except(['pc-codigo','pc-descripcion',"pc-numero_serie",'pc-id_marca','pc-modelo','pc-ram_soportada','pc-slots_ram',"pc-ip","pc-empleado",'pc-nombre','pc-usuario','pc-so','pc-office','pc-tipo_so','pc-service','pc-licencia','pc-conexiones_disco']) as $clave => $valor){
+            //     $comp = new Equipo();
+            //     $comp->id_marca = $valor['id_marca'];
+            //     $comp->codigo = $valor['codigo'];
+            //     $comp->modelo = $valor['modelo'];
+            //     $comp->numero_serie = $valor['numero_serie'];
+            //     $comp->descripcion = Arr::has($valor, 'descripcion') ? $valor['descripcion'] : '';
+            //     $comp->encargado_registro = 'admin';
+            //     $comp->fecha_registro = Date('Y-m-d H:i:s');
+            //     $comp->estado_operativo = 'O';
+            //     $comp->asignado=$request->get("pc-empleado");
+            //     $comp->componente_principal = $computador->id_equipo;
+            //     $comp->tipo_equipo = Str::contains($clave, '_') ? explode("_", explode('-', $clave)[1])[0] . "_" . explode("_", explode('-', $clave)[1])[1] : explode('-', $clave)[1];
+            //     if(Str::contains($clave, 'ups_regulador')){
+            //         $comp->tipo_equipo=$valor['tipo_equipo'];
+            //     }
+            //     $comp->save();
+
+            //     if (Str::contains($clave, 'disco_duro') || Str::contains($clave, 'ram')) {
+            //         $tipo = new DetalleComponente();
+            //         $tipo->campo = 'tipo';
+            //         $tipo->dato = $valor['tipo'];
+            //         $tipo->id_equipo = $comp->id_equipo;
+            //         $tipo->save();
+
+            //         $capacidad = new DetalleComponente();
+            //         $capacidad->campo = 'capacidad';
+            //         $capacidad->dato = $valor['capacidad'];
+            //         $capacidad->id_equipo = $comp->id_equipo;
+            //         $capacidad->save();
+
+            //         $capacidad = new DetalleComponente();
+            //         $capacidad->campo = 'tipo_capacidad';
+            //         $capacidad->dato = $valor['tipo_capacidad'];
+            //         $capacidad->id_equipo = $comp->id_equipo;
+            //         $capacidad->save();
+            //     }
+            //     if (Str::contains($clave, 'procesador')) {
+            //         $num_slots = new DetalleComponente();
+            //         $num_slots->campo = 'nucleos';
+            //         $num_slots->dato = $valor['nucleos'];
+            //         $num_slots->id_equipo = $comp->id_equipo;
+            //         $num_slots->save();
+
+            //         $ram_soport = new DetalleComponente();
+            //         $ram_soport->campo = 'frecuencia';
+            //         $ram_soport->dato = $valor['frecuencia'];
+            //         $ram_soport->id_equipo = $comp->id_equipo;
+            //         $ram_soport->save();
+            //     }
+            // }
+
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+    }
     /*Fin - listar computadoras y laptops - Web Version*/
 
     public function crear_otro_equipo(Request $request)
