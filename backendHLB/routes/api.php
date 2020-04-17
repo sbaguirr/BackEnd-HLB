@@ -104,7 +104,7 @@ use Illuminate\Http\Request;
     Route::get('reporte-general','EquipoController@reporte_general');
     Route::get('reporte-bajas','EquipoController@reporte_bajas');
     Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
-
+    Route::get('resumen-bajas','EquipoController@resumen_bajas');
 
 
 /* API DetalleEquipo */   

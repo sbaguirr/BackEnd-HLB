@@ -964,4 +964,10 @@ class EquipoController extends Controller
         /* ->groupBy('tipo_equipo') */;
     }
 
+    function resumen_bajas(){
+        return Equipo::select(DB::raw('count(*) as cantidad, tipo_equipo'))
+        ->where('estado_operativo', 'B')
+        ->groupBy('tipo_equipo')
+        ->get();
+    }
 }
