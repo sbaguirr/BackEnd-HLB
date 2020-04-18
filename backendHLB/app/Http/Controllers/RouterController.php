@@ -21,6 +21,7 @@ class RouterController extends Controller
         ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
         ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
         ->orderBy('routers.id_router', 'DESC')
+        ->where('equipos.estado_operativo', '<>', 'B')
         ->get();
     }
 
