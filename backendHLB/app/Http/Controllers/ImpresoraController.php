@@ -171,9 +171,9 @@ class ImpresoraController extends Controller
     }
 
     public function editar_impresora(Request $request){
-        $impresora= Impresora::find($request->get('key'));
+        $impresora= Impresora::find($request->get('key')); #key es el id de la impresora.
         $equipo= Equipo::find($impresora->id_equipo);   
-        $ip_anterior= $equipo->ip; //id de la dir ip;
+        $ip_anterior= $equipo->ip; #id de la dir ip;
 
         DB::beginTransaction();
         try{
@@ -286,8 +286,8 @@ class ImpresoraController extends Controller
         }
     }
 
-    /*Obtener los datos de una impresora a partir del id_equipo */
-    function impresora_id($id_equipo){
+    /*Obtener los datos de una impresora a partir de su id */
+    function impresora_id($id_impresora){
         return Impresora::selectRaw('impresoras.*, equipos.*, marcas.nombre as id_marca, 
         empleados.nombre as empleado, equipos.encargado_registro as encargado, ips.direccion_ip as ip,
          empleados.apellido as apellido, p.codigo as componente_principal,
@@ -299,7 +299,7 @@ class ImpresoraController extends Controller
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->where('impresoras.id_equipo',$id_equipo)
+        ->where('impresoras.id_impresora',$id_impresora)
         ->get();
     }
 }

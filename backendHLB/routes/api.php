@@ -101,8 +101,11 @@ use Illuminate\Http\Request;
     Route::get('listar_desktops','EquipoController@listar_desktops');
     Route::get('equipo_id/{id_equipo}','EquipoController@equipo_id');
     Route::put('eliminar_equipo/{id_equipo}','EquipoController@eliminar_equipo');
-
-
+    Route::get('reporte-general','EquipoController@reporte_general');
+    Route::get('reporte-bajas','EquipoController@reporte_bajas');
+    Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
+    Route::post('crear_laptop','EquipoController@crear_laptop');
+    Route::get('resumen-bajas','EquipoController@resumen_bajas');
 
 
 /* API DetalleEquipo */   
@@ -121,8 +124,8 @@ use Illuminate\Http\Request;
 /*  API Impresora*/
     Route::get('impresora_equipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
-    Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
-    
+    Route::get('/impresora_id/{id_impresora}','ImpresoraController@impresora_id');
+
 
 /*API Routers*/   
-    Route::get('router_id/{id_equipo}', 'RouterController@router_id');
+    Route::get('router_id/{id_equipo}', 'RouterController@router_id');    

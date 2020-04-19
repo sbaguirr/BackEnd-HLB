@@ -604,9 +604,27 @@ class EquipoController extends Controller
     }
     
     /*Listar computadoras y laptops Web Version*/
+    public function darDeBajaEquipoID($idequipo,$tipo)
+    {
+        DB::beginTransaction();
+        try {
+            $res1 = Equipo::Where("id_equipo", "=", $idequipo)->update(['estado_operativo' => "B"]);
+            $res2 = Equipo::Where("componente_principal", "=", $idequipo);
+            if($tipo=="laptop"){
+                $res2 = $res2->where("tipo_equipo","<>","procesador");
+                Equipo::Where("componente_principal", "=", $idequipo)->where("tipo_equipo","=","procesador")->update(['estado_operativo' => "B"]);
+            }
+            $res2=$res2->update(['componente_principal' => null]);
+            DB::commit();
+            return response()->json([$res1, $res2]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+    }
     public function listar_laptops(){
         $final = array();
-        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','laptop')->get();
+        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','laptop')->where('estado_operativo', '<>', 'B')->get();
         for ( $i=0; $i<count($eq); $i++ ){
             $varr = self::obtenerInfoLaptop($eq[$i]["id_equipo"]);
             array_push($final, $varr);
@@ -656,7 +674,7 @@ class EquipoController extends Controller
         $laptop =  self::fil_obj($equipos,"tipo_equipo","laptop");
         $laptop["marca"] = $marca['0']['nombre'];
         $ram_soport = self::fil_obj($detalles,"campo","ram_soportada");
-        $num_slots = self::fil_obj($detalles,"campo","slots_ram");
+        $num_slots = self::fil_obj($detalles,"campo","numero_slots");
         if($empleado !== []){
             $laptop["empleado"] = $empleado['0']["nombre"];            
             $laptop["apellido"] = $empleado['0']["apellido"];
@@ -671,7 +689,7 @@ class EquipoController extends Controller
     /*************************************************** */
     public function listar_desktops(){
         $final = array();
-        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','desktop')->get();
+        $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','desktop')->where('estado_operativo', '<>', 'B')->get();
         for ( $i=0; $i<count($eq); $i++ ){
             $varr = self::obtenerInfoDesktop($eq[$i]["id_equipo"]);
             array_push($final, $varr);
@@ -726,8 +744,8 @@ class EquipoController extends Controller
         };
         $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
         if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
-        $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
-        'pc-ups', 'pc-regulador', 'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
+         $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
+         'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
         $final['monitor'] = $obj['pc-monitor'];
         $final['teclado'] = $obj['pc-teclado'];
         $final['mouse'] = $obj['pc-mouse'];
@@ -738,6 +756,70 @@ class EquipoController extends Controller
         $final['fuente_poder'] = $obj['cpu-fuente_poder'];               
         $final['procesador'] = $obj['cpu-procesador'];
         return $final ;
+    }
+
+    public function crear_laptop(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $computador = new Equipo();
+            $computador->codigo = $request->get('general_fields')['codigo'];
+            $computador->fecha_registro = Date('Y-m-d H:i:s');
+            $computador->tipo_equipo = 'laptop';
+            $computador->id_marca = $request->get('general_fields')['marca'];
+            $computador->modelo = $request->get('general_fields')['modelo'];
+            $computador->encargado_registro = 'admin';
+            $computador->estado_operativo = 'O';
+            $computador->descripcion = $request->get('general_fields')['descripcion'];
+            $computador->numero_serie = $request->get('general_fields')['nserie'];
+            $computador->ip = $request->get('general_fields')['ip'];
+            $computador->asignado=$request->get('general_fields')['asignar'];
+            $computador->save();
+            if($request->get("general_fields")["ip"]!=null && $request->get("general_fields")["ip"]!=""){
+                Ip::Where("id_ip","=",$request->get("general_fields")["ip"])->update(['estado' => "EU"]);
+            }
+            $num_slots = new DetalleComponente();
+            $num_slots->campo = 'numero_slots';
+            $num_slots->dato = $request->get('ram_fields')['num_slots'];
+            $num_slots->id_equipo = $computador->id_equipo;
+            $num_slots->save();
+
+            $ram_soport = new DetalleComponente();
+            $ram_soport->campo = 'ram_soportada';
+            $ram_soport->dato = $request->get('ram_fields')['ram_soportada'];
+            $ram_soport->id_equipo = $computador->id_equipo;
+            $ram_soport->save();//no conexiones disco en front
+
+            $detEq = new DetalleEquipo();
+            $detEq->nombre_pc=$request->get('general_fields')['nombre_pc'];
+            $detEq->usuario_pc=$request->get('general_fields')['usuario_pc'];
+            $detEq->so=$request->get('so_fields')['so'];
+            $detEq->office=$request->get('so_fields')['office'];
+            $detEq->tipo_so=$request->get('so_fields')['tipo_so'];
+            $detEq->services_pack=$request->get('so_fields')['sp1'];
+            $detEq->licencia=$request->get('so_fields')['licencia'];
+            $detEq->id_equipo= $computador->id_equipo;
+            $detEq->save();
+
+            $comp = new Equipo();
+            $comp->id_marca = $request->get['procesador_fields']('marca_proc');
+            $comp->codigo = $request->get['procesador_fields']('codigo_proc');
+            $comp->modelo = $request->get['procesador_fields']('modelo_proc');
+            $comp->numero_serie = $request->get['procesador_fields']('nserie_proc');
+            $comp->descripcion = $request->get['procesador_fields']('descr_proc');
+            $comp->encargado_registro = 'admin';
+            $comp->fecha_registro = Date('Y-m-d H:i:s');
+            $comp->estado_operativo = 'O';
+            $comp->asignado=$request->get('general_fields')['asignar'];
+            $comp->componente_principal = $computador->id_equipo;
+            $comp->tipo_equipo='procesador';
+            $comp->save();
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
     }
     /*Fin - listar computadoras y laptops - Web Version*/
 
@@ -778,6 +860,7 @@ class EquipoController extends Controller
     public function mostrar_tipo_equipo()
     {
         return Equipo::Select('tipo_equipo')
+            ->whereNotIn('tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
             ->distinct()
             ->orderBy('tipo_equipo', 'asc')
             ->get();
@@ -793,6 +876,8 @@ class EquipoController extends Controller
             ->leftjoin('ips','id_ip','=','equipos.ip')
             ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal') 
             ->leftjoin('empleados','equipos.asignado','=','cedula')
+            ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
+            ->orderBy('equipos.tipo_equipo', 'asc')
             ->get();             
     }
 
@@ -920,7 +1005,39 @@ class EquipoController extends Controller
         $equipo = Equipo::find($id_equipo);
         $equipo->estado_operativo = 'B';
         $equipo->save();
-    } #por ver: que pasa si ya está de baja y le doy eliminar otra vez xd
-    # creo que si ya está de baja debería deshabilotarse la opción de eliminar ?
+    } 
 
+    /*Esto fue creado en base al formato de excel llamado "Inventario Final Ok" */
+    function reporte_general(){
+        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, 
+        empleados.nombre as empleado, empleados.apellido as apellido, 
+         bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
+         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('ips','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->whereNotNull('asignado')
+        ->orderBy('departamento')
+        ->get()
+        /* ->groupBy('departamento') */;  
+    }
+
+     /*Esto fue creado en base al formato de excel llamado "Inventario equipos Sistemas (baja)" */
+     function reporte_bajas(){
+        return Equipo::SelectRaw('id_equipo, codigo, tipo_equipo, modelo,numero_serie,estado_operativo,
+        descripcion, marcas.nombre as marca')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->orderBy('tipo_equipo')
+        ->where('estado_operativo','B')
+        ->get()
+        /* ->groupBy('tipo_equipo') */;
+    }
+
+    function resumen_bajas(){
+        return Equipo::select(DB::raw('count(*) as cantidad, tipo_equipo'))
+        ->where('estado_operativo', 'B')
+        ->groupBy('tipo_equipo')
+        ->get();
+    }
 }
