@@ -129,4 +129,5 @@ use Illuminate\Http\Request;
 
 
 /*API Routers*/   
-    Route::get('router_id/{id_equipo}', 'RouterController@router_id');    
+    Route::get('router_id/{id_equipo}', 'RouterController@router_id');     
+    Route::post('editar_router', 'RouterController@editar_router');   

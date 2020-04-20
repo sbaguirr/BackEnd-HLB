@@ -604,10 +604,14 @@ class EquipoController extends Controller
     }
     
     /*Listar computadoras y laptops Web Version*/
-    public function darDeBajaEquipoID($idequipo,$tipo)
+    public function darDeBajaEquipoID($idequipo,$tipo)//metodo corregido del original, no se ha tocado el anterior para evitar conflictos.
     {
-        DB::beginTransaction();
         try {
+            $ip_old=Equipo::select("ip")->where("id_equipo","=", $idequipo)->get();
+            if($ip_old!==null){
+                Ip::Where("id_ip","=",$ip_old[0]->ip)->update(['estado' => "L"]);
+                Equipo::Where("id_equipo","=", $idequipo)->update(["ip" => null]);
+            }
             $res1 = Equipo::Where("id_equipo", "=", $idequipo)->update(['estado_operativo' => "B"]);
             $res2 = Equipo::Where("componente_principal", "=", $idequipo);
             if($tipo=="laptop"){
@@ -622,6 +626,7 @@ class EquipoController extends Controller
             return response()->json(['log' => $e], 400);
         }
     }
+    
     public function listar_laptops(){
         $final = array();
         $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','laptop')->get();
