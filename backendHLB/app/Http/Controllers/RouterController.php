@@ -109,14 +109,14 @@ class RouterController extends Controller
 
     public function eliminar_router($id)
     {
-      $router = Router::find($id);
-      $equipo = Equipo::find($router->id_equipo);
-      if ($equipo->estado_operativo !== 'B'){
+        $router = Router::find($id);
+        $equipo = Equipo::find($router->id_equipo);
         $equipo->estado_operativo = 'B';
-        $equipo->save();
-      }else{
-        return response()->json(['message' => 'Imposible eliminar. El registro ya ha sido dado de baja'], 400);
-      }      
+        $ip_old=$equipo->ip;
+            if($ip_old!==null){
+                Ip::Where("id_ip","=",$ip_old)->update(['estado' => "L"]);
+            }
+        $equipo->save();     
     }
 
     public function editar_equipo_router(Request $request)
@@ -176,7 +176,7 @@ class RouterController extends Controller
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->where('routers.id_equipo',$id_equipo)
-        ->get();
+        ->get()[0];
 
 
 
