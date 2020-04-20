@@ -466,6 +466,11 @@ class EquipoController extends Controller
     {
         DB::beginTransaction();
         try {
+            //si el equipo que se da de baja tiene una ip asignada, se libera la ip
+            $ip_old=Equipo::Where("id_equipo","=", $idequipo)->get(["ip"]);
+            if($ip_old!=null){
+                Ip::Where("id_ip","=",$ip_old)->update(['estado' => "L"]);
+            }
             $res1 = Equipo::Where("id_equipo", "=", $idequipo)->update(['estado_operativo' => "B"]);
             $res2 = Equipo::Where("componente_principal", "=", $idequipo);
             if($tipo=="laptop"){
