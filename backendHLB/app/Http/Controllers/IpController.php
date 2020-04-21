@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Ip;
 use App\Models\Equipo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class IpController extends Controller
 {
@@ -94,6 +95,7 @@ class IpController extends Controller
     public function crear_ip(Request $request)
     {
         $ip= new Ip();
+        try{
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
@@ -104,6 +106,13 @@ class IpController extends Controller
         $ip->nombre_usuario=$request->get('nombre_usuario');
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'La IP ingresada ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }
     }
 
     public function ips_libres()
@@ -122,7 +131,8 @@ class IpController extends Controller
 
     public function editar_ip(Request $request)
     {
-        $ip= Ip::find($request->get('key'));
+        try{
+        $ip= Ip::find($request->get('key')); #key es el id de la ip.
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
@@ -133,6 +143,13 @@ class IpController extends Controller
         $ip->nombre_usuario=$request->get('nombre_usuario');
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'La IP ingresada ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }
     }
 
     public function es_ip_enuso($ip){

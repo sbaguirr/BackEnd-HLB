@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Database\QueryException;
 use DateTime;
 
 class EquipoController extends Controller
@@ -825,12 +826,13 @@ class EquipoController extends Controller
 
     public function crear_otro_equipo(Request $request)
     {
+        try{
         $equipo = new Equipo();
         $dt = new \DateTime();
         $dt->format('Y-m-d');
+        $equipo->codigo = $request->get('codigo');
         $equipo->modelo = $request->get('modelo');
         $equipo->fecha_registro = $dt;
-        $equipo->codigo = $request->get('codigo');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->id_marca = $request->get('id_marca');
         $equipo->asignado = $request->get('asignado');
@@ -846,8 +848,6 @@ class EquipoController extends Controller
             $equipo->tipo_equipo = $tipo;
         }
 
-        /*Si el usuario elige una ip para la impresora, el
-        estado de la ip debe cambiar a En uso */
         $id = $request->get('ip');
         if ($id !== null) {
             $ip = Ip::find($id);
@@ -855,6 +855,13 @@ class EquipoController extends Controller
             $ip->save();
         }
         $equipo->save();
+    }catch(QueryException $e){
+        $error_code = $e->errorInfo[1];
+        if($error_code == 1062){
+            return response()->json(['log'=>'El código del equipo que ha ingresado ya existe'],500);
+        }
+        return response()->json(['log'=>$e],500);
+    }
     }
 
     public function mostrar_tipo_equipo()
@@ -889,13 +896,13 @@ class EquipoController extends Controller
 
         DB::beginTransaction();
         try  {
+            $equipo->codigo = $request->get('codigo');
             $equipo->modelo = $request->get('modelo');
-            
             $equipo->descripcion = $request->get('descripcion');
             $equipo->numero_serie = $request->get('numero_serie');
             $equipo->estado_operativo = $request->get('estado_operativo');
             $equipo->componente_principal = $request->get('componente_principal'); 
-            $equipo->codigo = $request->get('codigo');
+            
             
             /*Comprobación necesaria de acuerdo a lo establecido en el formulario del 
             frontend */
@@ -958,9 +965,6 @@ class EquipoController extends Controller
         }
         $equipo->ip = $ip_actual;     
         
-         /*Si el usuario elige una nueva ip para la impresora,
-         *el estado de esta debe cambiar a En uso y la anterior debe
-         quedar libre. */
             if($ip_anterior!==$ip_actual){
                 if($ip_actual!==null){
                     $ips= Ip::find($ip_actual);
@@ -982,7 +986,13 @@ class EquipoController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
-        } 
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código del equipo que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }
     }
 
     /*Obtener los datos de un equipo a partir de su ID */
@@ -1000,10 +1010,11 @@ class EquipoController extends Controller
         ->get();
 
     }
-
+    #debo considerar algo más? -s
     function eliminar_equipo($id_equipo){
         $equipo = Equipo::find($id_equipo);
         $equipo->estado_operativo = 'B';
+        $equipo->componente_principal = null;
         $equipo->save();
     } 
 
@@ -1033,7 +1044,9 @@ class EquipoController extends Controller
         ->get()
         /* ->groupBy('tipo_equipo') */;
     }
-
+    
+    /* Servicio que resume la cantidad de equipos que estan dados de baja.
+     * Esto es utilizado para cargar datos en el archivo que se exporta desde la página web */
     function resumen_bajas(){
         return Equipo::select(DB::raw('count(*) as cantidad, tipo_equipo'))
         ->where('estado_operativo', 'B')
