@@ -729,33 +729,54 @@ class EquipoController extends Controller
     public function obtenerInfoDesktop($idequipo){
         $laptops= Equipo::Where("id_equipo","=",$idequipo)->orWhere("componente_principal","=",$idequipo);
         $marca = Marca::WhereIn("id_marca",$laptops->get(['id_marca']));
+        $ip = Ip::WhereIn("id_ip",$laptops->get(['ip']));
         $empleado = Empleado::WhereIn("cedula",$laptops->get(['asignado']));
         $dpto = Departamento::WhereIn("id_departamento",$empleado->get(['id_departamento']));
         $punto = Organizacion::WhereIn("id_organizacion",$dpto->get(['id_organizacion']));
         $compenentes = DetalleComponente::WhereIn("id_equipo",$laptops->get(['id_equipo']));  
         $detEq= DetalleEquipo::Where("id_equipo","=",$idequipo)->get();
         $var = self::generarDetalleDesktop($laptops->get()->toArray(),$compenentes->get()->toArray(),$detEq,
-        $empleado->get()->toArray(), $dpto->get()->toArray(), $punto->get()->toArray(),$marca->get()->toArray());
+        $empleado->get()->toArray(), $dpto->get()->toArray(), $punto->get()->toArray(),$marca->get()->toArray(),$ip->get()->toArray());
         return response()->json($var);
     }
 
-    private function generarDetalleDesktop($equipos, $detalles, $detEq, $empleado, $dpto, $punto, $marca)
+    private function generarDetalleDesktop($equipos, $detalles, $detEq, $empleado, $dpto, $punto, $marcas, $ip)
     {
         $rams = array();
         $discos = array();
         $fuente_alimentacion = array();
         for ( $i=0; $i<count($equipos); $i++ ){
-            $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
-            $equipos[$i]['marca'] = $marca['0']["nombre"];
+            if($equipos[$i]["id_marca"] !== null){
+                $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+                $equipos[$i]['marca'] = $marca['0']["nombre"];
+            }
             if ($equipos[$i]["tipo_equipo"] === "memoria_ram" || $equipos[$i]["tipo_equipo"] === "disco_duro"){
-                $capacidad = self::fil_obj($detalles,"campo","capacidad");
-                $tipo = self::fil_obj($detalles,"campo","tipo");
-                $equipos[$i]['capacidad'] = $capacidad["dato"];                
-                $equipos[$i]['tipo'] = $tipo["dato"];
                 if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
+                    $equipos[$i]['marca'] = $marca['0']["nombre"];
+                    for ( $k=0; $k<count($detalles); $k++ ){
+                        if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){
+                            if($detalles[$k]['campo']==='capacidad'){
+                                $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
+                            }
+                            if($detalles[$k]['campo']==='tipo'){
+                                $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
+                            }
+                        }
+                    }
                     array_push($rams, $equipos[$i]);
                 }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
-                    array_push($discos, $equipos[$i]);
+                    $equipos[$i]['marca'] = $marca['0']["nombre"];
+                    for ( $k=0; $k<count($detalles); $k++ ){
+                        if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){ 
+                            if($detalles[$k]['campo']==='capacidad'){
+                                $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
+                            }
+                            if($detalles[$k]['campo']==='tipo'){
+                                $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
+                            }                        
+                        }
+                    }
+                    array_push($discos, $equipos[$i]); 
                 }
             }elseif ($equipos[$i]["tipo_equipo"] === "ups"){
                 array_push($fuente_alimentacion, $equipos[$i]);
@@ -764,12 +785,14 @@ class EquipoController extends Controller
             }
         }
         $laptop =  self::fil_obj($equipos,"tipo_equipo","desktop");
-        $laptop["marca"] = $marca['0']['nombre'];
         if($empleado !== []){
             $laptop["empleado"] = $empleado['0']["nombre"];            
             $laptop["apellido"] = $empleado['0']["apellido"];
             $laptop["departamento"] = $dpto['0']["nombre"];
             $laptop["bspi"] = $punto['0']["bspi_punto"];
+        };
+        if($ip !== []){
+            $laptop["direccion_ip"] = $ip['0']['direccion_ip'];
         };
         $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
         if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
@@ -898,7 +921,7 @@ class EquipoController extends Controller
             DB::rollback();
             return response()->json(['log' => $e], 400);
         }
-        }
+    }
 
     public function crear_laptop(Request $request)
     {
@@ -911,7 +934,7 @@ class EquipoController extends Controller
             $computador->id_marca = $request->get('general_fields')['marca'];
             $computador->modelo = $request->get('general_fields')['modelo'];
             $computador->encargado_registro = 'admin';
-            $computador->estado_operativo = 'O';
+            $computador->estado_operativo = $request->get('general_fields')['estado'];
             $computador->descripcion = $request->get('general_fields')['descripcion'];
             $computador->numero_serie = $request->get('general_fields')['nserie'];
             $computador->ip = $request->get('general_fields')['ip'];
@@ -951,7 +974,7 @@ class EquipoController extends Controller
             $proc->descripcion = $request->get('procesador_fields')['descr_proc'];
             $proc->encargado_registro = 'admin';
             $proc->fecha_registro = Date('Y-m-d H:i:s');
-            $proc->estado_operativo = 'O';
+            $proc->estado_operativo = $request->get('general_fields')['estado'];
             $proc->asignado=$request->get('general_fields')['asignar'];
             $proc->componente_principal = $computador->id_equipo;
             $proc->tipo_equipo = 'procesador';
@@ -979,7 +1002,7 @@ class EquipoController extends Controller
                     $comp->descripcion = $data['descr'];
                     $comp->encargado_registro = 'admin';
                     $comp->fecha_registro = Date('Y-m-d H:i:s');
-                    $comp->estado_operativo = 'O';
+                    $comp->estado_operativo = $request->get('general_fields')['estado'];
                     $comp->asignado=$request->get('general_fields')['asignar'];
                     $comp->componente_principal = $computador->id_equipo;
                     $comp->tipo_equipo=$clave;
@@ -996,6 +1019,259 @@ class EquipoController extends Controller
                     $capacidad->dato = $data['capacidad']['cant'] . " " . $data['capacidad']['un'] ;
                     $capacidad->id_equipo = $comp->id_equipo;
                     $capacidad->save();
+                }
+            }
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+    }
+
+    public function editar_desktop(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $computador = Equipo::find($request->key);
+            $ip_anterior= $computador->ip; 
+            $computador->estado_operativo = $request->get('general')['estado'];
+            $computador->descripcion = $request->get('general')['descripcion'];
+            $ip = $request->get('general')['ip'];
+            if($ip === null){
+                $ip = null;
+            }elseif(!is_numeric($ip)){
+                $id_ip=Ip::select('id_ip')->where('direccion_ip','=',$ip)->get();
+                $ip= $id_ip[0]->id_ip;
+            }
+            $computador->ip = $ip;
+            if($ip_anterior!==$ip){
+                if($ip!==null){
+                    $ips= Ip::find($ip);
+                    $ips->estado= "EU";
+                    $ips->save();
+                }
+                if($ip_anterior!==null){
+                    $anterior= Ip::find($ip_anterior);
+                    $anterior->estado= "L";
+                    $anterior->save();
+                }
+            }
+            $computador->asignado=$request->get('general')['asignar'];
+            $computador->save();
+            
+            DetalleEquipo::where("id_equipo","=",$request->key)->update([
+                "nombre_pc"=>$request->get('general')['nombre_pc'],
+                "usuario_pc"=>$request->get('general')['usuario_pc'],
+                "so"=>$request->get('so')['so'],
+                "office"=>$request->get('so')['office'],
+                "tipo_so"=>$request->get('so')['tipo_so'],
+                "services_pack"=>$request->get('so')['sp1'],
+                "licencia"=>$request->get('so')['licencia']
+            ]);            
+            
+            $marca_proc = $request->get('procesador')['marca_proc'];
+            if(!is_numeric($marca_proc)){
+                $id_marca=Marca::select('id_marca')->where('nombre','=',$marca_proc)->get();
+                $marca_proc= $id_marca[0]->id_marca;
+            }
+            Equipo::where("componente_principal","=",$request->key)->where("tipo_equipo", "=", "procesador")->update([
+                "id_marca" => $marca_proc,
+                "modelo" => $request->get('procesador')['modelo_proc'],
+                "numero_serie" => $request->get('procesador')['nserie_proc'],
+                "descripcion" => $request->get('procesador')['descr_proc'],
+                "estado_operativo" => $request->get('general')['estado'],
+                "asignado" => $request->get('general')['asignar']
+            ]);
+            $id_procesador = Equipo::select("id_equipo")->where("componente_principal","=",$request->key)->where("tipo_equipo","=","procesador")->get();
+            DetalleComponente::where("id_equipo","=",$id_procesador[0]->id_equipo)->where("campo","=","nucleos")->update([
+                "dato" => $request->get('procesador')['nucleos_proc']
+            ]);
+            DetalleComponente::where("id_equipo","=",$id_procesador[0]->id_equipo)->where("campo","=","frecuencia")->update([
+                "dato" => $request->get('procesador')['frec_proc']
+            ]);
+        
+            foreach($request->except(['step', 'titulo', 'disabled', 'key','general', 'so', 'procesador']) as $clave => $valor){
+                if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
+                    $marca = $valor['marca'];
+                    if(!is_numeric($marca)){
+                        $id_marca=Marca::select('id_marca')->where('nombre','=',$marca)->get();
+                        $marca = $id_marca[0]->id_marca;
+                    }
+                    Equipo::where("componente_principal","=",$request->key)
+                    ->where("codigo","=",$valor['codigo'])->update([
+                        "id_marca" => $marca,
+                        "modelo" => $valor['modelo'],
+                        "numero_serie" => $valor['nserie'],
+                        "descripcion" => $valor['descr'],
+                        "estado_operativo" => $request->get('general')['estado'],
+                        "asignado" => $request->get('general')['asignar']
+                    ]);
+                    if($clave === 'mainboard'){
+                        $id_equipo1 = Equipo::select("id_equipo")->where("componente_principal","=",$request->key)
+                        ->where("codigo","=",$valor['codigo'])->get();
+                        DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","numero_slots")->update([
+                            "dato" => $request->get('mainboard')['num_slots']
+                        ]);
+                        DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","ram_soportada")->update([
+                            "dato" => $request->get('mainboard')['ram_soportada']
+                        ]);
+                        DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","conexiones_dd")->update([
+                            "dato" => $request->get('mainboard')['conexiones_dd']
+                        ]);
+                    }
+                } else {
+                    foreach($valor['datos'] as $k => $data){
+                        $id_equipo = Equipo::select("id_equipo")->where("componente_principal","=",$request->key)
+                        ->where("codigo","=",$data['codigo'])->where("tipo_equipo", "=", $clave)->get();
+                        Equipo::where("id_equipo","=",$id_equipo[0]->id_equipo)->update([
+                            "id_marca" => $data['marca'],
+                            "modelo" => $data['modelo'],
+                            "numero_serie" => $data['nserie'],
+                            "descripcion" => $data['descr'],
+                            "estado_operativo" => $request->get('general')['estado'],
+                            "asignado" => $request->get('general')['asignar']
+                        ]);
+                        DetalleComponente::where("id_equipo","=",$id_equipo[0]->id_equipo)->where("campo","=","tipo")->update([
+                            "dato" => $data['tipo']
+                        ]);
+                        DetalleComponente::where("id_equipo","=",$id_equipo[0]->id_equipo)->where("campo","=","capacidad")->update([
+                            "dato" => $data['capacidad']['cant'] . " " . $data['capacidad']['un'] 
+                        ]);
+                    }
+                }          
+            }
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+    }
+
+    public function crear_desktop(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $computador = new Equipo();
+            $computador->codigo = $request->get('general')['codigo'];
+            $computador->fecha_registro = Date('Y-m-d H:i:s');
+            $computador->tipo_equipo = 'desktop';
+            $computador->encargado_registro = 'admin';
+            $computador->estado_operativo = $request->get('general')['estado'];
+            $computador->descripcion = $request->get('general')['descripcion'];
+            $computador->ip = $request->get('general')['ip'];
+            $computador->asignado=$request->get('general')['asignar'];
+            $computador->save();
+            if($request->get("general")["ip"]!=null && $request->get("general")["ip"]!=""){
+                Ip::Where("id_ip","=",$request->get("general")["ip"])->update(['estado' => "EU"]);
+            }
+
+            $detEq = new DetalleEquipo();
+            $detEq->nombre_pc=$request->get('general')['nombre_pc'];
+            $detEq->usuario_pc=$request->get('general')['usuario_pc'];
+            $detEq->so=$request->get('so')['so'];
+            $detEq->office=$request->get('so')['office'];
+            $detEq->tipo_so=$request->get('so')['tipo_so'];
+            $detEq->services_pack=$request->get('so')['sp1'];
+            $detEq->licencia=$request->get('so')['licencia'];
+            $detEq->id_equipo= $computador->id_equipo;
+            $detEq->save();
+
+            $proc = new Equipo();
+            $proc->id_marca = $request->get('procesador')['marca_proc'];
+            $proc->codigo = $request->get('procesador')['codigo_proc'];
+            $proc->modelo = $request->get('procesador')['modelo_proc'];
+            $proc->numero_serie = $request->get('procesador')['nserie_proc'];
+            $proc->descripcion = $request->get('procesador')['descr_proc'];
+            $proc->encargado_registro = 'admin';
+            $proc->fecha_registro = Date('Y-m-d H:i:s');
+            $proc->estado_operativo = $request->get('general')['estado'];
+            $proc->asignado=$request->get('general')['asignar'];
+            $proc->componente_principal = $computador->id_equipo;
+            $proc->tipo_equipo = 'procesador';
+            $proc->save();
+
+            $nucleos = new DetalleComponente();
+            $nucleos->campo = 'nucleos';
+            $nucleos->dato = $request->get('procesador')['nucleos_proc'];
+            $nucleos->id_equipo = $proc->id_equipo;
+            $nucleos->save();
+
+            $frec = new DetalleComponente();
+            $frec->campo = 'frecuencia';
+            $frec->dato = $request->get('procesador')['frec_proc'];
+            $frec->id_equipo = $proc->id_equipo;
+            $frec->save();
+
+            foreach($request->except(['step', 'titulo', 'disabled', 'key', 'general', 'so', 'procesador']) as $clave => $valor){
+                if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
+                    $component = new Equipo();
+                    $component->id_marca = $valor['marca'];
+                    $component->codigo = $valor['codigo'];
+                    $component->modelo = $valor['modelo'];
+                    $component->numero_serie = $valor['nserie'];
+                    $component->descripcion = $valor['descr'];
+                    $component->encargado_registro = 'admin';
+                    $component->fecha_registro = Date('Y-m-d H:i:s');
+                    $component->estado_operativo = $request->get('general')['estado'];
+                    $component->asignado=$request->get('general')['asignar'];
+                    $component->componente_principal = $computador->id_equipo;
+                    if($clave === 'fuente_alimentacion'){
+                        $component->tipo_equipo=$valor['tipo'];
+                    }else{
+                        $component->tipo_equipo=$valor['nombre'];
+                    }
+                    
+                    $component->save();
+                    if($clave === 'mainboard'){
+                        $num_slots = new DetalleComponente();
+                        $num_slots->campo = 'numero_slots';
+                        $num_slots->dato = $request->get('mainboard')['num_slots'];
+                        $num_slots->id_equipo = $component->id_equipo;
+                        $num_slots->save();
+
+                        $ram_soport = new DetalleComponente();
+                        $ram_soport->campo = 'ram_soportada';
+                        $ram_soport->dato = $request->get('mainboard')['ram_soportada'] . " GB";
+                        $ram_soport->id_equipo = $component->id_equipo;
+                        $ram_soport->save();
+
+                        $conexiones_dd = new DetalleComponente();
+                        $conexiones_dd->campo = 'conexiones_dd';
+                        $conexiones_dd->dato = $request->get('mainboard')['conexiones_dd'];
+                        $conexiones_dd->id_equipo = $component->id_equipo;
+                        $conexiones_dd->save();//no conexiones disco en front
+                    }
+
+                } else {
+                    foreach($valor['datos'] as $k => $data){
+                        $comp = new Equipo();
+                        $comp->id_marca = $data['marca'];
+                        $comp->codigo = $data['codigo'];
+                        $comp->modelo = $data['modelo'];
+                        $comp->numero_serie = $data['nserie'];
+                        $comp->descripcion = $data['descr'];
+                        $comp->encargado_registro = 'admin';
+                        $comp->fecha_registro = Date('Y-m-d H:i:s');
+                        $comp->estado_operativo = $request->get('general')['estado'];
+                        $comp->asignado=$request->get('general')['asignar'];
+                        $comp->componente_principal = $computador->id_equipo;
+                        $comp->tipo_equipo=$clave;
+                        $comp->save();
+
+                        $tipo = new DetalleComponente();
+                        $tipo->campo = 'tipo';
+                        $tipo->dato = $data['tipo'];
+                        $tipo->id_equipo = $comp->id_equipo;
+                        $tipo->save();
+                        
+                        $capacidad = new DetalleComponente();
+                        $capacidad->campo = 'capacidad';
+                        $capacidad->dato = $data['capacidad']['cant'] . " " . $data['capacidad']['un'] ;
+                        $capacidad->id_equipo = $comp->id_equipo;
+                        $capacidad->save();
+                    }
                 }
             }
             DB::commit();
