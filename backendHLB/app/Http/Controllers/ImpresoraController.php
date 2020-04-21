@@ -9,6 +9,7 @@ use App\Models\Marca;
 use App\Models\Ip;
 use App\Models\Empleado;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 use DateTime;
 
 
@@ -31,7 +32,7 @@ class ImpresoraController extends Controller
         //$v="id_marca";
         //$equipo ->id_marca=$value_marca->$v;
 
-
+    try{
         $equipo ->modelo=$request->get('modelo');
 
         $equipo ->fecha_registro=$dt;
@@ -80,6 +81,13 @@ class ImpresoraController extends Controller
             $ip->save();
         }
         return response()->json($impresora);
+    }catch(QueryException $e){
+        $error_code = $e->errorInfo[1];
+        if($error_code == 1062){
+            return response()->json(['log'=>'El código del equipo que ha ingresado ya existe'],500);
+        }
+        return response()->json(['log'=>$e],500);
+    }
     }
 
     public function mostrar_impresoras(){
@@ -283,6 +291,12 @@ class ImpresoraController extends Controller
         }catch(Exception $e){
             DB::rollback();
             return response()->json(['log'=>$e],400);
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código del equipo que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
         }
     }
 
