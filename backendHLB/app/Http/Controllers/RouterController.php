@@ -109,16 +109,62 @@ class RouterController extends Controller
 
     public function eliminar_router($id)
     {
-      $router = Router::find($id);
-      $equipo = Equipo::find($router->id_equipo);
-      if ($equipo->estado_operativo !== 'B'){
+        $equipo = Equipo::find($id);
         $equipo->estado_operativo = 'B';
-        $equipo->save();
-      }else{
-        return response()->json(['message' => 'Imposible eliminar. El registro ya ha sido dado de baja'], 400);
-      }      
+        $ip_old=$equipo->ip;
+            if($ip_old!==null){
+                Ip::Where("id_ip","=",$ip_old)->update(['estado' => "L"]);
+                $equipo->ip = null;
+            }
+        $equipo->save();     
     }
 
+    /*Web service*/
+    public function editar_router(Request $request)
+    {
+      $equipo = Equipo::find($request->id_equipo); 
+      $ip_anterior= $equipo->ip; 
+      $equipo->fecha_registro = $request->get('fecha_registro');      
+      $equipo->estado_operativo = $request->get('estado_operativo');
+      $equipo->codigo = $request->get('codigo');
+      $equipo->tipo_equipo = $request->get('tipo_equipo');
+      $equipo->id_marca = $request->get('id_marca');
+      $equipo->modelo = $request->get('modelo');
+      $equipo->numero_serie = $request->get('numero_serie');
+      $equipo->descripcion = $request->get('descripcion');
+      $equipo->asignado = $request->get('asignado');
+      $equipo->encargado_registro = $request->get('encargado_registro');
+      $equipo->componente_principal = $request->get('componente_principal');
+      
+      $ip_actual = $request->get('ip');
+        if($ip_actual!==null){
+            if($ip_anterior!==$ip_actual){
+                $ip= Ip::find($ip_actual);
+                $ip->estado= "EU";
+                $ip->save();
+            }
+        }else{
+            $ip_actual=null;
+        }
+      
+        $equipo->ip = $request->get('ip'); 
+        if($ip_anterior!==null){
+            $anterior= Ip::find($ip_anterior);
+            $anterior->estado= "L";
+            $anterior->save();
+        }
+      $equipo->save(); 
+
+      $router = Router::Where("id_equipo","=",$request->id_equipo)->update([
+        "nombre" => $request->get('nombre'),
+        "pass" => $request->get('pass'),
+        "puerta_enlace" => $request->get('puerta_enlace'),
+        "usuario" => $request->get('usuario'),
+        "clave" => $request->get('clave')
+      ]);  
+    }
+
+    /*Método usado en la aplicación movil*/
     public function editar_equipo_router(Request $request)
     {
       $router = Router::find($request->id_equipo);
@@ -160,9 +206,7 @@ class RouterController extends Controller
       $router->puerta_enlace = $request->get('puerta_enlace');
       $router->usuario = $request->get('usuario');
       $router->clave = $request->get('clave');
-      $router->save();   
-      
-      
+      $router->save();    
     }
 
     /* Obtener datos de un router dado el id del equipo */
@@ -176,7 +220,7 @@ class RouterController extends Controller
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->where('routers.id_equipo',$id_equipo)
-        ->get();
+        ->get()[0];
 
 
 

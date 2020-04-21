@@ -105,6 +105,7 @@ use Illuminate\Http\Request;
     Route::get('reporte-bajas','EquipoController@reporte_bajas');
     Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
     Route::post('crear_laptop','EquipoController@crear_laptop');
+    Route::post('editar_laptop','EquipoController@editar_laptop');
     Route::get('resumen-bajas','EquipoController@resumen_bajas');
 
 
@@ -128,4 +129,5 @@ use Illuminate\Http\Request;
 
 
 /*API Routers*/   
-    Route::get('router_id/{id_equipo}', 'RouterController@router_id');    
+    Route::get('router_id/{id_equipo}', 'RouterController@router_id');     
+    Route::post('editar_router', 'RouterController@editar_router');   

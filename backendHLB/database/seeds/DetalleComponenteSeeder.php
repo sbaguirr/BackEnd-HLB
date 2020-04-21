@@ -184,6 +184,66 @@ class DetalleComponenteSeeder extends Seeder
             'id_equipo' => 36
         ]);
         DetalleComponente::create([
+            'dato' => '12 GB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 37
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR3',
+            'campo' => 'tipo', 
+            'id_equipo' => 37
+        ]);
+        DetalleComponente::create([
+            'dato' => '1 GB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 38
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR2',
+            'campo' => 'tipo', 
+            'id_equipo' => 38
+        ]);
+        DetalleComponente::create([
+            'dato' => '1 GB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 39
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR2',
+            'campo' => 'tipo', 
+            'id_equipo' => 39
+        ]);
+        DetalleComponente::create([
+            'dato' => '1 GB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 40
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR2',
+            'campo' => 'tipo', 
+            'id_equipo' => 40
+        ]);
+        DetalleComponente::create([
+            'dato' => '1 GB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 41
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR2',
+            'campo' => 'tipo', 
+            'id_equipo' => 41
+        ]);
+        DetalleComponente::create([
+            'dato' => '2 TB',
+            'campo' => 'capacidad', 
+            'id_equipo' => 42
+        ]);
+        DetalleComponente::create([
+            'dato' => 'DDR',
+            'campo' => 'tipo', 
+            'id_equipo' => 42
+        ]);
+        DetalleComponente::create([
             'dato' => '3 GB',
             'campo' => 'ram_soportada', 
             'id_equipo' => 50
