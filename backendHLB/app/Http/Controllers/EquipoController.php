@@ -1567,12 +1567,29 @@ class EquipoController extends Controller
     }
 
 
-    #debo considerar algo más? -s
     function eliminar_equipo($id_equipo){
+        try{
         $equipo = Equipo::find($id_equipo);
+        $ip_old= $equipo->ip;
         $equipo->estado_operativo = 'B';
-        $equipo->componente_principal = null;
+        $equipo->componente_principal = null; 
+        $equipo->ip = null;
+        $equipo->asignado = null;
         $equipo->save();
+        if($ip_old!==null){
+            Ip::Where("id_ip","=",$ip_old)->update(['estado' => "L"]);
+        }
+        #Si otros equipos lo tienen como componente principal
+        Equipo::Where("componente_principal", "=", $id_equipo)->update(['componente_principal' => null]);
+        DB::commit();
+        return response()->json(['log' => "Registro dado de baja satisfactoriamente"]);
+        } catch(Exception $e){
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+        catch(QueryException $e){
+            return response()->json(['log'=>$e],500);
+        }
     } 
 
     /*Esto fue creado en base al formato de excel llamado "Inventario Final Ok" */
@@ -1586,9 +1603,9 @@ class EquipoController extends Controller
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->whereNotNull('asignado')
+        ->where('estado_operativo','<>','B')
         ->orderBy('departamento')
-        ->get()
-        /* ->groupBy('departamento') */;  
+        ->get();  
     }
 
      /*Esto fue creado en base al formato de excel llamado "Inventario equipos Sistemas (baja)" */
