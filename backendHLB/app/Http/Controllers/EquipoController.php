@@ -1010,6 +1010,7 @@ class EquipoController extends Controller
 
     public function crear_otro_equipo(Request $request)
     {
+        DB::beginTransaction();
         try{
         $equipo = new Equipo();
         $dt = new \DateTime();
@@ -1039,7 +1040,44 @@ class EquipoController extends Controller
             $ip->save();
         }
         $equipo->save();
-    }catch(QueryException $e){
+
+        if(strcasecmp($equipo->tipo_equipo,"memoria_ram")==0 ||
+            strcasecmp($equipo->tipo_equipo,"disco_duro")==0 ||
+            strcasecmp($equipo->tipo_equipo,"ram")==0 ||
+            strcasecmp($equipo->tipo_equipo,"discoduro")==0){
+            $tipo = new DetalleComponente();
+            $tipo->campo = 'tipo';
+            $tipo->dato = $request->get('tipo_mem');
+            $tipo->id_equipo = $equipo->id_equipo;
+            $tipo->save();
+                        
+            $capacidad = new DetalleComponente();
+            $capacidad->campo = 'capacidad';
+            $capacidad->dato = $request->get('capacidad'). " " . $request->get('un');
+            $capacidad->id_equipo = $equipo->id_equipo;
+            $capacidad->save();
+
+        }   else if(strcasecmp($equipo->tipo_equipo,"procesador")==0){
+            $nucleos = new DetalleComponente();
+            $nucleos->campo = 'nucleos';
+            $nucleos->dato = $request->get('nucleo');
+            $nucleos->id_equipo = $equipo->id_equipo;
+            $nucleos->save();
+
+            $frec = new DetalleComponente();
+            $frec->campo = 'frecuencia';
+            $frec->dato = $request->get('frecuencia');
+            $frec->id_equipo = $equipo->id_equipo;
+            $frec->save();
+        }
+
+        DB::commit();
+        return response()->json(['log' => 'Registro creado satisfactoriamente'], 200);
+        }catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+        catch(QueryException $e){
         $error_code = $e->errorInfo[1];
         if($error_code == 1062){
             return response()->json(['log'=>'El código del equipo que ha ingresado ya existe'],500);
@@ -1165,6 +1203,27 @@ class EquipoController extends Controller
     
             $equipo->save();
 
+            if(strcasecmp($equipo->tipo_equipo,"memoria_ram")==0 ||
+            strcasecmp($equipo->tipo_equipo,"disco_duro")==0 ||
+            strcasecmp($equipo->tipo_equipo,"ram")==0 ||
+            strcasecmp($equipo->tipo_equipo,"discoduro")==0){
+
+            DetalleComponente::where("id_equipo","=", $equipo->id_equipo)->where("campo","=","tipo")->update([
+                "dato" => $request->get('tipo_mem')
+            ]);
+            DetalleComponente::where("id_equipo","=", $equipo->id_equipo)->where("campo","=","capacidad")->update([
+                "dato" => $request->get('capacidad') . " " . $request->get('un') 
+            ]);
+
+            } else if(strcasecmp($equipo->tipo_equipo,"procesador")==0){
+            DetalleComponente::where("id_equipo","=",$equipo->id_equipo)->where("campo","=","nucleos")->update([
+                "dato" => $request->get('nucleo')
+            ]);
+            DetalleComponente::where("id_equipo","=",$equipo->id_equipo)->where("campo","=","frecuencia")->update([
+                "dato" => $request->get('frecuencia')
+            ]);
+            }
+
             DB::commit();
             return response()->json(['log' => 'Registro actualizado satisfactoriamente'], 200);
         } catch (Exception $e) {
@@ -1181,7 +1240,7 @@ class EquipoController extends Controller
 
     /*Obtener los datos de un equipo a partir de su ID */
     public function equipo_id($id_equipo){
-        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, 
+        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca,
         empleados.nombre as empleado, empleados.apellido as apellido, p.codigo as componente_principal,
          bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
@@ -1191,9 +1250,16 @@ class EquipoController extends Controller
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->where('equipos.id_equipo',$id_equipo)
-        ->get();
-
+        ->get();  
     }
+
+    public function info_extra($id_equipo){
+        return DetalleComponente::selectRaw('*')
+        ->where('id_equipo',$id_equipo)
+        ->get();
+    }
+
+
     #debo considerar algo más? -s
     function eliminar_equipo($id_equipo){
         $equipo = Equipo::find($id_equipo);
