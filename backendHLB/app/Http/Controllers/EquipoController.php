@@ -717,6 +717,15 @@ class EquipoController extends Controller
     }
     
     /*************************************************** */
+    public function listado_codigos(){
+        $codigos = array();
+        $codigo = Equipo::select('codigo')->distinct()->get();
+        for ( $i=0; $i<count($codigo); $i++ ){
+            array_push($codigos, $codigo[$i]['codigo']);
+        }
+        return ($codigos);
+    }
+    
     public function listar_desktops(){
         $final = array();
         $eq = Equipo::select('id_equipo')->where('tipo_equipo','=','desktop')->where('estado_operativo', '<>', 'B')->get();
@@ -746,68 +755,72 @@ class EquipoController extends Controller
         $rams = array();
         $discos = array();
         $fuente_alimentacion = array();
-        for ( $i=0; $i<count($equipos); $i++ ){
-            if($equipos[$i]["id_marca"] !== null){
-                $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
-                $equipos[$i]['marca'] = $marca['0']["nombre"];
-            }
-            if ($equipos[$i]["tipo_equipo"] === "memoria_ram" || $equipos[$i]["tipo_equipo"] === "disco_duro"){
-                if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
-                    $equipos[$i]['marca'] = $marca['0']["nombre"];
-                    for ( $k=0; $k<count($detalles); $k++ ){
-                        if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){
-                            if($detalles[$k]['campo']==='capacidad'){
-                                $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
-                            }
-                            if($detalles[$k]['campo']==='tipo'){
-                                $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
-                            }
-                        }
-                    }
-                    array_push($rams, $equipos[$i]);
-                }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
-                    $equipos[$i]['marca'] = $marca['0']["nombre"];
-                    for ( $k=0; $k<count($detalles); $k++ ){
-                        if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){ 
-                            if($detalles[$k]['campo']==='capacidad'){
-                                $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
-                            }
-                            if($detalles[$k]['campo']==='tipo'){
-                                $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
-                            }                        
-                        }
-                    }
-                    array_push($discos, $equipos[$i]); 
-                }
-            }elseif ($equipos[$i]["tipo_equipo"] === "ups"){
-                array_push($fuente_alimentacion, $equipos[$i]);
-            }elseif ($equipos[$i]["tipo_equipo"] === "regulador"){
-                array_push($fuente_alimentacion, $equipos[$i]);
-            }
-        }
-        $laptop =  self::fil_obj($equipos,"tipo_equipo","desktop");
+        $desktop = self::fil_obj($equipos,"tipo_equipo","desktop");
         if($empleado !== []){
-            $laptop["empleado"] = $empleado['0']["nombre"];            
-            $laptop["apellido"] = $empleado['0']["apellido"];
-            $laptop["departamento"] = $dpto['0']["nombre"];
-            $laptop["bspi"] = $punto['0']["bspi_punto"];
+            $desktop["empleado"] = $empleado['0']["nombre"];            
+            $desktop["apellido"] = $empleado['0']["apellido"];
+            $desktop["departamento"] = $dpto['0']["nombre"];
+            $desktop["bspi"] = $punto['0']["bspi_punto"];
         };
         if($ip !== []){
-            $laptop["direccion_ip"] = $ip['0']['direccion_ip'];
+            $desktop["direccion_ip"] = $ip['0']['direccion_ip'];
         };
-        $final = [ "general" => $laptop, "so" => $detEq['0'], "rams" => $rams, "discos" => $discos];
-        if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
-         $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
-         'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
-        $final['monitor'] = $obj['pc-monitor'];
-        $final['teclado'] = $obj['pc-teclado'];
-        $final['mouse'] = $obj['pc-mouse'];
-        $final['parlantes'] = $obj['pc-parlantes'];
-        $final['tarjeta_red'] = $obj['cpu-tarjeta_red'];
-        $final['tarjeta_madre'] = $obj['cpu-tarjeta_madre'];        
-        $final['case'] = $obj['cpu-case'];
-        $final['fuente_poder'] = $obj['cpu-fuente_poder'];               
-        $final['procesador'] = $obj['cpu-procesador'];
+        $final = [ "general" => $desktop, "so" => $detEq['0']];
+        if (count($equipos) > 1) {  
+            for ( $i=0; $i<count($equipos); $i++ ){
+                if($equipos[$i]["id_marca"] !== null){
+                    $marca = Marca::Where("id_marca","=",$equipos[$i]["id_marca"])->get();
+                    $equipos[$i]['marca'] = $marca['0']["nombre"];
+                }
+                if ($equipos[$i]["tipo_equipo"] === "memoria_ram" || $equipos[$i]["tipo_equipo"] === "disco_duro"){
+                    if ($equipos[$i]["tipo_equipo"] === "memoria_ram"){
+                        $equipos[$i]['marca'] = $marca['0']["nombre"];
+                        for ( $k=0; $k<count($detalles); $k++ ){
+                            if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){
+                                if($detalles[$k]['campo']==='capacidad'){
+                                    $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
+                                }
+                                if($detalles[$k]['campo']==='tipo'){
+                                    $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
+                                }
+                            }
+                        }
+                        array_push($rams, $equipos[$i]);
+                    }elseif ($equipos[$i]["tipo_equipo"] === "disco_duro"){
+                        $equipos[$i]['marca'] = $marca['0']["nombre"];
+                        for ( $k=0; $k<count($detalles); $k++ ){
+                            if($detalles[$k]['id_equipo']===$equipos[$i]["id_equipo"]){ 
+                                if($detalles[$k]['campo']==='capacidad'){
+                                    $equipos[$i]['capacidad'] = $detalles[$k]["dato"];   
+                                }
+                                if($detalles[$k]['campo']==='tipo'){
+                                    $equipos[$i]['tipo'] = $detalles[$k]["dato"];   
+                                }                        
+                            }
+                        }
+                        array_push($discos, $equipos[$i]); 
+                    }
+                }elseif ($equipos[$i]["tipo_equipo"] === "ups"){
+                    array_push($fuente_alimentacion, $equipos[$i]);
+                }elseif ($equipos[$i]["tipo_equipo"] === "regulador"){
+                    array_push($fuente_alimentacion, $equipos[$i]);
+                }
+            }
+            $final['rams'] = $rams;
+            $final['discos'] = $discos;
+            if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
+            $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
+            'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder','cpu-tarjeta_madre', 'cpu-procesador']);    
+            $final['monitor'] = $obj['pc-monitor'];
+            $final['teclado'] = $obj['pc-teclado'];
+            $final['mouse'] = $obj['pc-mouse'];
+            $final['parlantes'] = $obj['pc-parlantes'];
+            $final['tarjeta_red'] = $obj['cpu-tarjeta_red'];
+            $final['tarjeta_madre'] = $obj['cpu-tarjeta_madre'];        
+            $final['case'] = $obj['cpu-case'];
+            $final['fuente_poder'] = $obj['cpu-fuente_poder'];               
+            $final['procesador'] = $obj['cpu-procesador'];
+        } 
         return $final ;
     }
 
@@ -1580,7 +1593,7 @@ class EquipoController extends Controller
         return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, 
         empleados.nombre as empleado, empleados.apellido as apellido, 
          bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
-         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+         ->leftjoin('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
@@ -1595,7 +1608,7 @@ class EquipoController extends Controller
      function reporte_bajas(){
         return Equipo::SelectRaw('id_equipo, codigo, tipo_equipo, modelo,numero_serie,estado_operativo,
         descripcion, marcas.nombre as marca')
-        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('marcas','marcas.id_marca','=','equipos.id_marca')
         ->orderBy('tipo_equipo')
         ->where('estado_operativo','B')
         ->get()

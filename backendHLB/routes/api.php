@@ -110,6 +110,7 @@ use Illuminate\Http\Request;
     Route::post('editar_desktop','EquipoController@editar_desktop');
     Route::get('resumen-bajas','EquipoController@resumen_bajas');
     Route::get('info_extra/{id_equipo}','EquipoController@info_extra');
+    Route::get('listado_codigos','EquipoController@listado_codigos');
 
 /* API DetalleEquipo */   
     Route::get('listar_so','DetalleEquipoController@listar_so');
