@@ -1091,8 +1091,24 @@ class EquipoController extends Controller
             DetalleComponente::where("id_equipo","=",$id_procesador[0]->id_equipo)->where("campo","=","frecuencia")->update([
                 "dato" => $request->get('procesador')['frec_proc']
             ]);
+
+            if($request->get('fuente_alimentacion')['tipo'] !== 'ninguno'){
+                $marca = $request->get('fuente_alimentacion')['marca'];
+                if(!is_numeric($marca)){
+                    $id_marca=Marca::select('id_marca')->where('nombre','=',$marca)->get();
+                    $marca= $id_marca[0]->id_marca;
+                }
+                Equipo::where("componente_principal","=",$request->key)->where("codigo", "=", $request->get('fuente_alimentacion')['codigo'])->update([
+                    "id_marca" => $marca,
+                    "modelo" => $request->get('fuente_alimentacion')['modelo'],
+                    "numero_serie" => $request->get('fuente_alimentacion')['nserie'],
+                    "descripcion" => $request->get('fuente_alimentacion')['descr'],
+                    "estado_operativo" => $request->get('general')['estado'],
+                    "asignado" => $request->get('general')['asignar']
+                ]);
+            }
         
-            foreach($request->except(['step', 'titulo', 'disabled', 'key','general', 'so', 'procesador']) as $clave => $valor){
+            foreach($request->except(['step', 'titulo', 'disabled', 'key','general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
                 if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
                     $marca = $valor['marca'];
                     if(!is_numeric($marca)){
@@ -1205,7 +1221,23 @@ class EquipoController extends Controller
             $frec->id_equipo = $proc->id_equipo;
             $frec->save();
 
-            foreach($request->except(['step', 'titulo', 'disabled', 'key', 'general', 'so', 'procesador']) as $clave => $valor){
+            if($request->get('fuente_alimentacion')['tipo'] !== 'ninguno'){
+                $falim = new Equipo();
+                $falim->id_marca = $request->get('fuente_alimentacion')['marca'];
+                $falim->codigo = $request->get('fuente_alimentacion')['codigo'];
+                $falim->modelo = $request->get('fuente_alimentacion')['modelo'];
+                $falim->numero_serie = $request->get('fuente_alimentacion')['nserie'];
+                $falim->descripcion = $request->get('fuente_alimentacion')['descr'];
+                $falim->encargado_registro = 'admin';
+                $falim->fecha_registro = Date('Y-m-d H:i:s');
+                $falim->estado_operativo = $request->get('general')['estado'];
+                $falim->asignado=$request->get('general')['asignar'];
+                $falim->componente_principal = $computador->id_equipo;
+                $falim->tipo_equipo=$request->get('fuente_alimentacion')['tipo'];               
+                $falim->save();
+            }
+
+            foreach($request->except(['step', 'titulo', 'key', 'general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
                 if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
                     $component = new Equipo();
                     $component->id_marca = $valor['marca'];
@@ -1242,9 +1274,8 @@ class EquipoController extends Controller
                         $conexiones_dd->campo = 'conexiones_dd';
                         $conexiones_dd->dato = $request->get('mainboard')['conexiones_dd'];
                         $conexiones_dd->id_equipo = $component->id_equipo;
-                        $conexiones_dd->save();//no conexiones disco en front
+                        $conexiones_dd->save();
                     }
-
                 } else {
                     foreach($valor['datos'] as $k => $data){
                         $comp = new Equipo();
