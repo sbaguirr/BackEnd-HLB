@@ -106,6 +106,8 @@ use Illuminate\Http\Request;
     Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
     Route::post('crear_laptop','EquipoController@crear_laptop');
     Route::post('editar_laptop','EquipoController@editar_laptop');
+    Route::post('crear_desktop','EquipoController@crear_desktop');
+    Route::post('editar_desktop','EquipoController@editar_desktop');
     Route::get('resumen-bajas','EquipoController@resumen_bajas');
     Route::get('info_extra/{id_equipo}','EquipoController@info_extra');
 
