@@ -934,7 +934,13 @@ class EquipoController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
-        }
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código de alguno de los equipos que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        } 
     }
 
     public function crear_laptop(Request $request)
@@ -1040,7 +1046,13 @@ class EquipoController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
-        }
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código de alguno de los equipos que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        } 
     }
 
     public function editar_desktop(Request $request)
@@ -1173,9 +1185,15 @@ class EquipoController extends Controller
             }
             DB::commit();
             return response()->json(['log' => 'exito'], 200);
-        } catch (Exception $e) {
+        }  catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código de alguno de los equipos que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
         }
     }
 
@@ -1249,7 +1267,6 @@ class EquipoController extends Controller
                 $falim->tipo_equipo=$request->get('fuente_alimentacion')['tipo'];               
                 $falim->save();
             }
-
             foreach($request->except(['step', 'titulo', 'key', 'general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
                 if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
                     $component = new Equipo();
@@ -1291,39 +1308,47 @@ class EquipoController extends Controller
                     }
                 } else {
                     foreach($valor['datos'] as $k => $data){
-                        $comp = new Equipo();
-                        $comp->id_marca = $data['marca'];
-                        $comp->codigo = $data['codigo'];
-                        $comp->modelo = $data['modelo'];
-                        $comp->numero_serie = $data['nserie'];
-                        $comp->descripcion = $data['descr'];
-                        $comp->encargado_registro = 'admin';
-                        $comp->fecha_registro = Date('Y-m-d H:i:s');
-                        $comp->estado_operativo = $request->get('general')['estado'];
-                        $comp->asignado=$request->get('general')['asignar'];
-                        $comp->componente_principal = $computador->id_equipo;
-                        $comp->tipo_equipo=$clave;
-                        $comp->save();
-
-                        $tipo = new DetalleComponente();
-                        $tipo->campo = 'tipo';
-                        $tipo->dato = $data['tipo'];
-                        $tipo->id_equipo = $comp->id_equipo;
-                        $tipo->save();
-                        
-                        $capacidad = new DetalleComponente();
-                        $capacidad->campo = 'capacidad';
-                        $capacidad->dato = $data['capacidad']['cant'] . " " . $data['capacidad']['un'] ;
-                        $capacidad->id_equipo = $comp->id_equipo;
-                        $capacidad->save();
+                        // if($data['codigo'] !== ''){
+                            $comp = new Equipo();
+                            $comp->id_marca = $data['marca'];
+                            $comp->codigo = $data['codigo'];
+                            $comp->modelo = $data['modelo'];
+                            $comp->numero_serie = $data['nserie'];
+                            $comp->descripcion = $data['descr'];
+                            $comp->encargado_registro = 'admin';
+                            $comp->fecha_registro = Date('Y-m-d H:i:s');
+                            $comp->estado_operativo = $request->get('general')['estado'];
+                            $comp->asignado=$request->get('general')['asignar'];
+                            $comp->componente_principal = $computador->id_equipo;
+                            $comp->tipo_equipo=$clave;
+                            $comp->save();
+    
+                            $tipo = new DetalleComponente();
+                            $tipo->campo = 'tipo';
+                            $tipo->dato = $data['tipo'];
+                            $tipo->id_equipo = $comp->id_equipo;
+                            $tipo->save();
+                            
+                            $capacidad = new DetalleComponente();
+                            $capacidad->campo = 'capacidad';
+                            $capacidad->dato = $data['capacidad']['cant'] . " " . $data['capacidad']['un'] ;
+                            $capacidad->id_equipo = $comp->id_equipo;
+                            $capacidad->save();
+                        // }
                     }
                 }
             }
             DB::commit();
             return response()->json(['log' => 'exito'], 200);
-        } catch (Exception $e) {
+        }  catch (Exception $e) {
             DB::rollback();
             return response()->json(['log' => $e], 400);
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El código de alguno de los equipos que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
         }
     }
     /*Fin - listar computadoras y laptops - Web Version*/
