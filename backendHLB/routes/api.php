@@ -70,6 +70,7 @@ use Illuminate\Http\Request;
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
     Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
+    Route::get('ipbyidonly/{id}', 'IpController@Ip_ID_Only');
     
 
 

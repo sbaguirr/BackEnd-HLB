@@ -141,6 +141,16 @@ class IpController extends Controller
             return $reg_ip->direccion_ip;
         }
     }
+    
+    public function Ip_ID_Only($id){
+        $list_ip = Ip::select('id_ip', 'direccion_ip')->where("estado","=","L");
+        if($id!=null||$id!=""||$id!=-1){
+            $list_ip =  $list_ip->orWhere("id_ip","=",$id);
+        }
+
+        return response()->json( $list_ip->get());
+
+    }
 
     /* Servicio para obtener datos de la ip a partir de su ID */
     public function ip_id($id_ip){
