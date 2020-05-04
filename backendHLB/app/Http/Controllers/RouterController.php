@@ -135,23 +135,30 @@ class RouterController extends Controller
       $equipo->asignado = $request->get('asignado');
       $equipo->encargado_registro = $request->get('encargado_registro');
       $equipo->componente_principal = $request->get('componente_principal');
-      
       $ip_actual = $request->get('ip');
-        if($ip_actual!==null){
-            if($ip_anterior!==$ip_actual){
-                $ip= Ip::find($ip_actual);
-                $ip->estado= "EU";
-                $ip->save();
+      if(!is_numeric($ip_actual)){
+            if($ip_actual!==null){
+                $ip=Ip::select('id_ip')
+                ->where('direccion_ip','=',$ip_actual)
+                ->get();
+                $ip_actual = $ip[0]->id_ip;
+            }else{
+                $ip_actual=null;
             }
-        }else{
-            $ip_actual=null;
         }
-      
-        $equipo->ip = $request->get('ip'); 
-        if($ip_anterior!==null){
-            $anterior= Ip::find($ip_anterior);
-            $anterior->estado= "L";
-            $anterior->save();
+        $equipo->ip = $ip_actual;
+        
+        if($ip_anterior!==$ip_actual){
+            if($ip_actual!==null){
+                $ips= Ip::find($ip_actual);
+                $ips->estado= "EU";
+                $ips->save();
+            }    
+            if($ip_anterior!==null){
+                $anterior= Ip::find($ip_anterior);
+                $anterior->estado= "L";
+                $anterior->save();
+            }
         }
       $equipo->save(); 
 
@@ -212,13 +219,14 @@ class RouterController extends Controller
     /* Obtener datos de un router dado el id del equipo */
     public function router_id($id_equipo){
         return Router::selectRaw('routers.*, equipos.*, marcas.nombre as marca, 
-        empleados.nombre as empleado, empleados.apellido as apellido,
+        empleados.nombre as empleado, empleados.apellido as apellido, ips.direccion_ip,
          organizaciones.bspi_punto, departamentos.nombre as departamento' )
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->where('routers.id_equipo',$id_equipo)
         ->get()[0];
 
