@@ -17,10 +17,12 @@ use Illuminate\Http\Request;
 /*API Correo*/
     Route::get('mostrar_correos', 'CorreoController@mostrar_correos');
     Route::post('correos', 'CorreoController@crear_correo');
-    Route::get('filtrar_correos/{departamento}/{fecha_asignacion?}', 'CorreoController@filtrar_correos');
+    Route::post('filtrar_correos', 'CorreoController@filtrar_correos');
+    Route::get('correo_id/{correo_id}', 'CorreoController@correo_id');
+    Route::put('editar_correo', 'CorreoController@editar_correo');
+    Route::put('eliminar_correo/{id_correo}', 'CorreoController@eliminar_correo');
 
  /*API Empleado*/
-    Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
 
 
