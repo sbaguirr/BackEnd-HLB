@@ -386,7 +386,7 @@ class ImpresoraController extends Controller
 
         }
         //$query= $query->orderBy('equipos.created_at', 'asc')->get();
-        return $query->orderBy('equipos.created_at', 'asc')->paginate(10);
+        return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
 
     }
 
