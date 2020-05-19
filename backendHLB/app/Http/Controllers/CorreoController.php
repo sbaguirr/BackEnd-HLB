@@ -85,7 +85,9 @@ public function filtrar_correos(Request $request){
         $query= $query->whereDate('correos.created_at',$fecha_asignacion);
     }
 
-    if (!empty($estado)){
+    if (empty($estado)){ #Para cargar por defecto todos los correos en uso.
+        $query= $query->where('correos.estado','<>','I');
+    }else{ # Entra cuando se seleccione un estado como filtro.
         $query= $query->where('correos.estado',$estado);
     }
     if (!empty($empleado)){
@@ -109,9 +111,4 @@ public function filtrar_correos(Request $request){
         ->get();
     }
 
-   
-/* Route::post('filtrar_correos', 'CorreoController@filtrar_correos');
-Route::get('correo_id/{correo_id}', 'CorreoController@correo_id');
-Route::put('editar_correo', 'CorreoController@editar_correo');
-Route::put('eliminar_correo/{id_correo}', 'CorreoController@eliminar_correo'); */
 }
