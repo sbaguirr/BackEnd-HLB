@@ -13,10 +13,11 @@ class RouterController extends Controller
     {
         return Router::select('routers.id_router', 'equipos.codigo', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
         'routers.clave', 'routers.id_equipo', 'marcas.id_marca', 'marcas.nombre as marca', 'equipos.id_equipo', 'equipos.modelo', 
-        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento',
-        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido')
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento','ips.direccion_ip',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido', 'equipos.created_at as fecha_registro')
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->leftjoin('empleados','empleados.cedula', '=', 'equipos.asignado')
         ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
         ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
@@ -37,6 +38,7 @@ class RouterController extends Controller
 
     public function crear_equipo_router(Request $request)
     {
+        try{
         $equipo = new Equipo();
         $router = new Router();   
 
@@ -67,7 +69,15 @@ class RouterController extends Controller
             $ip->estado= "EU";
             $ip->save();
         }   
-        $router->save();    
+        $router->save();
+        return response()->json(['log' => 'Router registrado satisfactoriamente'], 200);    
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El router que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }      
     }
 
     public function marcas_routers(){
@@ -79,29 +89,52 @@ class RouterController extends Controller
         ->get();
     }
 
-    public function filtrar_routers($marca, $fecha_registro=null){
-        $query= Router::select('routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
-        'routers.clave', 'routers.id_equipo')
-        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')  
-        ->join('marcas','marcas.id_marca','=','equipos.id_marca');
-        
-        if($marca != "Todas" && !empty($fecha_registro)){
-            $query= $query->where([['routers.created_at', 'like', "${fecha_registro}%"],
-                ['marcas.nombre', '=', $marca]]);
-        }
-        if ($marca != "Todas" && empty($fecha_registro)){
-            $query= $query->where('marcas.nombre', $marca);
-        }
-        if ($marca == "Todas" && !empty($fecha_registro)){
-            $query= $query->whereDate('routers.created_at', $fecha_registro);
-        }
-        return  $query->get();
+    public function filtrar_routers(Request $request){
+        $fecha_asignacion = $request->get("fecha");
+        $estado = $request->get("estado");
+        $marca = $request->get("marca");
+
+        $query= Router::select('routers.id_router', 'equipos.codigo', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        'routers.clave', 'routers.id_equipo', 'marcas.id_marca', 'marcas.nombre as marca', 'equipos.id_equipo', 'equipos.modelo', 
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento','ips.direccion_ip',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido', 'equipos.created_at as fecha_registro')
+        ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('ips','ips.id_ip','=','equipos.ip')
+        ->leftjoin('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion');
+    
+    if($marca!= "Todas" && !empty($marca)){
+        $query= $query->where('marcas.nombre', $marca);
+    }
+
+    if (!empty($fecha_asignacion)){
+        $query= $query->whereDate('equipos.created_at',$fecha_asignacion);
+    }
+
+    if (empty($estado)){
+        $query= $query->where('equipos.estado_operativo','<>','B');
+    }else{ 
+        $query= $query->where('equipos.estado_operativo', $estado);
+    }
+    $itemSize = $query->count();
+    $query->orderBy('equipos.codigo', 'asc');
+    $query= $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index")); 
+    return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
     }
 
     public function buscar_router($codigo){
-        return Router::select('equipos.codigo','routers.id_router', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
-        'routers.clave', 'routers.id_equipo')
+        return Router::select('routers.id_router', 'equipos.codigo', 'routers.nombre', 'routers.pass', 'routers.puerta_enlace', 'routers.usuario',
+        'routers.clave', 'routers.id_equipo', 'marcas.id_marca', 'marcas.nombre as marca', 'equipos.id_equipo', 'equipos.modelo', 
+        'equipos.numero_serie', 'equipos.estado_operativo', 'equipos.descripcion', 'departamentos.nombre as departamento','ips.direccion_ip',
+        'organizaciones.bspi_punto', 'equipos.ip', 'empleados.nombre as nempleado', 'empleados.apellido', 'equipos.created_at as fecha_registro')
         ->join('equipos','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('ips','ips.id_ip','=','equipos.ip')
+        ->leftjoin('empleados','empleados.cedula', '=', 'equipos.asignado')
+        ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
         ->where('equipos.codigo','like',"%".strtolower($codigo)."%")
         ->orderBy('equipos.created_at', 'desc')
         ->get();
