@@ -49,6 +49,11 @@ use Illuminate\Http\Request;
     Route::get('getLaptopByID/{idequipo}','EquipoController@getLaptopByID');
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
+    Route::get('mostrar_equipos_paginado/{size}','EquipoController@mostrar_equipos_paginado');
+	Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
+    Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{size}', 'EquipoController@filtrar_equipos_paginado');
+    Route::put('eliminar_otros_equipos/{id}','EquipoController@eliminar_otros_equipos');
+    Route::get('/obtener_otro_equipo_por_id/{id_otro_equipo}','EquipoController@obtener_otro_equipo_por_id');
 
 
 /*API DEPARTAMENTO*/
