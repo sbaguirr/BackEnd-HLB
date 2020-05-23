@@ -199,7 +199,7 @@ class ImpresoraController extends Controller
         return response()->json($impresoras);
     }
 
-    public function eliminar_impresora($id){
+    public function eliminar_impresora($id,Request $request){
         DB::beginTransaction();
         try {
             $ip_anterior= Db::table('equipos')->where('id_equipo',$id)->pluck('ip');
@@ -208,7 +208,15 @@ class ImpresoraController extends Controller
             }
             Equipo::Where('id_equipo', '=', $id)->update(['estado_operativo' => 'B','ip' => null]);
             DB::commit();
-            return $this-> mostrar_impresoras_paginado();
+            if ($request->get('tipo')==='general'){
+                return $this-> mostrar_impresoras_paginado($request->get('size'));
+            }
+            if ($request->get('tipo')==='codigo'){
+                return $this-> impresoras_codigo_paginado($request->get('codigo'),$request->get('size'));
+            }
+            if ($request->get('tipo')==='filtro'){
+                return $this-> filtrar_impresoras_paginado($request->get('marca'),$request->get('fecha'),$request->get('size'));
+            }
             //return $this-> mostrar_impresoras_paginado();
             //return response()->json(['log' => 1]);
         } catch (Exception $e) {
@@ -313,9 +321,11 @@ class ImpresoraController extends Controller
 
     }
 
-    public function mostrar_impresoras_paginado(){
+    public function mostrar_impresoras_paginado($size){
+        //print_r('Part: ',$request->get('size'));
         return Impresora::select('id_impresora','tipo','tinta','cinta','ip','direccion_ip','asignado','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','empleados.nombre','empleados.apellido','numero_serie','equipos.encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
+        //print_r('Part: ',$request->get('size'));
 
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
@@ -323,11 +333,11 @@ class ImpresoraController extends Controller
         ->where('equipos.estado_operativo','<>','B')
         ->where('equipos.estado_operativo','<>','De baja')
         ->orderBy('equipos.created_at', 'desc')
-        ->paginate(10);
+        ->paginate($size);
 
     }
 
-    public function impresoras_codigo_paginado($codigo){
+    public function impresoras_codigo_paginado($codigo,$size){
 
         return Impresora::select('id_impresora','tipo','tinta','cinta','ip','direccion_ip','asignado','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','empleados.nombre','empleados.apellido','numero_serie','equipos.encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
@@ -339,7 +349,10 @@ class ImpresoraController extends Controller
         ->where('equipos.estado_operativo','<>','De baja')
         ->where('equipos.codigo','like','%'.$codigo.'%')
         ->orderBy('equipos.created_at', 'desc')
-        ->paginate(10);
+        ->paginate($size);
+
+
+
 
     }
 

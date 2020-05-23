@@ -64,10 +64,10 @@ use Illuminate\Http\Request;
 	Route::get('/impresoras_codigo/{codigo}','ImpresoraController@impresoras_codigo');
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
     Route::put('eliminar_impresora/{id}','ImpresoraController@eliminar_impresora');
-	Route::get('/impresoras_codigo_paginado/{codigo}','ImpresoraController@impresoras_codigo_paginado');
-    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras_paginado');
+	Route::get('/impresoras_codigo_paginado/{codigo}/{size}','ImpresoraController@impresoras_codigo_paginado');
+    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
     Route::get('/mostrar_impresoras_codigo_paginado','ImpresoraController@mostrar_impresoras_codigo_paginado');
-    Route::get('/impresoras_paginado','ImpresoraController@mostrar_impresoras_paginado');
+    Route::get('/impresoras_paginado/{size}','ImpresoraController@mostrar_impresoras_paginado');
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
 
 
