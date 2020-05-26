@@ -31,7 +31,7 @@ class CreateEquiposTable extends Migration
 
             $table->foreign('id_marca')
             ->references('id_marca')->on('marcas')
-            ->onDelete('cascade')
+            ->onDelete('set null')
             ->onUpdate('cascade'); 
             
             $table->foreign('encargado_registro')

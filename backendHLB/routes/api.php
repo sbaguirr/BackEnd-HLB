@@ -25,6 +25,10 @@ use Illuminate\Http\Request;
  /*API Empleado*/
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
 
+ /*API Marcas */   
+    Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
+    Route::get('marca_id/{marca_id}', 'MarcaController@marca_id');
+    Route::delete('eliminar_marca/{id_marca}', 'MarcaController@eliminar_marca');
 
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
