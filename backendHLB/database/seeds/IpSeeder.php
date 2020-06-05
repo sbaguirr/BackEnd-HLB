@@ -20,7 +20,7 @@ class IpSeeder extends Seeder
             foreach(range(0, 9) as $y)
             {
                 Ip::create([
-                    'id_estado_equipo' => 1,
+                    'estado' => 'EU',
                     'direccion_ip' => '192.168.' . $x . '.' . $y,
                     'hostname' => '192.168.' . $x . '.' . $y,
                     'subred' => '192.168.' . $x . '.' . $y,

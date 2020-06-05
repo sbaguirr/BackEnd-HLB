@@ -15,11 +15,9 @@ class IpController extends Controller
     public function listar_ips()
     {
         // return Ip::all();
-        $users = DB::table('ips')
-        ->leftJoin('estado_equipo', 'ips.id_estado_equipo', 'estado_equipo.id_estado_equipo')
-        ->select('ips.*', 'estado_equipo.nombre AS nombre_estado_equipo', 'estado_equipo.abreviatura AS abreviatura_estado_equipo')
+        $ips = DB::table('ips')
         ->paginate(10);
-        return $users;
+        return $ips;
     }
 
     public function listar_ips_prueba()
@@ -72,7 +70,7 @@ class IpController extends Controller
             $ip->direccion_ip = $request->get('direccion_ip');
             $ip->hostname = $request->get('hostname');
             $ip->subred = $request->get('subred');
-            $ip->id_estado_equipo = $request->get('estado');
+            $ip->estado = $request->get('estado');
             $ip->fortigate = $request->get('fortigate');
             $ip->observacion = $request->get('observacion');
             $ip->maquinas_adicionales = $request->get('maquinas_adicionales');

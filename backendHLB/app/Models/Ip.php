@@ -17,7 +17,7 @@ class Ip extends Model
     protected $fillable = [
         'direccion_ip', 'hostname',
         'subred', 'fortigate', 'observacion', 'maquinas_adicionales',
-        'nombre_usuario', 'encargado_registro', 'id_estado_equipo'
+        'nombre_usuario', 'encargado_registro', 'estado'
     ];
 
 
@@ -38,7 +38,7 @@ class Ip extends Model
     }
 
     // Relacion: Ip - EstadoEquipo (1 - 1)
-    public function estado() {
-        return $this->hasOne('App\Models\EstadoEquipo', 'id_estado_equipo');
-    }
+    // public function estado() {
+    //     return $this->hasOne('App\Models\EstadoEquipo', 'id_estado_equipo');
+    // }
 }

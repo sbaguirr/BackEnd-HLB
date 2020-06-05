@@ -15,7 +15,7 @@ class CreateIpsTable extends Migration
     {
         Schema::create('ips', function (Blueprint $table) {
             $table->bigIncrements('id_ip');
-            $table->unsignedBigInteger('id_estado_equipo');
+            $table->string('estado');
             $table->ipAddress('direccion_ip');
             $table->ipAddress('hostname');
             $table->ipAddress('subred');
@@ -31,8 +31,8 @@ class CreateIpsTable extends Migration
             ->onDelete('cascade')
             ->onUpdate('cascade');
 
-            $table->foreign('id_estado_equipo')
-            ->references('id_estado_equipo')->on('estado_equipo')
+            // $table->foreign('id_estado_equipo')
+            // ->references('id_estado_equipo')->on('estado_equipo')
             // ->onDelete('cascade')
             // ->onUpdate('cascade')
             ; 
