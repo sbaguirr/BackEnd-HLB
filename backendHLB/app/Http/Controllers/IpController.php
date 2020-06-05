@@ -6,18 +6,45 @@ use Illuminate\Http\Request;
 use App\Models\Ip;
 use App\Models\Equipo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class IpController extends Controller
 {
     public function listar_ips()
     {
-        return Ip::all();
+        // return Ip::all();
+        $users = DB::table('ips')->paginate(10);
+        return $users;
+    }
+
+    public function listar_ips_prueba()
+    {
+        // $ips = Ip::all();
+        
+        // $result = array();
+
+        // foreach ($ips as $ip)
+        // {
+        //     $result = (object) [
+        //         'direccion_ip' => $ip->direccion_ip,
+        //         'estado' => $ip->estado->nombre,
+        //     ];
+        // }
+
+        // $response = array(
+        //     'status' => true,
+        //     'message' => 'Success',
+        //     'data' => $result
+        // );
+        // return $response;
+
+        return Ip::find(1)->estado->nombre;
     }
 
     public function buscar_ip_por_codigo($id_ip)
     {
         return Ip::select('*')
-        ->where('id_ip',$id_ip)
+        ->where('id_ip', $id_ip)
         ->get();
     }
 
@@ -27,59 +54,49 @@ class IpController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function crear_equipo_ip(Request $request)
+
+    public function crear_ip(Request $request)
     {
-        // var_dump($request->get('registro_ip_obj'));
-        // var_dump($request->get('registro_equipo_obj'));
-
-        var_dump($request->get('registro_ip_obj')['estado']);
-
         DB::beginTransaction();
+
         try {
-            // Primero creo la ip, y luego el equipo
             $ip = new Ip();
             $dt = new \DateTime();
             $dt->format('Y-m-d');
 
-            $ip->estado = $request->get('registro_ip_obj')['estado'];
-            $ip->fecha_asignacion = $dt;
-            $ip->direccion_ip = $request->get('registro_ip_obj')['direccion_ip'];
-            $ip->hostname = $request->get('registro_ip_obj')['hostname'];
-            $ip->subred = $request->get('registro_ip_obj')['subred'];
-            $ip->fortigate = $request->get('registro_ip_obj')['fortigate'];
-            $ip->observacion = $request->get('registro_ip_obj')['observacion'];
-            $ip->maquinas_adicionales = $request->get('registro_ip_obj')['maquinas_adicionales'];
+            $ip->direccion_ip = $request->get('direccion_ip');
+            $ip->hostname = $request->get('hostname');
+            $ip->subred = $request->get('subred');
+            $ip->estado = $request->get('estado');
+            $ip->fortigate = $request->get('fortigate');
+            $ip->observacion = $request->get('observacion');
+            $ip->maquinas_adicionales = $request->get('maquinas_adicionales');
+            // $ip->fecha_asignacion = $dt;
+
+            // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
+            $ip->nombre_usuario = 'Samuel Braganza';
+            $ip->encargado_registro = 'admin';
 
             // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
             $ip->nombre_usuario = 'Samuel Braganza';
             $ip->encargado_registro = 'admin';
 
             $ip->save();
-
-            $equipo= new Equipo();
-            // Aprovecho el id_ip saliente del insert anterior para referenciarlo en la tabla equipos
-            $equipo->ip = $ip->id_ip;
-
-            $equipo->fecha_registro = $request->get('registro_equipo_obj')['fecha_registro'];
-            $equipo->estado_operativo  = $request->get('registro_equipo_obj')['estado_operativo'];
-            $equipo->codigo = $request->get('registro_equipo_obj')['codigo'];
-            $equipo->tipo_equipo = $request->get('registro_equipo_obj')['tipo_equipo'];
-            $equipo->modelo = $request->get('registro_equipo_obj')['modelo'];
-            $equipo->descripcion = $request->get('registro_equipo_obj')['descripcion'];
-            $equipo->numero_serie = $request->get('registro_equipo_obj')['numero_serie'];
-            $equipo->encargado_registro = $request->get('registro_equipo_obj')['encargado_registro'];
-            $equipo->componente_principal = $request->get('registro_equipo_obj')['componente_principal'];
-
-            $equipo->save();
-
-
+            
             DB::commit();
-            return response()->json(['status'=>'success'], 200);
+
+            return Response::json (
+                array (
+                    'success' => true,
+                    'id_ip' => $ip->id_ip,
+                )
+            , 200);
+
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => $e,
-                ], 400);
+            ], 400);
         }
     }
 
@@ -91,20 +108,7 @@ class IpController extends Controller
             ->get();
     }
 
-    public function crear_ip(Request $request)
-    {
-        $ip= new Ip();
-        $ip->direccion_ip=$request->get('direccion_ip');
-        $ip->hostname=$request->get('hostname');
-        $ip->subred=$request->get('subred');
-        $ip->estado=$request->get('estado');
-        $ip->fortigate=$request->get('fortigate');
-        $ip->observacion=$request->get('observacion');
-        $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
-        $ip->nombre_usuario=$request->get('nombre_usuario');
-        $ip->encargado_registro=$request->get('encargado_registro');
-        $ip->save();
-    }
+    
 
     public function ips_libres()
     {

@@ -26,6 +26,7 @@ class CreateEquiposTable extends Migration
             $table->string('encargado_registro')->nullable();
             $table->unsignedBigInteger('componente_principal')->nullable();
             $table->unsignedBigInteger('ip')->nullable();
+            $table->unsignedBigInteger('id_estado_equipo')->nullable();
             $table->string('asignado')->nullable();
             $table->timestamps();
 
@@ -53,6 +54,11 @@ class CreateEquiposTable extends Migration
             ->references('id_ip')->on('ips')
             ->onDelete('set null')
             ->onUpdate('cascade'); 
+
+            $table->foreign('id_estado_equipo')
+            ->references('id_estado_equipo')->on('estado_equipo')
+            ->onDelete('set null')
+            ->onUpdate('cascade');
 
         });
     }
