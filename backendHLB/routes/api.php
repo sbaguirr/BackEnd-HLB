@@ -17,12 +17,18 @@ use Illuminate\Http\Request;
 /*API Correo*/
     Route::get('mostrar_correos', 'CorreoController@mostrar_correos');
     Route::post('correos', 'CorreoController@crear_correo');
-    Route::get('filtrar_correos/{departamento}/{fecha_asignacion?}', 'CorreoController@filtrar_correos');
+    Route::post('filtrar_correos', 'CorreoController@filtrar_correos');
+    Route::get('correo_id/{correo_id}', 'CorreoController@correo_id');
+    Route::put('editar_correo', 'CorreoController@editar_correo');
+    Route::put('eliminar_correo/{id_correo}', 'CorreoController@eliminar_correo');
 
  /*API Empleado*/
-    Route::get('empleados_nombre/{nombreEmpleado}', 'EmpleadoController@buscar_por_nombre');
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
 
+ /*API Marcas */   
+    Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
+    Route::get('marca_id/{marca_id}', 'MarcaController@marca_id');
+    Route::delete('eliminar_marca/{id_marca}', 'MarcaController@eliminar_marca');
 
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
@@ -32,12 +38,12 @@ use Illuminate\Http\Request;
     Route::get('listar_routers', 'RouterController@listar_router');
     Route::post('crear_equipo_router', 'RouterController@crear_equipo_router');
     Route::get('marcas_routers', 'RouterController@marcas_routers');
-    Route::get('filtrar_routers/{marca}/{fecha_registro?}', 'RouterController@filtrar_routers');
+    Route::post('filtrar_routers', 'RouterController@filtrar_routers');
     Route::get('buscar_router/{codigo}', 'RouterController@buscar_router');
     Route::put('eliminar_router/{id}', 'RouterController@eliminar_router');
     Route::post('editar_equipo_router', 'RouterController@editar_equipo_router');
     Route::get('buscar_router_por_id/{id}', 'RouterController@buscar_router_por_id');
-    
+
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');
@@ -47,6 +53,11 @@ use Illuminate\Http\Request;
     Route::get('getLaptopByID/{idequipo}','EquipoController@getLaptopByID');
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
+    Route::get('mostrar_equipos_paginado/{size}','EquipoController@mostrar_equipos_paginado');
+	Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
+    Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{size}', 'EquipoController@filtrar_equipos_paginado');
+    Route::put('eliminar_otros_equipos/{id}','EquipoController@eliminar_otros_equipos');
+    Route::get('/obtener_otro_equipo_por_id/{id_otro_equipo}','EquipoController@obtener_otro_equipo_por_id');
 
 
 /*API DEPARTAMENTO*/
@@ -58,10 +69,16 @@ use Illuminate\Http\Request;
     Route::get('/impresoras','ImpresoraController@mostrar_impresoras');
     Route::get('/impresoras_all','ImpresoraController@mostrar_impresoras_all');
     Route::get('/marcas_impresoras','ImpresoraController@marcas_impresoras');
+    Route::post('/impresora_nueva','ImpresoraController@crear_impresora_nueva');
 	Route::get('/impresoras_codigo/{codigo}','ImpresoraController@impresoras_codigo');
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
-    
- 
+    Route::put('eliminar_impresora/{id}','ImpresoraController@eliminar_impresora');
+	Route::get('/impresoras_codigo_paginado/{codigo}/{size}','ImpresoraController@impresoras_codigo_paginado');
+    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
+    Route::get('/mostrar_impresoras_codigo_paginado','ImpresoraController@mostrar_impresoras_codigo_paginado');
+    Route::get('/impresoras_paginado/{size}','ImpresoraController@mostrar_impresoras_paginado');
+    Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
+
 
 /**API Ip */
     Route::get('listar_ips', 'IpController@listar_ips');
@@ -72,7 +89,8 @@ use Illuminate\Http\Request;
     Route::get('filtrar_ip/{direccion_ip}', 'IpController@filtrar_ip');
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
     Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
-    
+    Route::get('ipbyidonly/{id}', 'IpController@Ip_ID_Only');
+
 
 
 /*-------------WEB ROUTES-------------*/
@@ -81,7 +99,7 @@ use Illuminate\Http\Request;
     Route::get('mostrar_empleados','EmpleadoController@mostrar_todos');
     Route::get('impresoraxequipo','impresoraController@impresoras_equipo');
 
- 
+
 /* API DEPARTAMENTO*/
     Route::get('departamentos','DepartamentoController@mostrar_todos');
 
@@ -106,10 +124,15 @@ use Illuminate\Http\Request;
     Route::get('reporte-general','EquipoController@reporte_general');
     Route::get('reporte-bajas','EquipoController@reporte_bajas');
     Route::put('darDeBajaEquipoID/{idequipo}/{tipo}','EquipoController@darDeBajaEquipoID');
+    Route::post('crear_laptop','EquipoController@crear_laptop');
+    Route::post('editar_laptop','EquipoController@editar_laptop');
+    Route::post('crear_desktop','EquipoController@crear_desktop');
+    Route::post('editar_desktop','EquipoController@editar_desktop');
+    Route::get('resumen-bajas','EquipoController@resumen_bajas');
+    Route::get('info_extra/{id_equipo}','EquipoController@info_extra');
+    Route::get('listado_codigos','EquipoController@listado_codigos');
 
-
-
-/* API DetalleEquipo */   
+/* API DetalleEquipo */
     Route::get('listar_so','DetalleEquipoController@listar_so');
     Route::get('listar_office','DetalleEquipoController@listar_office');
 
@@ -125,8 +148,9 @@ use Illuminate\Http\Request;
 /*  API Impresora*/
     Route::get('impresora_equipo','ImpresoraController@impresoras_equipo');
     Route::put('editar_impresora','ImpresoraController@editar_impresora');
-    Route::get('/impresora_id/{id_impresora}','ImpresoraController@impresora_id');
+    Route::get('/impresora_id/{id_equipo}','ImpresoraController@impresora_id');
 
 
-/*API Routers*/   
-    Route::get('router_id/{id_equipo}', 'RouterController@router_id');    
+/*API Routers*/
+    Route::get('router_id/{id_equipo}', 'RouterController@router_id');
+    Route::post('editar_router', 'RouterController@editar_router');

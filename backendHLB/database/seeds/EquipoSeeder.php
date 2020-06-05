@@ -612,10 +612,10 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'O',
             'codigo' => 'HLB_DSK_001',
             'tipo_equipo' => 'desktop',
-            'id_marca' => 7,
-            'modelo' => 'XSAFEG',
+            'id_marca' => null,
+            'modelo' => null,
             'descripcion' => 'Primera computadora de sistemas',
-            'numero_serie' => '4534592050346',
+            'numero_serie' => null,
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'asignado' => null,
@@ -626,10 +626,10 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_DSK_002',
             'tipo_equipo' => 'desktop',
-            'id_marca' => 5,
-            'modelo' => 'DSL-AC3432468U',
+            'id_marca' => null,
+            'modelo' => null,
             'descripcion' => 'Desktop con IP asignada',
-            'numero_serie' => '5675757543',
+            'numero_serie' => null,
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'asignado' => '1205478963',
@@ -637,13 +637,13 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([//45
             'fecha_registro' => '2018-09-25',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_DSK_003',
             'tipo_equipo' => 'desktop',
-            'id_marca' => 1, 
-            'modelo' => 'RTHGFD.2',
+            'id_marca' => null, 
+            'modelo' => null,
             'descripcion' => 'Con UPS',
-            'numero_serie' => 'T45645DG867FH',
+            'numero_serie' => null,
             'encargado_registro' => 'admin',
             'componente_principal' => null,
             'asignado' => '0258463258',
@@ -1048,7 +1048,7 @@ class EquipoSeeder extends Seeder
         /*dektop 3*/
         Equipo::create([
             'fecha_registro' => '2019-04-15',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_MON_012',
             'tipo_equipo' => 'monitor',//74
             'id_marca' => 2,
@@ -1062,7 +1062,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_TEC_012',
             'tipo_equipo' => 'teclado',//75
             'id_marca' => 2,
@@ -1076,7 +1076,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_MOU_012',
             'tipo_equipo' => 'mouse',//76
             'id_marca' => 7,
@@ -1090,7 +1090,7 @@ class EquipoSeeder extends Seeder
         ]); 
         Equipo::create([
             'fecha_registro' => '2019-04-15',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_PAR_012',
             'tipo_equipo' => 'parlantes',//77
             'id_marca' => 7,
@@ -1104,7 +1104,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_TMA_012',
             'tipo_equipo' => 'tarjeta_madre',//78
             'id_marca' => 7,
@@ -1118,7 +1118,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_PRC_012',
             'tipo_equipo' => 'procesador',//79
             'id_marca' => 8,
@@ -1132,7 +1132,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_RAM_023',
             'tipo_equipo' => 'memoria_ram',//80
             'id_marca' => 10,
@@ -1146,7 +1146,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_DD_020',
             'tipo_equipo' => 'disco_duro',//81
             'id_marca' => 10,
@@ -1160,7 +1160,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_CAS_012',
             'tipo_equipo' => 'case',//82
             'id_marca' => 10,
@@ -1174,7 +1174,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_FPO_012',
             'tipo_equipo' => 'fuente_poder',//83
             'id_marca' => 10,
@@ -1188,7 +1188,7 @@ class EquipoSeeder extends Seeder
         ]);
         Equipo::create([
             'fecha_registro' => '2019-05-07',
-            'estado_operativo' => 'B',
+            'estado_operativo' => 'O',
             'codigo' => 'HLB_TRE_012',
             'tipo_equipo' => 'tarjeta_red',//84
             'id_marca' => 10,

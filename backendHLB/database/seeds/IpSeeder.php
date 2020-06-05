@@ -27,7 +27,7 @@ class IpSeeder extends Seeder
                     'fortigate' => '192.168.' . $x . '.' . $y,
                     'observacion' => 'OBSERVACION PRUEBA',
                     'maquinas_adicionales' => 0,
-                    'nombre_usuario' => '',
+                    'nombre_usuario' => 'Samuel Braganza',
                     'encargado_registro' => 'admin',
                 ]);   
             }

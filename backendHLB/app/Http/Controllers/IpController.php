@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ip;
 use App\Models\Equipo;
+use App\Models\EstadoEquipo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Database\QueryException;
 
 class IpController extends Controller
 {
     public function listar_ips()
     {
         // return Ip::all();
-        $users = DB::table('ips')->paginate(10);
+        $users = DB::table('ips')
+        ->leftJoin('estado_equipo', 'ips.id_estado_equipo', 'estado_equipo.id_estado_equipo')
+        ->select('ips.*', 'estado_equipo.nombre AS nombre_estado_equipo', 'estado_equipo.abreviatura AS abreviatura_estado_equipo')
+        ->paginate(10);
         return $users;
     }
 
@@ -67,7 +72,7 @@ class IpController extends Controller
             $ip->direccion_ip = $request->get('direccion_ip');
             $ip->hostname = $request->get('hostname');
             $ip->subred = $request->get('subred');
-            $ip->estado = $request->get('estado');
+            $ip->id_estado_equipo = $request->get('estado');
             $ip->fortigate = $request->get('fortigate');
             $ip->observacion = $request->get('observacion');
             $ip->maquinas_adicionales = $request->get('maquinas_adicionales');
@@ -126,7 +131,8 @@ class IpController extends Controller
 
     public function editar_ip(Request $request)
     {
-        $ip= Ip::find($request->get('key'));
+        try{
+        $ip= Ip::find($request->get('key')); #key es el id de la ip.
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
@@ -137,6 +143,13 @@ class IpController extends Controller
         $ip->nombre_usuario=$request->get('nombre_usuario');
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'La IP ingresada ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }
     }
 
     public function es_ip_enuso($ip){
@@ -144,6 +157,16 @@ class IpController extends Controller
         if($reg_ip->estado === 'EU'){
             return $reg_ip->direccion_ip;
         }
+    }
+    
+    public function Ip_ID_Only($id){
+        $list_ip = Ip::select('id_ip', 'direccion_ip')->where("estado","=","L");
+        if($id!=null||$id!=""||$id!=-1){
+            $list_ip =  $list_ip->orWhere("id_ip","=",$id);
+        }
+
+        return response()->json( $list_ip->get());
+
     }
 
     /* Servicio para obtener datos de la ip a partir de su ID */
