@@ -16,20 +16,26 @@ class CreateIpsTable extends Migration
         Schema::create('ips', function (Blueprint $table) {
             $table->bigIncrements('id_ip');
             $table->string('estado');
-            $table->string('direccion_ip');
-            $table->string('hostname');
-            $table->string('subred');
-            $table->string('fortigate');
-            $table->string('observacion')->nullable();
-            $table->integer('maquinas_adicionales');
-            $table->string('nombre_usuario')->nullable();
-            $table->string('encargado_registro');
-            $table->timestamps();
+            $table->ipAddress('direccion_ip');
+            $table->ipAddress('hostname');
+            $table->ipAddress('subred');
+            $table->ipAddress('fortigate'); 
+            $table->text('observacion')->nullable();
+            $table->unsignedTinyInteger('maquinas_adicionales');
+            $table->string('nombre_usuario', 100)->nullable();
+            $table->string('encargado_registro', 100);
+            $table->timestampsTz(0);
 
             $table->foreign('encargado_registro')
             ->references('usuario')->on('usuarios')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
+
+            // $table->foreign('id_estado_equipo')
+            // ->references('id_estado_equipo')->on('estado_equipo')
+            // ->onDelete('cascade')
+            // ->onUpdate('cascade')
+            ; 
 
         });
     }

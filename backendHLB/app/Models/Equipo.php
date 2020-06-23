@@ -16,7 +16,7 @@ class Equipo extends Model
      */
     protected $fillable = [
         'fecha_registro','estado_operativo','codigo','tipo_equipo', 'modelo', 'numero_serie', 'descripcion', 'id_marca',
-        'encargado_registro', 'componente_principal', 'ip','asignado'
+        'encargado_registro', 'componente_principal', 'ip', 'asignado', 'id_estado_equipo', 'id_router'
       
     ];
 
@@ -42,13 +42,6 @@ class Equipo extends Model
     {
         return $this->hasMany('App\Models\Equipo', 'componente_principal')->with('equipos');
     }
-
-
-    // Relación: Ip - Equipo (1 - 0/1)
-    public function ips()
-    {
-        return $this->belongsTo('App\Models\Ip', 'ip');
-    }
     
 
     // Relación: Equipo - ProgramaEquipo (1 - M)
@@ -72,7 +65,13 @@ class Equipo extends Model
     // Relación: Equipo - Router (1 - 0/1)
     public function routers()
     {
-        return $this->hasOne('App\Models\Router', 'id_equipo');
+        return $this->hasOne('App\Models\Router', 'id_router');
+    }
+
+    // Relación: Equipo - Router (1 - 0/1)
+    public function ips()
+    {
+        return $this->hasOne('App\Models\Ip', 'ip');
     }
 
 
@@ -98,5 +97,10 @@ class Equipo extends Model
     public function marcas()
     {
         return $this->belongsTo('App\Models\Marca', 'id_marca');
+    }
+
+    // Relacion: Equipo - Estado (1 - 1)
+    public function estados() {
+        return $this->hasOne('App\Models\EstadoEquipo', 'id_estado_equipo');
     }
 }

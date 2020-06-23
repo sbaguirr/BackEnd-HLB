@@ -15,7 +15,7 @@ class Router extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre','pass','puerta_enlace','clave','estado_operativo','id_equipo', 'created_at'
+        'nombre','pass','puerta_enlace','clave','estado_operativo', 'created_at', 'id_equipo'
     ];
 
 
