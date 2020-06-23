@@ -474,7 +474,7 @@ class EquipoController extends Controller
                 Ip::Where("id_ip","=",$request->get("pc-ip_asignada"))->update(['estado' => "EU"]);
             
             }
-            DetalleEquipo::Where("id_equipo","=",$idequipo)->update(["usuario_pc"=>$request->get("pc-usuario_pc"),"nombre_pc"=>$request->get("pc-nombre_pc"), "so"=>$request->get('pc-sistema_operativo'),"tipo_so"=>$request->get('pc-tipo_sistema_operativo'),"services_pack"=>$request->get('pc-service'),"licencia"=>$request->get('pc-licencia')]);
+            DetalleEquipo::Where("id_equipo","=",$ )->update(["usuario_pc"=>$request->get("pc-usuario_pc"),"nombre_pc"=>$request->get("pc-nombre_pc"), "so"=>$request->get('pc-sistema_operativo'),"tipo_so"=>$request->get('pc-tipo_sistema_operativo'),"services_pack"=>$request->get('pc-service'),"licencia"=>$request->get('pc-licencia')]);
             $arr_up = ['pc-teclado'=>[], 'pc-parlantes'=>[], 'pc-mouse'=>[],'cpu-tarjeta_red'=>[], 'cpu-case'=>[], 'cpu-fuente_poder'=>[],'cpu-tarjeta_madre'=>['ram_soportada', 'slots_ram', 'conexiones_disco'], 'cpu-procesador'=>["frecuencia","nucleos"]];
             if($request->get("pc-ups_regulador")["tipo_equipo"]!=null){
                 $arr_up = array_merge($arr_up,["pc-ups_regulador"=>[]]);
