@@ -188,7 +188,7 @@ class ImpresoraController extends Controller
                 return $this-> impresoras_codigo_paginado($request->get('codigo'),$request->get('size'));
             }
             if ($request->get('tipo')==='filtro'){
-                return $this-> filtrar_impresoras_paginado($request->get('marca'),$request->get('fecha'),$request->get('size'));
+                return $this-> filtrar_impresoras_paginado($request->get('marca'),$request->get('fecha'),$request->get('estado_operativo'),$request->get('size'));
             }
             //return $this-> mostrar_impresoras_paginado();
             //return response()->json(['log' => 1]);

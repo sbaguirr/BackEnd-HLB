@@ -55,7 +55,7 @@ use Illuminate\Http\Request;
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
     Route::get('mostrar_equipos_paginado/{size}','EquipoController@mostrar_equipos_paginado');
 	Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
-    Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{size}', 'EquipoController@filtrar_equipos_paginado');
+    Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{estado?}/{size}', 'EquipoController@filtrar_equipos_paginado');
     Route::put('eliminar_otros_equipos/{id}','EquipoController@eliminar_otros_equipos');
     Route::get('/obtener_otro_equipo_por_id/{id_otro_equipo}','EquipoController@obtener_otro_equipo_por_id');
 
@@ -74,7 +74,7 @@ use Illuminate\Http\Request;
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
     Route::put('eliminar_impresora/{id}','ImpresoraController@eliminar_impresora');
 	Route::get('/impresoras_codigo_paginado/{codigo}/{size}','ImpresoraController@impresoras_codigo_paginado');
-    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{estado}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
+    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{estado?}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
     Route::get('/mostrar_impresoras_codigo_paginado','ImpresoraController@mostrar_impresoras_codigo_paginado');
     Route::get('/impresoras_paginado/{size}','ImpresoraController@mostrar_impresoras_paginado');
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
