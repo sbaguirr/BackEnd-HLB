@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
  /*API Empleado*/
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
 
- /*API Marcas */   
+ /*API Marcas */
     Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
     Route::get('marca_id/{marca_id}', 'MarcaController@marca_id');
     Route::delete('eliminar_marca/{id_marca}', 'MarcaController@eliminar_marca');
@@ -74,7 +74,7 @@ use Illuminate\Http\Request;
     Route::get('filtrar_impresoras/{marca?}/{fecha_asignacion?}', 'ImpresoraController@filtrar_impresoras');
     Route::put('eliminar_impresora/{id}','ImpresoraController@eliminar_impresora');
 	Route::get('/impresoras_codigo_paginado/{codigo}/{size}','ImpresoraController@impresoras_codigo_paginado');
-    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
+    Route::get('filtrar_impresoras_paginado/{marca?}/{fecha_asignacion?}/{estado}/{size}', 'ImpresoraController@filtrar_impresoras_paginado');
     Route::get('/mostrar_impresoras_codigo_paginado','ImpresoraController@mostrar_impresoras_codigo_paginado');
     Route::get('/impresoras_paginado/{size}','ImpresoraController@mostrar_impresoras_paginado');
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');

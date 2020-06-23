@@ -22,16 +22,6 @@ class ImpresoraController extends Controller
         $equipo = new Equipo();
         $dt = new \DateTime();
         $dt->format('Y-m-d');
-
-       /*  $value_marca=Marca::select('id_marca')
-        ->where('nombre','=',$request->get('marca'))
-        ->get();
-
-        $equipo ->id_marca=$value_marca[0]->id_marca; */
-
-        //$v="id_marca";
-        //$equipo ->id_marca=$value_marca->$v;
-
     try{
         $equipo ->modelo=$request->get('modelo');
 
@@ -103,18 +93,6 @@ class ImpresoraController extends Controller
         $dt = new \DateTime();
         $dt->format('Y-m-d');
 
-        /*
-         $value_marca=Marca::select('id_marca')
-        ->where('nombre','=',$request->get('marca'))
-        ->get();
-        $equipo ->id_marca=$value_marca[0]->id_marca;
-        */
-
-
-        //$v="id_marca";
-        //$equipo ->id_marca=$value_marca->$v;
-
-
         $equipo ->modelo=$request->get('modelo');
 
         $equipo ->fecha_registro=$dt;
@@ -159,12 +137,7 @@ class ImpresoraController extends Controller
         //$impresora ->id_equipo=(int)$request->get('id_equipo');
         $impresora ->id_equipo=$id;
 
-
         $impresora->save();
-
-
-
-
 
          /*Si el usuario elige una ip para la impresora, el
         estado de la ip debe cambiar a En uso */
@@ -356,7 +329,7 @@ class ImpresoraController extends Controller
 
     }
 
-    public function filtrar_impresoras_paginado($marca,$fecha_asignacion=null){
+    public function filtrar_impresoras_paginado($marca,$fecha_asignacion=null,$estado){
         $query = Impresora::select('id_impresora','tipo','tinta','cinta','ip','direccion_ip','asignado','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','empleados.nombre','empleados.apellido','numero_serie','equipos.encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
 
@@ -373,34 +346,25 @@ class ImpresoraController extends Controller
             //print_r('Part 1');
             $value_marca=Marca::select('id_marca')
             ->where('nombre','=',$marca)->pluck('id_marca');
-
-            //$value_marca[0]->id_marca;
-
-            //$query= $query->where([['equipos.created_at', 'like', "$" . $fecha_asignacion . "%"],
-            //    ['equipos.id_marca', '=', $value_marca[0]->id_marca]]);
             $query = $query -> where('equipos.created_at','like', "%" . $fecha_asignacion . "%")
             ->where('equipos.id_marca','=', $value_marca);
             //->pluck('ip');
         }
         if ($marca != "Todos" && empty($fecha_asignacion)){
-            //console.log('Parte 2');
-            //print_r('Part 2');
-
             $value_marca=Marca::select('id_marca')
             ->where('nombre','=',$marca);
             $query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
         }
         if ($marca == "Todos" && !empty($fecha_asignacion)){
-            //console.log('Parte 3');
-            //print_r('Part 3');
-
-            //$query= $query->whereDate('equipos.created_at',$fecha_asignacion);
             $query= $query->where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
-
         }
-        //$query= $query->orderBy('equipos.created_at', 'asc')->get();
-        return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
+        if (empty($estado)){
+            $query= $query->where('equipos.estado_operativo','<>','B');
+        }else{
+            $query= $query->where('equipos.estado_operativo', $estado);
+        }
 
+        return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
     }
 
     public function editar_impresora(Request $request){
@@ -422,7 +386,6 @@ class ImpresoraController extends Controller
         no envia el id de: marca, empleados, e ip. Pero, si el usuario hace un cambio
         y elige otro elemento del select/combo entonces si se envía el id, por tal motivo
         es necesario esta comprobación   */
-
         $marca=$request->get('id_marca');
         if(!is_numeric($marca)){
             $id_marca=Marca::select('id_marca')
