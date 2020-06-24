@@ -99,8 +99,4 @@ class Equipo extends Model
         return $this->belongsTo('App\Models\Marca', 'id_marca');
     }
 
-    // Relacion: Equipo - Estado (1 - 1)
-    public function estados() {
-        return $this->hasOne('App\Models\EstadoEquipo', 'id_estado_equipo');
-    }
 }

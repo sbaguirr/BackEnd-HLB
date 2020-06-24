@@ -37,8 +37,4 @@ class Ip extends Model
         return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
     }
 
-    // Relacion: Ip - EstadoEquipo (1 - 1)
-    // public function estado() {
-    //     return $this->hasOne('App\Models\EstadoEquipo', 'id_estado_equipo');
-    // }
 }
