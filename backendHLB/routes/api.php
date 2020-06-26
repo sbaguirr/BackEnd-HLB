@@ -43,7 +43,7 @@ use Illuminate\Http\Request;
     Route::put('eliminar_router/{id}', 'RouterController@eliminar_router');
     Route::post('editar_equipo_router', 'RouterController@editar_equipo_router');
     Route::get('buscar_router_por_id/{id}', 'RouterController@buscar_router_por_id');
-
+    
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');
