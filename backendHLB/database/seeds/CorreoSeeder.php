@@ -16,69 +16,69 @@ class CorreoSeeder extends Seeder
 
         Correo::create([
             'correo' => 'genencia.sistemas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('@dmin'),
-            'estado' => 'En uso',
+            'contrasena' => '@dmin',
+            'estado' => 'EU',
             'cedula' => '0584721925'
         ]);
         Correo::create([
             'correo' => 'dptosistemas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('ralvarezc'),
-            'estado' => 'Inactivo',
+            'contrasena' => 'ralvarezc',
+            'estado' => 'I',
             'cedula' => '0584721925'
         ]);
         Correo::create([
             'correo' => 'soporte.sistemas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('Prueb@'),
-            'estado' => 'En uso',
+            'contrasena' => 'Prueb@',
+            'estado' => 'EU',
             'cedula' => '1358978564'
         ]);
         Correo::create([
             'correo' => 'analista.sistemas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('mmend21'),
-            'estado' => 'En uso',
+            'contrasena' => 'mmend21',
+            'estado' => 'EU',
             'cedula' => '1328169874'
         ]);
 
         Correo::create([
             'correo' => 'jefe.finanzas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('financiero98'),
-            'estado' => 'En uso',
+            'contrasena' => 'financiero98',
+            'estado' => 'EU',
             'cedula' => '1205478963'
         ]);
         Correo::create([
             'correo' => 'secretaria.finanzas@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('asistfin'),
-            'estado' => 'En uso',
+            'contrasena' => 'asistfin',
+            'estado' => 'EU',
             'cedula' => '0258463258'
         ]);
         Correo::create([
             'correo' => 'gerente.general@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('supadmin'),
-            'estado' => 'En uso',
+            'contrasena' => 'supadmin',
+            'estado' => 'EU',
             'cedula' => '0784361981'
         ]);
         Correo::create([
             'correo' => 'administracion@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('adming'),
-            'estado' => 'En uso',
+            'contrasena' =>'adming',
+            'estado' => 'EU',
             'cedula' => '1478523458'
         ]);
         Correo::create([
             'correo' => 'laboratorio@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('labPrueb@'),
-            'estado' => 'En uso',
+            'contrasena' => 'labPrueb@',
+            'estado' => 'EU',
             'cedula' => '0325896347'
         ]);
         Correo::create([
             'correo' => 'auditoria@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('auditint'),
-            'estado' => 'En uso',
+            'contrasena' => 'auditint',
+            'estado' => 'EU',
             'cedula' => '1630258746'
         ]);
         Correo::create([
             'correo' => 'dietetica@hospitalleonbecerra.org',
-            'contrasena' => bcrypt('Dprueba'),
-            'estado' => 'En uso',
+            'contrasena' => 'Dprueba',
+            'estado' => 'EU',
             'cedula' => '1589635784'
         ]);
     }

@@ -186,7 +186,7 @@ class EquipoController extends Controller
 
     }
 
-    public function filtrar_equipos_paginado($marca,$fecha_asignacion=null,$size){
+    public function filtrar_equipos_paginado($marca,$fecha_asignacion=null, $estado){
         $query = Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
             empleados.apellido,
              equipos.encargado_registro as encargado, p.codigo as principal,
@@ -234,8 +234,13 @@ class EquipoController extends Controller
             $query= $query->where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
 
         }
+        if (empty($estado)){
+            $query= $query->where('equipos.estado_operativo','<>','B');
+        }else{
+            $query= $query->where('equipos.estado_operativo', $estado);
+        }
         //$query= $query->orderBy('equipos.created_at', 'asc')->get();
-        return $query->orderBy('equipos.created_at', 'desc')->paginate($size);
+        return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
 
     }
 
@@ -255,7 +260,7 @@ class EquipoController extends Controller
                 return $this-> equipo_codigo_paginado($request->get('codigo'),$request->get('size'));
             }
             if ($request->get('tipo')==='filtro'){
-                return $this-> filtrar_equipos_paginado($request->get('marca'),$request->get('fecha'),$request->get('size'));
+                return $this-> filtrar_equipos_paginado($request->get('marca'),$request->get('fecha'),$request->get('estado_operativo'),$request->get('size'));
             }
             //return $this-> mostrar_equipos_paginado();
             //return $this-> mostrar_impresoras_paginado();
