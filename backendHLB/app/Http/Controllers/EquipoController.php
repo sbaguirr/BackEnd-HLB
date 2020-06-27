@@ -436,10 +436,10 @@ class EquipoController extends Controller
         if(count( $codigo_rep)!=0){
             return response()->json(['log' => "El codigo ".($codigo_rep[0]->codigo)." ya esta registrado en la base de datos. Por favor revisar..."], 400);
         }
-        $num_serie_rep = Equipo::WhereIn("numero_serie",$request->get("list_serie"))->get(["numero_serie"]);
-        if(count( $num_serie_rep)!=0){
-            return response()->json(['log' => "El Numero de Serie ".($num_serie_rep[0]->numero_serie)." ya esta registrado en la base de datos. Por favor revisar..."], 400);
-        }
+        // $num_serie_rep = Equipo::WhereIn("numero_serie",$request->get("list_serie"))->get(["numero_serie"]);
+        // if(count( $num_serie_rep)!=0){
+        //     return response()->json(['log' => "El Numero de Serie ".($num_serie_rep[0]->numero_serie)." ya esta registrado en la base de datos. Por favor revisar..."], 400);
+        // }
         return null;
     }
 
@@ -449,7 +449,7 @@ class EquipoController extends Controller
     //consulta, filtrado y paginado
     public function getEquipos(Request $request)
     {
-        $result = Equipo::select("id_equipo")->where("tipo_equipo", "=", $request->get("tipo"))->where("estado_operativo", "<>", "B")->orderBy('created_at', 'desc');
+        $result = Equipo::select("id_equipo")->where("tipo_equipo", "=", $request->get("tipo"))->orderBy('created_at', 'desc');
         if ($request->get("codigo") != null && $request->get("codigo") != "") {
             $result = $result->where('codigo', 'like', "%" . $request->get("codigo") . "%");
         }
@@ -467,6 +467,12 @@ class EquipoController extends Controller
         }
         if ($request->get("fecha_hasta") != null && $request->get("fecha_hasta") != "") {
             $result = $result->where('fecha_registro', '<=', $request->get("fecha_hasta"));
+        }
+        if ($request->get("estado") != null && $request->get("estado") != "") {
+            $result = $result->where('estado_operativo', '=', $request->get("estado"));
+        }
+        else{
+            $result = $result->where("estado_operativo", "<>", "B");
         }
         $ItemSize = $result->count();
         $result = $result->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index"))->get();
@@ -677,7 +683,7 @@ class EquipoController extends Controller
             if($request->get("pc-ups_regulador")["tipo_equipo"]!=null){
                 $arr_up = array_merge($arr_up,["pc-ups_regulador"=>[]]);
             }
-            self::editDeskAux($request,$arr_a_up);
+            self::editDeskAux($request,$arr_up);
             self::editEquipoAux($request,"memoria_ram","cpu",$idequipo);
             self::editEquipoAux($request,"disco_duro","cpu",$idequipo);
             DB::commit();
