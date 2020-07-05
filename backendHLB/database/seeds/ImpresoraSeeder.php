@@ -16,8 +16,6 @@ class ImpresoraSeeder extends Seeder
 
         Impresora::create([
             'tipo' => 'Multifuncional',
-            'tinta' => 'Epson 664',
-            'cartucho' => '4 colores',
             'toner' => 'Experte TN1050_2',
             'cinta' => 'Cinta',
             'id_equipo' => 8
