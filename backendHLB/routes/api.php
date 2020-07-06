@@ -154,3 +154,14 @@ use Illuminate\Http\Request;
 /*API Routers*/
     Route::get('router_id/{id_equipo}', 'RouterController@router_id');
     Route::post('editar_router', 'RouterController@editar_router');
+
+/* API PROGRAMAS */
+    Route::get('programas', 'ProgramaInstaladoController@programas');
+    Route::get('buscar_programa/{nombre}', 'ProgramaInstaladoController@buscar_programa');
+    Route::post('filtrar_programas', 'ProgramaInstaladoController@filtrar_programas');
+    Route::get('editores_programa', 'ProgramaInstaladoController@editores_programa');
+    Route::post('crear_programa', 'ProgramaInstaladoController@crear_programa');
+    Route::put('eliminar_programa/{id}', 'ProgramaInstaladoController@eliminar_programa');
+    Route::post('editar_programa', 'ProgramaInstaladoController@editar_programa');
+    Route::post('lista_programas_id', 'ProgramaInstaladoController@lista_programas_id');
+    Route::get('buscar_programa_id/{id_programa}', 'ProgramaInstaladoController@buscar_programa_id');

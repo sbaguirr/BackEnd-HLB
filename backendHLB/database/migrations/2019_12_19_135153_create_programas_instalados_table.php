@@ -16,8 +16,10 @@ class CreateProgramasInstaladosTable extends Migration
         Schema::create('programas_instalados', function (Blueprint $table) {
             $table->bigIncrements('id_programa');
             $table->string('nombre');
-            $table->string('codigo');
-            $table->string('observacion');
+            $table->string('codigo')->unique();
+            $table->string('version')->nullable();
+            $table->string('editor')->nullable();
+            $table->string('observacion')->nullable();
             $table->string('encargado_registro');
             $table->timestamps();
 

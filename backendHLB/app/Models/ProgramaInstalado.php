@@ -15,7 +15,7 @@ class ProgramaInstalado extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'codigo', 'observacion', 'encargado_registro'
+        'nombre', 'codigo', 'version', 'editor', 'observacion', 'encargado_registro'
     ];
 
 

@@ -22,7 +22,7 @@ class RouterController extends Controller
         ->leftjoin('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
         ->leftjoin('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
         ->orderBy('routers.id_router', 'DESC')
-        ->where('equipos.estado_operativo', '<>', 'B')
+        // ->where('equipos.estado_operativo', '<>', 'B')
         ->get();
     }
 
@@ -114,7 +114,8 @@ class RouterController extends Controller
     }
 
     if (empty($estado)){
-        $query= $query->where('equipos.estado_operativo','<>','B');
+        // $query= $query->where('equipos.estado_operativo', $estado);
+        $query= $query->where('equipos.estado_operativo','<>','Bl');
     }else{ 
         $query= $query->where('equipos.estado_operativo', $estado);
     }
