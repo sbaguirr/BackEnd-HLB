@@ -51,6 +51,12 @@ class Equipo extends Model
     }
 
 
+    // Relación: Equipo - ProgramaEquipo (1 - M)
+    public function solicitud_equipos()
+    {
+        return $this->hasMany('App\Models\SolicitudEquipo', 'id_equipo');
+    }
+
     // Relación: Usuario - Equipo (1 - M)
      public function usuarios()
     {
