@@ -48,7 +48,6 @@ class Empleado extends Model
     {
         return $this->belongsTo('App\Models\Departamento', 'id_departamento');
     }
-  
 
     // Relación: Empleado - Correo (1 - M)
     public function correos()
@@ -60,7 +59,7 @@ class Empleado extends Model
     // Relación: Empleado - Usuario (1 - 1)
     public function usuarios()
     {
-        return $this->hasOne('App\Models\Usuario', 'cedula');
+        return $this->hasOne('App\Models\User', 'cedula');
     }
 
     // Relación: Usuario - Equipo (1 - M)
