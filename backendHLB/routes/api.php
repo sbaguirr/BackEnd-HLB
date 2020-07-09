@@ -14,6 +14,13 @@ use Illuminate\Http\Request;
 */
 /*-------------APP ROUTES-------------*/
 
+
+Route::post('register', 'UserController@register');
+Route::post('login', 'UserController@login');
+Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
+Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
+
+
 /*API Correo*/
     Route::get('mostrar_correos', 'CorreoController@mostrar_correos');
     Route::post('correos', 'CorreoController@crear_correo');
@@ -33,6 +40,8 @@ use Illuminate\Http\Request;
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
    Route::get('org_dpto/{punto}', 'DepartamentoController@org_dpto');
+   Route::get('mostrar_departamentos','DepartamentoController@mostrar_departamentos');
+   Route::get('mostrar_roles','DepartamentoController@mostrar_roles');
 
 /*API Routers*/
     Route::get('listar_routers', 'RouterController@listar_router');
@@ -43,7 +52,7 @@ use Illuminate\Http\Request;
     Route::put('eliminar_router/{id}', 'RouterController@eliminar_router');
     Route::post('editar_equipo_router', 'RouterController@editar_equipo_router');
     Route::get('buscar_router_por_id/{id}', 'RouterController@buscar_router_por_id');
-    
+
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
     Route::post('laptop','EquipoController@crear_Comp_laptop');

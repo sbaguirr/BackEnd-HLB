@@ -17,7 +17,7 @@ class Equipo extends Model
     protected $fillable = [
         'fecha_registro','estado_operativo','codigo','tipo_equipo', 'modelo', 'numero_serie', 'descripcion', 'id_marca',
         'encargado_registro', 'componente_principal', 'ip', 'asignado', 'id_estado_equipo', 'id_router'
-      
+
     ];
 
 
@@ -42,7 +42,7 @@ class Equipo extends Model
     {
         return $this->hasMany('App\Models\Equipo', 'componente_principal')->with('equipos');
     }
-    
+
 
     // Relación: Equipo - ProgramaEquipo (1 - M)
     public function programa_equipos()
@@ -54,7 +54,7 @@ class Equipo extends Model
     // Relación: Usuario - Equipo (1 - M)
      public function usuarios()
     {
-        return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
+        return $this->belongsTo('App\Models\User', 'encargado_registro');
     }
 
     public function asignado()
@@ -80,7 +80,7 @@ class Equipo extends Model
     {
         return $this->hasOne('App\Models\Impresora', 'id_equipo');
     }
-    
+
 
     // Relación: Equipo - DetalleEquipo (1 - 0/1)
     public function detalle_equipos()
@@ -90,7 +90,7 @@ class Equipo extends Model
 
     public function detalle_componentes(){
         return $this->hasMany('App\Models\DetalleComponente', 'id_equipo');
-        
+
     }
 
     // Relación: Marca - Equipo  (1 - M)

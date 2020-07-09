@@ -32,12 +32,12 @@ class CreateEquiposTable extends Migration
             $table->foreign('id_marca')
             ->references('id_marca')->on('marcas')
             ->onDelete('set null')
-            ->onUpdate('cascade'); 
-            
+            ->onUpdate('cascade');
+
             $table->foreign('encargado_registro')
-            ->references('usuario')->on('usuarios')
+            ->references('username')->on('users')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
 
             $table->foreign('asignado')
             ->references('cedula')->on('empleados')
@@ -47,12 +47,12 @@ class CreateEquiposTable extends Migration
             $table->foreign('componente_principal')
             ->references('id_equipo')->on('equipos')
             ->onDelete('set null')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
 
             $table->foreign('ip')
             ->references('id_ip')->on('ips')
             ->onDelete('set null')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
         });
     }
 

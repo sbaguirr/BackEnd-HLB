@@ -24,9 +24,9 @@ class CreateProgramasInstaladosTable extends Migration
             $table->timestamps();
 
             $table->foreign('encargado_registro')
-            ->references('usuario')->on('usuarios')
+            ->references('username')->on('users')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
 
         });
     }

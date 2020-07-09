@@ -19,7 +19,7 @@ class CreateIpsTable extends Migration
             $table->ipAddress('direccion_ip');
             $table->ipAddress('hostname');
             $table->ipAddress('subred');
-            $table->ipAddress('fortigate'); 
+            $table->ipAddress('fortigate');
             $table->text('observacion')->nullable();
             $table->unsignedTinyInteger('maquinas_adicionales');
             $table->string('nombre_usuario', 100)->nullable();
@@ -27,7 +27,7 @@ class CreateIpsTable extends Migration
             $table->timestampsTz(0);
 
             $table->foreign('encargado_registro')
-            ->references('usuario')->on('usuarios')
+            ->references('username')->on('users')
             ->onDelete('cascade')
             ->onUpdate('cascade');
 
@@ -35,7 +35,7 @@ class CreateIpsTable extends Migration
             // ->references('id_estado_equipo')->on('estado_equipo')
             // ->onDelete('cascade')
             // ->onUpdate('cascade')
-            ; 
+            ;
 
         });
     }

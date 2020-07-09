@@ -34,7 +34,7 @@ class Ip extends Model
     // Relación: Usuario - Ip (1 - M)
     public function usuarios()
     {
-        return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
+        return $this->belongsTo('App\Models\User', 'encargado_registro');
     }
 
 }
