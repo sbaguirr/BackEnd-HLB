@@ -80,10 +80,6 @@ class IpController extends Controller
             $ip->nombre_usuario = 'Samuel Braganza';
             $ip->encargado_registro = 'admin';
 
-            // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
-            $ip->nombre_usuario = 'Samuel Braganza';
-            $ip->encargado_registro = 'admin';
-
             $ip->save();
             
             DB::commit();
@@ -131,6 +127,7 @@ class IpController extends Controller
     {
         try{
         $ip= Ip::find($request->get('key')); #key es el id de la ip.
+        var_dump($ip);
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
