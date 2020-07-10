@@ -26,7 +26,7 @@ class CreateSolicitud extends Migration
             $table->timestamps();
 
             $table->foreign('id_usuario')
-            ->references('usuario')->on('usuarios')
+            ->references('username')->on('users')
             ->onDelete('cascade')
             ->onUpdate('cascade'); 
         });

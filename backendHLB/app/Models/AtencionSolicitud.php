@@ -34,7 +34,7 @@ class AtencionSolicitud extends Model
     // Relación: Usuario - Solicitud (1 - M)
     public function usuarios()
     {
-        return $this->belongsTo('App\Models\Usuario', 'id_usuario');
+        return $this->belongsTo('App\Models\User', 'id_usuario');
     }
 
     // Relación: Solicitud - AtencionSolicitud (1 - M)

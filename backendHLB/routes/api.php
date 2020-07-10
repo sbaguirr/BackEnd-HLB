@@ -15,10 +15,10 @@ use Illuminate\Http\Request;
 /*-------------APP ROUTES-------------*/
 
 
-Route::post('register', 'UserController@register');
-Route::post('login', 'UserController@login');
-Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
-Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
+    Route::post('register', 'UserController@register');
+    Route::post('login', 'UserController@login');
+    Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
+    Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
 
 
 /*API Correo*/
@@ -29,10 +29,10 @@ Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_us
     Route::put('editar_correo', 'CorreoController@editar_correo');
     Route::put('eliminar_correo/{id_correo}', 'CorreoController@eliminar_correo');
 
- /*API Empleado*/
+/*API Empleado*/
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
 
- /*API Marcas */
+/*API Marcas */
     Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
     Route::get('marca_id/{marca_id}', 'MarcaController@marca_id');
     Route::delete('eliminar_marca/{id_marca}', 'MarcaController@eliminar_marca');
@@ -89,7 +89,7 @@ Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_us
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
 
 
-/**API Ip */
+/*API Ip */
     Route::get('listar_ips', 'IpController@listar_ips');
     Route::get('listar_ips_prueba', 'IpController@listar_ips_prueba');
     Route::get('ips_libres', 'IpController@ips_libres');
@@ -99,6 +99,22 @@ Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_us
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
     Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
     Route::get('ipbyidonly/{id}', 'IpController@Ip_ID_Only');
+
+
+/*API Solicitudes */
+    Route::post('filtrar_solicitudes', 'SolicitudController@filtrar_solicitudes');
+    Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
+
+
+
+
+
+
+
+
+
+
+
 
 
 
