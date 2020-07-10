@@ -33,7 +33,7 @@ class Rol extends Model
     // Relación: Rol - Usuario (1 - M)
     public function usuarios()
     {
-        return $this->hasMany('App\Models\Usuario', 'id_rol');
+        return $this->hasMany('App\Models\User', 'id_rol');
     }
 
 }

@@ -15,7 +15,7 @@ class ProgramaInstalado extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'codigo', 'observacion', 'encargado_registro'
+        'nombre', 'codigo', 'version', 'editor', 'observacion', 'encargado_registro'
     ];
 
 
@@ -32,7 +32,7 @@ class ProgramaInstalado extends Model
     // Relación: Usuario - ProgramaInstalado (1 - M)
     public function usuarios()
     {
-        return $this->belongsTo('App\Models\Usuario', 'encargado_registro');
+        return $this->belongsTo('App\Models\User', 'encargado_registro');
     }
 
 

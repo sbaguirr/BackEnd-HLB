@@ -242,7 +242,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_ROU_005',
             'tipo_equipo' => 'Router',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -313,7 +313,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_LAP_003',
             'tipo_equipo' => 'laptop',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -384,7 +384,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_RAM_003',
             'tipo_equipo' => 'memoria_ram',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -398,7 +398,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_RAM_004',
             'tipo_equipo' => 'memoria_ram',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -483,7 +483,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_PRC_005',
             'tipo_equipo' => 'procesador',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -568,7 +568,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'D',
             'codigo' => 'HLB_DD_004',
             'tipo_equipo' => 'disco_duro',
-            'id_marca' => 11, 
+            'id_marca' => 11,
             'modelo' => 'MU-MIMO',
             'descripcion' => 'Ultra Wifi',
             'numero_serie' => 'AC3150',
@@ -606,7 +606,7 @@ class EquipoSeeder extends Seeder
             'ip' => null
         ]);
 
-        
+
         Equipo::create([//43
             'fecha_registro' => '2019-05-07',
             'estado_operativo' => 'O',
@@ -640,7 +640,7 @@ class EquipoSeeder extends Seeder
             'estado_operativo' => 'O',
             'codigo' => 'HLB_DSK_003',
             'tipo_equipo' => 'desktop',
-            'id_marca' => null, 
+            'id_marca' => null,
             'modelo' => null,
             'descripcion' => 'Con UPS',
             'numero_serie' => null,
@@ -690,7 +690,7 @@ class EquipoSeeder extends Seeder
             'componente_principal' => 43,
             'ip' => null,
             'asignado' => null,
-        ]); 
+        ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'O',
@@ -888,7 +888,7 @@ class EquipoSeeder extends Seeder
             'componente_principal' => 44,
             'ip' => null,
             'asignado' => '1205478963',
-        ]); 
+        ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'D',
@@ -1087,7 +1087,7 @@ class EquipoSeeder extends Seeder
             'componente_principal' => 45,
             'ip' => null,
             'asignado' => '0258463258',
-        ]); 
+        ]);
         Equipo::create([
             'fecha_registro' => '2019-04-15',
             'estado_operativo' => 'O',

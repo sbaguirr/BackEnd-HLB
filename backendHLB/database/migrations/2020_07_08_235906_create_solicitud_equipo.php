@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLaptopsTable extends Migration
+class CreateSolicitudEquipo extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateLaptopsTable extends Migration
      */
     public function up()
     {
-        Schema::create('laptops', function (Blueprint $table) {
-            $table->bigIncrements('id_laptop');
-            $table->string('marca');
-            $table->string('modelo');
-            $table->string('numero_serie');
-            $table->string('estado_operativo');
-            $table->bigInteger('id_equipo')->unsigned();
+        Schema::create('solicitud_equipos', function (Blueprint $table) {
+            $table->bigIncrements('id_solicitud_equipo');
+            $table->unsignedBigInteger('id_solicitud');
+            $table->unsignedBigInteger('id_equipo');
             $table->timestamps();
 
             $table->foreign('id_equipo')
@@ -27,6 +24,10 @@ class CreateLaptopsTable extends Migration
             ->onDelete('cascade')
             ->onUpdate('cascade'); 
 
+            $table->foreign('id_solicitud')
+            ->references('id_solicitud')->on('solicitudes')
+            ->onDelete('cascade')
+            ->onUpdate('cascade'); 
         });
     }
 
@@ -37,6 +38,6 @@ class CreateLaptopsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('laptops');
+        Schema::dropIfExists('solicitud_equipos');
     }
 }

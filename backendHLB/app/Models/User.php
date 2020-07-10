@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Usuario extends Model
+class User extends Authenticatable implements JWTSubject
 {
-    protected $table = 'usuarios';
-    protected $primaryKey = 'usuario';
+    use Notifiable;
+
+    protected $table = 'users';
+    protected $primaryKey = 'username';
 
     /**
      * Indicates if the IDs are no auto-incrementing.
@@ -23,15 +28,16 @@ class Usuario extends Model
      */
     protected $keyType = 'string';
 
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-         'contrasena', 'id_rol', 'cedula'
+        'password', 'id_rol', 'cedula'
+        //'name', 'email', 'password',
     ];
-
 
     /**
      * The attributes that should be hidden for arrays.
@@ -39,11 +45,18 @@ class Usuario extends Model
      * @var array
      */
     protected $hidden = [
-    	'constrasena','created_at', 'updated_at'
+        'password','created_at', 'updated_at'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
-    // Relación: Rol - Usuario (1 - M)
     public function roles()
     {
         return $this->belongsTo('App\Models\Rol', 'id_rol');
@@ -55,7 +68,7 @@ class Usuario extends Model
     {
         return $this->belongsTo('App\Models\Empleado', 'cedula');
     }
-    
+
 
     // Relación: Usuario - ProgramaInstalado (1 - M)
     public function programas_instalados()
@@ -75,17 +88,17 @@ class Usuario extends Model
      public function equipos()
     {
         return $this->hasMany('App\Models\Equipo', 'encargado_registro');
-    } 
-
-
-    // Relación: Usuario - Solicitud (1 - M)
-    public function solicitudes(){
-        return $this->hasMany('App\Models\Solicitud', 'id_usuario');
     }
 
-
-    // Relación: Usuario - AtencionSolicitud (1 - M)
-    public function atencion_solicitudes(){
-        return $this->hasMany('App\Models\AtencionSolicitud', 'id_usuario');
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
+
+
+

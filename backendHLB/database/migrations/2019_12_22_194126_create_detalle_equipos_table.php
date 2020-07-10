@@ -21,7 +21,7 @@ class CreateDetalleEquiposTable extends Migration
             $table->char('services_pack');
             $table->string('nombre_pc');            
             $table->string('usuario_pc');            
-            $table->string('office');
+            $table->string('office')->nullable();
             $table->bigInteger('id_equipo')->unsigned();
             $table->timestamps();
 
