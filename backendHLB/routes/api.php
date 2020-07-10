@@ -190,3 +190,9 @@ use Illuminate\Http\Request;
     Route::post('editar_programa', 'ProgramaInstaladoController@editar_programa');
     Route::post('lista_programas_id', 'ProgramaInstaladoController@lista_programas_id');
     Route::get('buscar_programa_id/{id_programa}', 'ProgramaInstaladoController@buscar_programa_id');
+
+/* API SOLICITUDES */
+    Route::post('crear_solicitud', 'SolicitudController@crear_solicitud');
+    
+
+
