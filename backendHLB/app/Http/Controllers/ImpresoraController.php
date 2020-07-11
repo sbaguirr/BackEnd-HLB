@@ -287,8 +287,8 @@ class ImpresoraController extends Controller
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->where('equipos.codigo','like',"%" . $request->get('codigo') . "%")
-        ->where('equipos.estado_operativo','<>','B')
-        ->where('equipos.estado_operativo','<>','De baja')
+        //->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','De baja')
         ->orderBy('equipos.created_at', 'desc')
         ->paginate(10);
 
@@ -303,8 +303,8 @@ class ImpresoraController extends Controller
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
-        ->where('equipos.estado_operativo','<>','B')
-        ->where('equipos.estado_operativo','<>','De baja')
+        //->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','De baja')
         ->orderBy('equipos.created_at', 'desc')
         ->paginate($size);
 
@@ -318,8 +318,8 @@ class ImpresoraController extends Controller
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
-        ->where('equipos.estado_operativo','<>','B')
-        ->where('equipos.estado_operativo','<>','De baja')
+        //->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','De baja')
         ->where('equipos.codigo','like','%'.$codigo.'%')
         ->orderBy('equipos.created_at', 'desc')
         ->paginate($size);
@@ -335,9 +335,9 @@ class ImpresoraController extends Controller
 
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
-        ->leftjoin('empleados','equipos.asignado','=','cedula')
-        ->where('equipos.estado_operativo','<>','B')
-        ->where('equipos.estado_operativo','<>','De baja');
+        ->leftjoin('empleados','equipos.asignado','=','cedula');
+        //->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','De baja');
 
         //print_r('Part');
 

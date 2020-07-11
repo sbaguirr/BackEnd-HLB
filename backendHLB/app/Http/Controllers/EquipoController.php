@@ -26,7 +26,7 @@ class EquipoController extends Controller
     const MAX = 'El campo :attribute supera la longitud maxima permitida';
 
     //creacion
-    
+
     public function crear_comp_laptop(Request $request)
     {
 
@@ -173,7 +173,7 @@ class EquipoController extends Controller
             ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
             ->leftjoin('empleados','equipos.asignado','=','cedula')
             ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
-            ->where('equipos.estado_operativo','<>','B')
+            //->where('equipos.estado_operativo','<>','B')
             ->orderBy('equipos.id_equipo', 'desc')
     //        ->get();
             ->paginate($size);
@@ -189,7 +189,7 @@ class EquipoController extends Controller
         ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
-        ->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','B')
         ->where('equipos.codigo','like',"%".$codigo."%")
         ->orderBy('equipos.tipo_equipo', 'desc')
         ->paginate($size);
@@ -205,7 +205,7 @@ class EquipoController extends Controller
             ->leftjoin('ips','id_ip','=','equipos.ip')
             ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
             ->leftjoin('empleados','equipos.asignado','=','cedula')
-            ->where('equipos.estado_operativo','<>','B')
+            //->where('equipos.estado_operativo','<>','B')
             ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"]);
             //->orderBy('equipos.tipo_equipo', 'desc')
             //->paginate(10);
@@ -245,7 +245,7 @@ class EquipoController extends Controller
 
         }
         if (empty($estado)){
-            $query= $query->where('equipos.estado_operativo','<>','B');
+            $query= $query;
         }else{
             $query= $query->where('equipos.estado_operativo', $estado);
         }
@@ -291,7 +291,7 @@ class EquipoController extends Controller
         ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
-        ->where('equipos.estado_operativo','<>','B')
+        //->where('equipos.estado_operativo','<>','B')
         ->where('equipos.id_equipo',$id_otro_equipo)
         ->get();
     }
@@ -342,7 +342,7 @@ class EquipoController extends Controller
             $detEq->services_pack=$request->get('pc-service');
             $detEq->licencia=$request->get('pc-licencia');
             $detEq->save();
-            
+
             for ( $i=0; $i<count($request->get('pc-version_office')); $i++ ){
                 $programa = new ProgramaEquipo();
                 $programa->id_equipo = $computador->id_equipo;
@@ -559,7 +559,7 @@ class EquipoController extends Controller
         "pc-usuario_pc"=>$detEq["usuario_pc"],
         "pc-sistema_operativo"=>$detEq["so"],
         "pc-tipo_sistema_operativo"=>$detEq["tipo_so"],
-        "pc-licencia"=>$detEq["licencia"]=="1", 
+        "pc-licencia"=>$detEq["licencia"]=="1",
         "pc-service"=>$detEq["services_pack"]=="1",
         "pc-version_office"=>$id_programas,
         'id-numero_slots'=>$num_slots["id"],];
@@ -677,19 +677,19 @@ class EquipoController extends Controller
             for ( $j=0; $j<count($consulta_instalados); $j++ ){
                 array_push($ids_programas_instalados, $consulta_instalados[$j]["id_programa"]);
             }
-        
+
             for ( $i=0; $i<count($programas); $i++ ){
                 if ((!in_array($programas[$i], $ids_programas_instalados,true))) {
-                    array_push($por_guardar, $programas[$i]);    
+                    array_push($por_guardar, $programas[$i]);
                 }
             }
-            
+
             for ( $i=0; $i<count($ids_programas_instalados); $i++ ){
                 if (!in_array($ids_programas_instalados[$i], $programas,true)) {
-                    array_push($a_eliminar, $ids_programas_instalados[$i]); 
+                    array_push($a_eliminar, $ids_programas_instalados[$i]);
                 }
             }
-            
+
             for ($i=0; $i<count($por_guardar); $i++){
                 $programa = new ProgramaEquipo();
                 $programa->id_equipo = $idequipo;
@@ -697,7 +697,7 @@ class EquipoController extends Controller
                 $programa->fecha_instalacion = Date('Y-m-d H:i:s');
                 $programa->save();
             }
-        
+
             for ($i=0; $i<count($a_eliminar); $i++){
                 $id = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',$idequipo)->get()[0]["id"];
                 ProgramaEquipo::find($id)->delete();
@@ -741,7 +741,7 @@ class EquipoController extends Controller
                 Ip::Where("id_ip","=",$request->get("pc-ip_asignada"))->update(['estado' => "EU"]);
             }
             DetalleEquipo::Where("id_equipo","=",$idequipo)->update(["usuario_pc"=>$request->get("pc-usuario_pc"),
-            "nombre_pc"=>$request->get("pc-nombre_pc"), 
+            "nombre_pc"=>$request->get("pc-nombre_pc"),
             "so"=>$request->get('pc-sistema_operativo'),
             "tipo_so"=>$request->get('pc-tipo_sistema_operativo'),
            "services_pack"=>$request->get('pc-service'),
@@ -754,19 +754,19 @@ class EquipoController extends Controller
             for ( $j=0; $j<count($consulta_instalados); $j++ ){
                 array_push($ids_programas_instalados, $consulta_instalados[$j]["id_programa"]);
             }
-        
+
             for ( $i=0; $i<count($programas); $i++ ){
                 if ((!in_array($programas[$i], $ids_programas_instalados,true))) {
-                    array_push($por_guardar, $programas[$i]);    
+                    array_push($por_guardar, $programas[$i]);
                 }
             }
-            
+
             for ( $i=0; $i<count($ids_programas_instalados); $i++ ){
                 if (!in_array($ids_programas_instalados[$i], $programas,true)) {
-                    array_push($a_eliminar, $ids_programas_instalados[$i]); 
+                    array_push($a_eliminar, $ids_programas_instalados[$i]);
                 }
             }
-            
+
             for ($i=0; $i<count($por_guardar); $i++){
                 $programa = new ProgramaEquipo();
                 $programa->id_equipo = $idequipo;
@@ -774,7 +774,7 @@ class EquipoController extends Controller
                 $programa->fecha_instalacion = Date('Y-m-d H:i:s');
                 $programa->save();
             }
-        
+
             for ($i=0; $i<count($a_eliminar); $i++){
                 $id = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',$idequipo)->get()[0]["id"];
                 ProgramaEquipo::find($id)->delete();
@@ -951,7 +951,7 @@ class EquipoController extends Controller
         for ( $i=0; $i<count($sw); $i++ ){
             $sw[$i] = ProgramaInstalado::Where("id_programa","=",$sw[$i]['id_programa'])->get()[0];
             $sw[$i]["fecha_instalacion"] = $sw[$i]['created_at'];
-        } 
+        }
         // $prog = ProgramaInstalado::WhereIn("id_programa",$sw->get(['id_programa']));
         $laptop["marca"] = $marca['0']['nombre'];
         // $sw["w"] = $prog;
@@ -1067,7 +1067,7 @@ class EquipoController extends Controller
             for ( $i=0; $i<count($sw); $i++ ){
                 $sw[$i] = ProgramaInstalado::Where("id_programa","=",$sw[$i]['id_programa'])->get()[0];
                 $sw[$i]["fecha_instalacion"] = $sw[$i]['created_at'];
-            } 
+            }
             $final['programas'] = $sw;
             if($fuente_alimentacion !== []){ $final['f_alim'] = $fuente_alimentacion[0]; }
             $obj = self::filtro_dinamico_plus($final, $equipos, $detalles, ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse',
@@ -1152,19 +1152,19 @@ class EquipoController extends Controller
             for ( $j=0; $j<count($consulta_instalados); $j++ ){
                 array_push($ids_programas_instalados, $consulta_instalados[$j]["id_programa"]);
             }
-        
+
             for ( $i=0; $i<count($programas); $i++ ){
                 if ((!in_array($programas[$i], $ids_programas_instalados,true))) {
-                    array_push($por_guardar, $programas[$i]);    
+                    array_push($por_guardar, $programas[$i]);
                 }
             }
-            
+
             for ( $i=0; $i<count($ids_programas_instalados); $i++ ){
                 if (!in_array($ids_programas_instalados[$i], $programas,true)) {
-                    array_push($a_eliminar, $ids_programas_instalados[$i]); 
+                    array_push($a_eliminar, $ids_programas_instalados[$i]);
                 }
             }
-            
+
             for ($i=0; $i<count($por_guardar); $i++){
                 $programa = new ProgramaEquipo();
                 $programa->id_equipo = $request->key;
@@ -1172,7 +1172,7 @@ class EquipoController extends Controller
                 $programa->fecha_instalacion = Date('Y-m-d H:i:s');
                 $programa->save();
             }
-        
+
             for ($i=0; $i<count($a_eliminar); $i++){
                 $id = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',$request->key)->get()[0]["id"];
                 ProgramaEquipo::find($id)->delete();
@@ -1426,19 +1426,19 @@ class EquipoController extends Controller
             for ( $j=0; $j<count($consulta_instalados); $j++ ){
                 array_push($ids_programas_instalados, $consulta_instalados[$j]["id_programa"]);
             }
-        
+
             for ( $i=0; $i<count($programas); $i++ ){
                 if ((!in_array($programas[$i], $ids_programas_instalados,true))) {
-                    array_push($por_guardar, $programas[$i]);    
+                    array_push($por_guardar, $programas[$i]);
                 }
             }
-            
+
             for ( $i=0; $i<count($ids_programas_instalados); $i++ ){
                 if (!in_array($ids_programas_instalados[$i], $programas,true)) {
-                    array_push($a_eliminar, $ids_programas_instalados[$i]); 
+                    array_push($a_eliminar, $ids_programas_instalados[$i]);
                 }
             }
-            
+
             for ($i=0; $i<count($por_guardar); $i++){
                 $programa = new ProgramaEquipo();
                 $programa->id_equipo = $request->key;
@@ -1446,7 +1446,7 @@ class EquipoController extends Controller
                 $programa->fecha_instalacion = Date('Y-m-d H:i:s');
                 $programa->save();
             }
-        
+
             for ($i=0; $i<count($a_eliminar); $i++){
                 $id = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',$request->key)->get()[0]["id"];
                 ProgramaEquipo::find($id)->delete();
