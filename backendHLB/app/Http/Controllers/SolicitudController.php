@@ -58,8 +58,8 @@ class SolicitudController extends Controller
         $solicitud->tipo = $request->get('tipo');
         $solicitud->observacion = $request->get('observacion');
         $solicitud->estado = 'P';
-        $solicitud->fecha_realizacion =  Date('Y-m-d');
-        $solicitud->hora_realizacion =  Date('H:i:s');
+        $solicitud->fecha_realizacion = Date('Y-m-d');
+        $solicitud->hora_realizacion = Date('H:i:s');
         $solicitud->save();
         return response()->json($solicitud,200);
     }
