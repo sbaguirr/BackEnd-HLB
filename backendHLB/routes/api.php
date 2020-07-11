@@ -194,6 +194,7 @@ use Illuminate\Http\Request;
 
 /* API SOLICITUDES */
     Route::post('crear_solicitud', 'SolicitudController@crear_solicitud');
+    Route::get('mostrar_solicitudes', 'SolicitudController@mostrar_solicitudes');
     
 
 
