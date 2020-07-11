@@ -12,7 +12,7 @@ class CorreoController extends Controller
      public function mostrar_correos()
     {
         return Correo::select('correos.id_correo','empleados.nombre','empleados.apellido','departamentos.nombre as departamento',
-        'bspi_punto','correo','correos.estado','correos.created_at as asignacion')
+        'bspi_punto','correo','correos.estado','correos.created_at as asignacion', 'empleados.cedula', 'correos.contrasena')
         ->join('empleados','empleados.cedula','=','correos.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
