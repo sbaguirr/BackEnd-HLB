@@ -214,42 +214,27 @@ class EquipoController extends Controller
 
         //print_r('Part');
 
-        if($marca != "Todos" && !empty($fecha_asignacion)){
-            //console.log('Parte 1');
-            //print_r('Part 1');
+        if($marca!=="Todas"){
+
             $value_marca=Marca::select('id_marca')
             ->where('nombre','=',$marca)->pluck('id_marca');
+            $query = $query ->where('equipos.id_marca','=', $value_marca);
 
-            //$value_marca[0]->id_marca;
-
-            //$query= $query->where([['equipos.created_at', 'like', "$" . $fecha_asignacion . "%"],
-            //    ['equipos.id_marca', '=', $value_marca[0]->id_marca]]);
-            $query = $query -> where('equipos.created_at','like', "%" . $fecha_asignacion . "%")
-            ->where('equipos.id_marca','=', $value_marca);
-            //->pluck('ip');
+            //$value_marca=Marca::select('id_marca')
+            //->where('nombre','=',$marca);
+            //$query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
+            //$query= $query->where('marcas.nombre', $marca);
         }
-        if ($marca != "Todos" && empty($fecha_asignacion)){
-            //console.log('Parte 2');
-            //print_r('Part 2');
-
-            $value_marca=Marca::select('id_marca')
-            ->where('nombre','=',$marca);
-            $query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
-        }
-        if ($marca == "Todos" && !empty($fecha_asignacion)){
-            //console.log('Parte 3');
-            //print_r('Part 3');
-
+        if ($fecha_asignacion!== "Todas"){
+            $query = $query -> where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
             //$query= $query->whereDate('equipos.created_at',$fecha_asignacion);
-            $query= $query->where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
-
         }
-        if (empty($estado)){
+        if ($estado ==="Todas"){
+            // $query= $query->where('equipos.estado_operativo', $estado);
             $query= $query;
         }else{
             $query= $query->where('equipos.estado_operativo', $estado);
         }
-        //$query= $query->orderBy('equipos.created_at', 'asc')->get();
         return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
 
     }

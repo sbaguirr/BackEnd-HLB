@@ -332,38 +332,33 @@ class ImpresoraController extends Controller
     public function filtrar_impresoras_paginado($marca,$fecha_asignacion=null,$estado){
         $query = Impresora::select('id_impresora','tipo','tinta','cinta','ip','direccion_ip','asignado','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','empleados.nombre','empleados.apellido','numero_serie','equipos.encargado_registro','equipos.created_at')
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
-
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->leftjoin('empleados','equipos.asignado','=','cedula');
         //->where('equipos.estado_operativo','<>','B')
         //->where('equipos.estado_operativo','<>','De baja');
-
         //print_r('Part');
+        if($marca!=="Todas"){
 
-        if($marca != "Todos" && !empty($fecha_asignacion)){
-            //console.log('Parte 1');
-            //print_r('Part 1');
             $value_marca=Marca::select('id_marca')
             ->where('nombre','=',$marca)->pluck('id_marca');
-            $query = $query -> where('equipos.created_at','like', "%" . $fecha_asignacion . "%")
-            ->where('equipos.id_marca','=', $value_marca);
-            //->pluck('ip');
+            $query = $query ->where('equipos.id_marca','=', $value_marca);
+
+            //$value_marca=Marca::select('id_marca')
+            //->where('nombre','=',$marca);
+            //$query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
+            //$query= $query->where('marcas.nombre', $marca);
         }
-        if ($marca != "Todos" && empty($fecha_asignacion)){
-            $value_marca=Marca::select('id_marca')
-            ->where('nombre','=',$marca);
-            $query= $query->where('equipos.id_marca',$value_marca[0]->id_marca);
+        if ($fecha_asignacion!== "Todas"){
+            $query = $query -> where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
+            //$query= $query->whereDate('equipos.created_at',$fecha_asignacion);
         }
-        if ($marca == "Todos" && !empty($fecha_asignacion)){
-            $query= $query->where('equipos.created_at','like', "%" . $fecha_asignacion . "%");
-        }
-        if (empty($estado)){
-            $query= $query->where('equipos.estado_operativo','<>','B');
+        if ($estado ==="Todas"){
+            // $query= $query->where('equipos.estado_operativo', $estado);
+            $query= $query;
         }else{
             $query= $query->where('equipos.estado_operativo', $estado);
         }
-
         return $query->orderBy('equipos.created_at', 'desc')->paginate(10);
     }
 
