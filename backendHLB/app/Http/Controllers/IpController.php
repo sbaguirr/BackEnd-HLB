@@ -44,6 +44,14 @@ class IpController extends Controller
         return Ip::find(1)->estado->nombre;
     }
 
+    private function verificar_ip_ya_existe($direccion_ip)
+    {
+        $buscar_ip = Ip::select('*')
+                    ->where('direccion_ip', $direccion_ip)
+                    ->get();
+        return isset($buscar_ip->id_ip);
+    }
+
     public function buscar_ip_por_codigo($id_ip)
     {
         return Ip::select('*')
@@ -79,7 +87,6 @@ class IpController extends Controller
             // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
             $ip->nombre_usuario = 'Samuel Braganza';
             $ip->encargado_registro = 'admin';
-
             $ip->save();
             
             DB::commit();
@@ -91,11 +98,19 @@ class IpController extends Controller
                 )
             , 200);
 
-        } catch (Exception $e) {
+        } catch (QueryException $e) {
             DB::rollback();
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json([
+                    'status' => 'error',
+                    'log'=>'La direccion IP que ha ingresado ya existe. Por favor ingrese una direccion IP que no exista.'
+                ], 409);
+            }
             return response()->json([
-                'status' => $e,
-            ], 400);
+                'status' => 'error',
+                'log' => $e
+            ], 409);
         }
     }
 

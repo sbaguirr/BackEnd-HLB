@@ -16,7 +16,7 @@ class CreateIpsTable extends Migration
         Schema::create('ips', function (Blueprint $table) {
             $table->bigIncrements('id_ip');
             $table->string('estado');
-            $table->ipAddress('direccion_ip');
+            $table->ipAddress('direccion_ip')->unique();
             $table->ipAddress('hostname');
             $table->ipAddress('subred');
             $table->ipAddress('fortigate');

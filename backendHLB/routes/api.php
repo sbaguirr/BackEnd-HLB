@@ -100,6 +100,7 @@ use Illuminate\Http\Request;
     Route::get('buscar_ip_por_codigo/{id_ip}', 'IpController@buscar_ip_por_codigo');
     Route::put('ip_asignada/{id_ip}','IpController@ip_asignada');
     Route::get('ipbyidonly/{id}', 'IpController@Ip_ID_Only');
+    Route::delete('eliminar_ip/{id_ip}', 'IpController@eliminar_ip');
 
 
 /*API Solicitudes */
