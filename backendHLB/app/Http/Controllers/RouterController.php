@@ -263,9 +263,5 @@ class RouterController extends Controller
         ->leftjoin('ips','ips.id_ip','=','equipos.ip')
         ->where('routers.id_equipo',$id_equipo)
         ->get()[0];
-
-
-
-}
-
+    }
 }
