@@ -54,6 +54,7 @@ class SolicitudController extends Controller
 
     public function crear_solicitud(Request $request){
         $solicitud = new Solicitud();
+        $solicitud->id_usuario = $request->get('id_usuario');
         $solicitud->prioridad = $request->get('prioridad');
         $solicitud->tipo = $request->get('tipo');
         $solicitud->observacion = $request->get('observacion');

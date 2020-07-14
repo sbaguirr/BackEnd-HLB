@@ -20,6 +20,12 @@ class IpController extends Controller
         return $ips;
     }
 
+    public function mostrar_ips()
+    {
+         return Ip::all();
+    }
+
+
     public function listar_ips_prueba()
     {
         // $ips = Ip::all();
@@ -85,7 +91,7 @@ class IpController extends Controller
             // $ip->fecha_asignacion = $dt;
 
             // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
-            $ip->nombre_usuario = 'Samuel Braganza';
+            $ip->nombre_usuario = '';
             $ip->encargado_registro = 'admin';
             $ip->save();
             
@@ -142,7 +148,6 @@ class IpController extends Controller
     {
         try{
         $ip= Ip::find($request->get('key')); #key es el id de la ip.
-        var_dump($ip);
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
