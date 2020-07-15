@@ -89,7 +89,8 @@ use Illuminate\Http\Request;
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
 
 
-/*API Ip */
+/*API Ip */    
+    Route::get('listar_ips', 'IpController@listar_ips');
     Route::get('mostrar_ips', 'IpController@mostrar_ips');
     Route::get('listar_ips_prueba', 'IpController@listar_ips_prueba');
     Route::get('ips_libres', 'IpController@ips_libres');
