@@ -25,6 +25,16 @@ class IpController extends Controller
          return Ip::all();
     }
 
+    public function mostrar_ips_detalladas(){
+        return Ip::SelectRaw('ips.*, bspi_punto, departamentos.nombre as departamento,
+         empleados.nombre, empleados.apellido, equipos.codigo, equipos.tipo_equipo')
+        ->leftjoin('equipos','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','cedula','=','asignado')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->get();
+    }
+
 
     public function listar_ips_prueba()
     {

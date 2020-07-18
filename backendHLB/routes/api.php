@@ -92,6 +92,7 @@ use Illuminate\Http\Request;
 /*API Ip */    
     Route::get('listar_ips', 'IpController@listar_ips');
     Route::get('mostrar_ips', 'IpController@mostrar_ips');
+    Route::get('mostrar_ips_detalladas', 'IpController@mostrar_ips_detalladas');
     Route::get('listar_ips_prueba', 'IpController@listar_ips_prueba');
     Route::get('ips_libres', 'IpController@ips_libres');
     Route::post('crear_equipo_ip', 'IpController@crear_equipo_ip');

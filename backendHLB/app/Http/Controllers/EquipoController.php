@@ -1793,11 +1793,13 @@ class EquipoController extends Controller
             return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
             empleados.apellido,
              equipos.encargado_registro as encargado, p.codigo as principal,
-             ips.direccion_ip')
+             ips.direccion_ip, bspi_punto, departamentos.nombre as departamento')
             ->join('marcas', 'marcas.id_marca', '=', 'equipos.id_marca')
             ->leftjoin('ips','id_ip','=','equipos.ip')
             ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
             ->leftjoin('empleados','equipos.asignado','=','cedula')
+            ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+            ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
             ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
             ->orderBy('equipos.tipo_equipo', 'asc')
             ->get();
