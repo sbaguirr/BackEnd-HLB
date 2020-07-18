@@ -197,6 +197,7 @@ use Illuminate\Http\Request;
 /* API SOLICITUDES */
     Route::post('crear_solicitud', 'SolicitudController@crear_solicitud');
     Route::get('mostrar_solicitudes', 'SolicitudController@mostrar_solicitudes');
+    Route::get('mostrar_solicitudes/{id_user}', 'SolicitudController@mostrar_solicitudes_user');
     
 
 

@@ -65,12 +65,19 @@ class SolicitudController extends Controller
         return response()->json($solicitud,200);
     }
 
+    
 
     public function mostrar_solicitudes(){
         return Solicitud::SelectRaw('solicitudes.*, empleados.nombre, empleados.apellido')
         ->join('users', 'users.username', '=', 'solicitudes.id_usuario')
         ->join('empleados', 'empleados.cedula', '=', 'users.cedula')
-        ->orderBy('solicitudes.created_at','asc')->get();
+        ->orderBy('solicitudes.created_at','desc')->get();
+    }
+
+    public function mostrar_solicitudes_user($id_user){
+        return Solicitud::SelectRaw('solicitudes.*')
+        ->where('solicitudes.id_usuario', '=', $id_user)
+        ->orderBy('solicitudes.created_at','desc')->get();
     }
 
     
