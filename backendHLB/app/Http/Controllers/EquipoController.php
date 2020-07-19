@@ -1789,8 +1789,8 @@ class EquipoController extends Controller
     }
 
     public function mostrar_equipos()
-    {
-            return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
+    {       
+            $equipos = Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
             empleados.apellido,
              equipos.encargado_registro as encargado, p.codigo as principal,
              ips.direccion_ip, bspi_punto, departamentos.nombre as departamento')
@@ -1803,6 +1803,41 @@ class EquipoController extends Controller
             ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
             ->orderBy('equipos.tipo_equipo', 'asc')
             ->get();
+
+            foreach($equipos as $obj){
+                $det = self::info_extra($obj['id_equipo']);
+                if(count($det)!=0){
+                    foreach($det as $objdet){
+                        $obj[$objdet['campo']] = $objdet['dato'];
+                    }
+                }
+            }
+            return response()->json($equipos,200);
+    }
+
+    private function mostrar_equipo_id($id_equipo)
+    {       
+            $equipo =Equipo::SelectRaw('equipos.*, marcas.nombre as marca,
+            empleados.nombre as empleado, empleados.apellido as apellido, p.codigo as componente_principal,
+             bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
+            ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+            ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
+            ->leftjoin('ips','id_ip','=','equipos.ip')
+            ->leftjoin('empleados','equipos.asignado','=','cedula')
+            ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+            ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+            ->where('equipos.id_equipo',$id_equipo)
+            ->first();
+
+            
+            $det = self::info_extra($equipo['id_equipo']);
+            if(count($det)!=0){
+                foreach($det as $objdet){
+                    $equipo[$objdet['campo']] = $objdet['dato'];
+                }
+            }
+            
+            return $equipo;
     }
 
     /* Servicio para editar otros equipos */
@@ -1982,10 +2017,11 @@ class EquipoController extends Controller
 
     /*Esto fue creado en base al formato de excel llamado "Inventario Final Ok" */
     function reporte_general(){
-        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca,
+        $detalles = ['desktop'=>[], 'laptop'=>[], 'impresora'=>[], 'router'=>[], 'otros'=>[]];
+        $equipos = Equipo::SelectRaw('equipos.*, marcas.nombre as marca,
         empleados.nombre as empleado, empleados.apellido as apellido,
-         bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
-         ->leftjoin('marcas','marcas.id_marca','=','equipos.id_marca')
+        bspi_punto, departamentos.nombre as departamento, ips.direccion_ip')
+        ->leftjoin('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
         ->leftjoin('empleados','equipos.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
@@ -1994,7 +2030,66 @@ class EquipoController extends Controller
         ->where('estado_operativo','<>','B')
         ->orderBy('departamento')
         ->get();
+
+        foreach($equipos as $obj){
+            if($obj['tipo_equipo']=='desktop' || $obj['tipo_equipo']=='Desktop'){
+                $desktop = self::obtenerInfoDesktop($obj["id_equipo"]);
+                array_push($detalles['desktop'],$desktop);
+            }
+            else if($obj['tipo_equipo']=='laptop' || $obj['tipo_equipo']=='Laptop' ){
+                $desktop = self::obtenerInfoLaptop($obj["id_equipo"]);
+                array_push($detalles['laptop'],$desktop);
+            }
+
+            else if($obj['tipo_equipo']=='Impresora' || $obj['tipo_equipo']=='impresora' ){
+                $impresora = self::impresora_id_equipo($obj["id_equipo"]);
+                array_push($detalles['impresora'],$impresora);
+            }
+            else if($obj['tipo_equipo']=='Router' || $obj['tipo_equipo']=='router' ){
+                $router = self::router_id_equipo($obj["id_equipo"]);
+                array_push($detalles['router'],$router);
+            }
+            else{
+                $otroeq = self::mostrar_equipo_id($obj["id_equipo"]);
+                array_push($detalles['otros'],$otroeq);
+            }
+
+            
+        }
+        return response()->json(['equipos' => $equipos, 'detalles' => $detalles],200);
     }
+
+    private function impresora_id_equipo($id_equipo){
+        return Equipo::selectRaw('impresoras.*, equipos.*, marcas.nombre as id_marca,
+        empleados.nombre as empleado, equipos.encargado_registro as encargado, ips.direccion_ip as ip,
+         empleados.apellido as apellido, p.codigo as componente_principal,
+         bspi_punto, departamentos.nombre as departamento' )
+        ->join('impresoras','equipos.id_equipo','=','impresoras.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
+        ->leftjoin('ips','id_ip','=','equipos.ip')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->where('impresoras.id_equipo',$id_equipo)
+        ->first();
+    }
+
+    private function router_id_equipo($id_equipo){
+        return Equipo::selectRaw('routers.*, equipos.*, marcas.nombre as marca, 
+        empleados.nombre as empleado, empleados.apellido as apellido, ips.direccion_ip,
+         organizaciones.bspi_punto, departamentos.nombre as departamento' )
+        ->join('routers','equipos.id_equipo','=','routers.id_equipo')
+        ->join('marcas','marcas.id_marca','=','equipos.id_marca')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->leftjoin('ips','ips.id_ip','=','equipos.ip')
+        ->where('routers.id_equipo',$id_equipo)
+        ->first();
+    }
+
+
 
      /*Esto fue creado en base al formato de excel llamado "Inventario equipos Sistemas (baja)" */
      function reporte_bajas(){

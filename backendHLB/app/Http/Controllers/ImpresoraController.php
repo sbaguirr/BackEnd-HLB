@@ -269,7 +269,7 @@ class ImpresoraController extends Controller
     public function impresoras_equipo(){
         return Impresora::selectRaw('impresoras.*, equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
         empleados.apellido, equipos.encargado_registro as encargado, p.codigo as componente_principal,
-        ips.direccion_ip' )
+        ips.direccion_ip, departamentos.nombre as departamento, bspi_punto' )
         ->join('equipos','equipos.id_equipo','=','impresoras.id_equipo')
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
