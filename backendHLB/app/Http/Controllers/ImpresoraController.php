@@ -274,7 +274,7 @@ class ImpresoraController extends Controller
         ->join('marcas','marcas.id_marca','=','equipos.id_marca')
         ->leftjoin('ips','id_ip','=','equipos.ip')
         ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
-        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->leftjoin('empleados','p.asignado','=','cedula')
         ->leftjoin('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->leftjoin('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->get();

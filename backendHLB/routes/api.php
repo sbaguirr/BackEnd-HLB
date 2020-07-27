@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
     Route::post('login', 'UserController@login');
     Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
     Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
+    Route::get('/mostrar_usuario_det/{username}', 'UserController@mostrar_usuario_det');
 
 
 /*API Correo*/
@@ -42,6 +43,7 @@ use Illuminate\Http\Request;
    Route::get('org_dpto/{punto}', 'DepartamentoController@org_dpto');
    Route::get('mostrar_departamentos','DepartamentoController@mostrar_departamentos');
    Route::get('mostrar_roles','DepartamentoController@mostrar_roles');
+   Route::get('mostrar_dep_org','DepartamentoController@org_dpto_all');
 
 /*API Routers*/
     Route::get('listar_routers', 'RouterController@listar_router');

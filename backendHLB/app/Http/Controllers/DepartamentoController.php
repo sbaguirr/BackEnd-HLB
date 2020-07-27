@@ -29,11 +29,18 @@ class DepartamentoController extends Controller
         ->get();
     }
 
-        public function org_dpto($punto)
+    public function org_dpto($punto)
     {
         return Departamento::select('id_departamento', 'nombre')
         ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->where('organizaciones.bspi_punto',$punto)
+        ->get()
+        ;
+    }
+
+    public function org_dpto_all(){
+        return Departamento::select('departamentos.id_departamento', 'departamentos.nombre', 'organizaciones.bspi_punto')
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
         ->get()
         ;
     }

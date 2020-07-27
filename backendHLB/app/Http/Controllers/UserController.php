@@ -24,19 +24,31 @@ class UserController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        return response()->json(compact('token'));
+        $user = self::obtener_datos_usurios($credentials['username'])[0];
+        return response()->json(['token'=>compact('token')['token'],'user'=>$user]);
     }
 
     public function obtener_datos_usurios($username){
 
 
 
-        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido')
+        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','roles.nombre as rol')
         ->join('empleados','empleados.cedula','=','users.cedula')
+        ->join('roles','roles.id_rol','=','users.id_rol')
         ->where('users.username','=',$username)
         ->get();
 
     }
+
+    public function mostrar_usuario_det($username){
+        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','users.id_rol','empleados.id_departamento')
+        ->join('empleados','empleados.cedula','=','users.cedula')
+        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('roles','roles.id_rol','=','users.id_rol')
+        ->where('users.username','=',$username)
+        ->first();
+    }
+
 
     public function existe_cedula($cedula){
         return $query = User::select('*')
