@@ -23,7 +23,7 @@ class SolicitudController extends Controller
         $query= Solicitud::selectRaw('*');       
 
         if(strcasecmp($estado, "O") == 0){
-            $query= $query->where('solicitudes.estado',$filtro_estado);
+            $query= $query->where('solicitudes.estado',$filtro_estado)->orWhere('solicitudes.estado',"R");
             if (!empty($fecha_realizacion)){
                 $query= $query->whereDate('solicitudes.fecha_realizacion',$fecha_realizacion);
             }
@@ -37,7 +37,7 @@ class SolicitudController extends Controller
         $query= $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index")); 
         return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
     }
-
+ 
     /**
      * Contador de solicitudes pendientes.
      * Versión preliminar... 
@@ -80,8 +80,20 @@ class SolicitudController extends Controller
         ->orderBy('solicitudes.created_at','desc')->get();
     }
 
-    
+    public function info_solicitud_id($id){
+        return Solicitud::SelectRaw('solicitudes.*, users.cedula, empleados.nombre, empleados.apellido,organizaciones.bspi_punto,departamentos.nombre as dpto' )
+        ->join('users', 'users.username', '=', 'solicitudes.id_usuario')
+        ->join('empleados', 'users.cedula', '=', 'empleados.cedula')
+        ->join('departamentos', 'empleados.id_departamento', '=', 'departamentos.id_departamento')
+        ->join('organizaciones', 'organizaciones.id_organizacion', '=', 'departamentos.id_organizacion')
+        ->where('solicitudes.id_solicitud', '=', $id)->get()[0];
+    }
 
-
+    public function cambiar_estado_solicitud($id_solicitud, $estado)
+    {
+      $solicitud = Solicitud::find($id_solicitud);
+      $solicitud->estado = $estado;
+      $solicitud->save();
+    }
 
 }

@@ -110,7 +110,9 @@ use Illuminate\Http\Request;
 /*API Solicitudes */
     Route::post('filtrar_solicitudes', 'SolicitudController@filtrar_solicitudes');
     Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
-
+    Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
+    Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
+    
 
 
 
