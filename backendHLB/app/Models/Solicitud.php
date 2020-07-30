@@ -43,4 +43,7 @@ class Solicitud extends Model
         return $this->hasOne('App\Models\FirmasElectronicas', 'id');
     }
 
+    public static function contar_pendientes(){
+        return Solicitud::where('estado', 'P')->get()->count();
+    }
 }
