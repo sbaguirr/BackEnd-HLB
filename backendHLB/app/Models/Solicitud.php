@@ -37,4 +37,10 @@ class Solicitud extends Model
     {
         return $this->belongsTo('App\Models\User', 'id_usuario');
     }
+
+    public function firmas_electronicas()
+    {
+        return $this->hasOne('App\Models\FirmasElectronicas', 'id');
+    }
+
 }

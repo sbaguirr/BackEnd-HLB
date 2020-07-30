@@ -28,7 +28,13 @@ class CreateSolicitud extends Migration
             $table->foreign('id_usuario')
             ->references('username')->on('users')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
+
+            $table->foreign('id_firma')
+            ->references('id')->on('firmas_electronicas')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+
         });
     }
 

@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 */
 /*-------------APP ROUTES-------------*/
 
+    Route::post('/upload/images', 'ImageUploadController@uploadImages');
+    Route::get('/path_all','ImageUploadController@obtener_rutas');
 
     Route::post('register', 'UserController@register');
     Route::post('login', 'UserController@login');
@@ -91,7 +93,7 @@ use Illuminate\Http\Request;
     Route::get('/obtener_impresora_por_id/{id_impresora}','ImpresoraController@obtener_impresora_por_id');
 
 
-/*API Ip */    
+/*API Ip */
     Route::get('listar_ips', 'IpController@listar_ips');
     Route::get('mostrar_ips', 'IpController@mostrar_ips');
     Route::get('mostrar_ips_detalladas', 'IpController@mostrar_ips_detalladas');
@@ -112,7 +114,7 @@ use Illuminate\Http\Request;
     Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
     Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
     Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
-    
+
 
 
 
@@ -203,6 +205,6 @@ use Illuminate\Http\Request;
     Route::post('crear_solicitud', 'SolicitudController@crear_solicitud');
     Route::get('mostrar_solicitudes', 'SolicitudController@mostrar_solicitudes');
     Route::get('mostrar_solicitudes/{id_user}', 'SolicitudController@mostrar_solicitudes_user');
-    
+
 
 
