@@ -37,4 +37,8 @@ class Solicitud extends Model
     {
         return $this->belongsTo('App\Models\User', 'id_usuario');
     }
+
+    public static function contar_pendientes(){
+        return Solicitud::where('estado', 'P')->get()->count();
+    }
 }

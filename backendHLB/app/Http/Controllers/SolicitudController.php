@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Events\Notificar;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use DateTime;
@@ -44,13 +44,8 @@ class SolicitudController extends Controller
      * Falta tomar en consideración: Cuando se haga una nueva solicitud.
      */
     public function contar_solicitudes(){
-        return Solicitud::select('id_solicitud')
-        ->where('estado', 'P')
-        ->get()
-        ->count();
+        return Solicitud::contar_pendientes();
     }
-
-
 
     public function crear_solicitud(Request $request){
         $solicitud = new Solicitud();
@@ -62,6 +57,7 @@ class SolicitudController extends Controller
         $solicitud->fecha_realizacion = Date('Y-m-d');
         $solicitud->hora_realizacion = Date('H:i:s');
         $solicitud->save();
+        event(new Notificar($solicitud->id_usuario));  //Cuando se cree una solicitud, se genera el evento web.
         return response()->json($solicitud,200);
     }
 
