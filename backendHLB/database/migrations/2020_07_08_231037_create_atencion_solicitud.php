@@ -16,6 +16,7 @@ class CreateAtencionSolicitud extends Migration
         Schema::create('atencion_solicitudes', function (Blueprint $table) {
             $table->bigIncrements('id_atencion');
             $table->date('fecha_atencion');
+            $table->time('hora_atencion');
             $table->string('observacion');  
             $table->unsignedBigInteger('id_solicitud');
             $table->string('id_usuario')->nullable();

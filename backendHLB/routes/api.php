@@ -34,6 +34,7 @@ use Illuminate\Http\Request;
 
 /*API Empleado*/
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
+    Route::get('empleados_sistemas', 'EmpleadoController@empleados_sistemas');
 
 /*API Marcas */
     Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
@@ -114,11 +115,7 @@ use Illuminate\Http\Request;
     Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
     Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
     Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
-
-
-
-
-
+    Route::post('crear_atencion_solicitud/{request}/{requestFirma}', 'SolicitudController@crear_atencion_solicitud');
 
 
 
