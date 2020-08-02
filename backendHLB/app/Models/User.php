@@ -98,6 +98,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    // Relación: Usuario - Solicitud (1 - M)
+    public function solicitudes(){
+        return $this->hasMany('App\Models\Solicitud', 'id_usuario');
+    }
+
+    // Relación: Usuario - AtencionSolicitud (1 - M)
+    public function atencion_solicitudes(){
+        return $this->hasMany('App\Models\AtencionSolicitud', 'id_usuario');
+    }
 }
 
 

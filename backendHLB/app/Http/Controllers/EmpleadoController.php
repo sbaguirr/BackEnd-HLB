@@ -24,8 +24,9 @@ class EmpleadoController extends Controller
     }
 
     public function empleados_sistemas(){
-        return Empleado::select('empleados.nombre', 'empleados.apellido', 'empleados.cedula')
+        return Empleado::select('empleados.nombre', 'empleados.apellido', 'users.username')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('users','users.cedula','=','empleados.cedula')
         ->where('departamentos.nombre','=','Sistemas')->get();
     }
 }

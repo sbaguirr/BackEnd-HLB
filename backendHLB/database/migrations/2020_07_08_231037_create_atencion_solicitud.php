@@ -16,8 +16,8 @@ class CreateAtencionSolicitud extends Migration
         Schema::create('atencion_solicitudes', function (Blueprint $table) {
             $table->bigIncrements('id_atencion');
             $table->date('fecha_atencion');
-            $table->time('hora_atencion');
-            $table->string('observacion');  
+            $table->time('hora_atencion',0);
+            $table->string('observacion')->nullable();  
             $table->unsignedBigInteger('id_solicitud');
             $table->string('id_usuario')->nullable();
             $table->timestamps();
@@ -25,7 +25,7 @@ class CreateAtencionSolicitud extends Migration
             $table->foreign('id_usuario')
             ->references('username')->on('users')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
+            ->onUpdate('cascade');
 
             $table->foreign('id_solicitud')
             ->references('id_solicitud')->on('solicitudes')

@@ -14,28 +14,62 @@ use Illuminate\Support\Facades\Schema;
 
 class AtencionSolicitudController extends Controller
 {
-    public function crear_atencion_solicitud(Request $request, Request $requestFirma){
-        $soli = Equipo::find($request->id_solicitud); 
-        $id_firma = uploadImages($requestFirma);
-        $soli ->id_firma = $id_firma;
-        $soli = save();
-        $solicitud = new AtencionSolicitud();
-        $solicitud->fecha_atencion = Date('Y-m-d');
-        $solicitud->hora_atencion = Date('H:i:s');
-        $solicitud->observacion = $request->get('observacion');
-        $solicitud->id_solicitud = $request->get('id_solicitud');
-        $solicitud->id_usuario = $request->get('id_usuario');
-        $solicitud->save();
-        for ( $i=0; $i<count($request->get('equipos')); $i++ ){
-            $solicitud_equipo = new SolicitudEquipo;
-            $solicitud_equipo->id_solicitud = $request->get('id_solicitud');
-            $solicitud_equipo->id_equipo = $request->get('equipos')[$i];
-            $solicitud_equipo->save();
-        }
-        $id_firma = uploadImages($requestFirma);
+    // public function crear_atencion_solicitud(Request $request, Request $requestFirma){
+    //     $soli = Equipo::find($request->id_solicitud); 
+    //     $id_firma = uploadImages($requestFirma);
+    //     $soli ->id_firma = $id_firma;
+    //     $soli = save();
+    //     $solicitud = new AtencionSolicitud();
+    //     $solicitud->fecha_atencion = Date('Y-m-d');
+    //     $solicitud->hora_atencion = Date('H:i:s');
+    //     $solicitud->observacion = $request->get('observacion');
+    //     $solicitud->id_solicitud = $request->get('id_solicitud');
+    //     $solicitud->id_usuario = $request->get('id_usuario');
+    //     $solicitud->save();
+    //     for ( $i=0; $i<count($request->get('equipos')); $i++ ){
+    //         $solicitud_equipo = new SolicitudEquipo;
+    //         $solicitud_equipo->id_solicitud = $request->get('id_solicitud');
+    //         $solicitud_equipo->id_equipo = $request->get('equipos')[$i];
+    //         $solicitud_equipo->save();
+    //     }
+    //     $id_firma = uploadImages($requestFirma);
 
-        return response()->json($solicitud,$solicitud_equipo, 200);
+    //     return response()->json($solicitud,$solicitud_equipo, 200);
+    // }
+
+    public function crear_atencion_solicitud(Request $request){
+        try{
+            $solicitud = new AtencionSolicitud();
+            $solicitud->id_solicitud = $request->get('id_solicitud');
+            $solicitud->fecha_atencion = Date('Y-m-d');
+            $solicitud->hora_atencion = Date('H:i:s');
+            $solicitud->observacion = $request->get('observacion');
+            $solicitud->id_usuario = $request->get('id_usuario');
+            $solicitud->save();
+            for ( $i=0; $i<count($request->get('equipos')); $i++ ){
+                $solicitud_equipo = new SolicitudEquipo();
+                $solicitud_equipo->id_solicitud = $request->get('id_solicitud');
+                $solicitud_equipo->id_equipo = $request->get('equipos')[$i];
+                $solicitud_equipo->save();
+            }
+            $id_solicitud = $request->get('id_solicitud');
+            // $estado_solicitud = Solicitud::find($id_solicitud);
+            // $estado_solicitud->estado = $request->get('estado');
+            // $estado_solicitud = save();
+            Solicitud::Where("id_solicitud","=",$id_solicitud)->update(['estado' => $request->get('estado'), 
+            'id_firma' => $request->get('id_imagen')]);
+            
+         // Solicitud::Where("id_solicitud","=",$id_solicitud)->update(['estado' => "C"]);
+            return response()->json(['log' => 'Registrado satisfactoriamente'], 200);  
+        }catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El registro que ha ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);
+        }    
     }
+
 
     public function uploadImages(Request $request){
 
@@ -57,6 +91,7 @@ class AtencionSolicitudController extends Controller
 
         //Save images
         $id = $this->saveImages($request, $image_url);
+        Solicitud::Where("id_solicitud","=",$id_solicitud)->update(['id_firma' => $url]);
 
 
        return $id;

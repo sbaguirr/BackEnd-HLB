@@ -9,7 +9,7 @@ class AtencionSolicitud extends Model
     //
 
     protected $table = 'atencion_solicitudes';
-    protected $primaryKey = 'id_atencion_solicitud';
+    protected $primaryKey = 'id_atencion';
 
      /**
      * The attributes that are mass assignable.
@@ -17,7 +17,7 @@ class AtencionSolicitud extends Model
      * @var array
      */
     protected $fillable = [
-        'fecha_atencion', 'observacion',
+        'fecha_atencion','hora_atencion', 'observacion',
         'id_solicitud', 'id_usuario'
     ];
 
@@ -41,5 +41,10 @@ class AtencionSolicitud extends Model
     public function solicitudes()
     {
         return $this->belongsTo('App\Models\Solicitud', 'id_solicitud');
+    }
+
+    // Relación: Usuario - AtencionSolicitud (1 - M)
+    public function users(){
+        return $this->belongsTo('App\Models\Users', 'id_usuario');
     }
 }
