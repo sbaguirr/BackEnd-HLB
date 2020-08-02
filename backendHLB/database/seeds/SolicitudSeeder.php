@@ -19,7 +19,7 @@ class SolicitudSeeder extends Seeder
             'observacion' => 'Ninguna',
             'estado' => 'EP',       #En progreso
             'prioridad' => 'A',     #Alta
-            'tipo' => 'ST',         #Servicio Técnico 
+            'tipo' => 'ST',         #Servicio Técnico
             'id_firma' => null,
             'id_usuario' => 'administracion'
         ]);
@@ -41,7 +41,7 @@ class SolicitudSeeder extends Seeder
             'observacion' => 'Ninguna',
             'estado' => 'P',        #Pendiente
             'prioridad' => 'A',     #Alta
-            'tipo' => 'ST',         #Servicio Técnico 
+            'tipo' => 'ST',         #Servicio Técnico
             'id_firma' => null,
             'id_usuario' => 'asistente'
         ]);
@@ -84,8 +84,8 @@ class SolicitudSeeder extends Seeder
             'observacion' => 'Ninguna',
             'estado' => 'C',        #Completada
             'prioridad' => 'CT',    #Critica
-            'tipo' => 'ST',         #Servicio Técnico 
-            'id_firma' => null,
+            'tipo' => 'ST',         #Servicio Técnico
+            'id_firma' => 7,
             'id_usuario' => 'laboratorio1'
         ]);
         Solicitud::create([
@@ -94,8 +94,8 @@ class SolicitudSeeder extends Seeder
             'observacion' => 'Ninguna',
             'estado' => 'C',        #Completada
             'prioridad' => 'B',     #Baja
-            'tipo' => 'AE',         #Asignación de equipo 
-            'id_firma' => null,
+            'tipo' => 'AE',         #Asignación de equipo
+            'id_firma' => 8,
             'id_usuario' => 'administracion'
         ]);
 
@@ -120,7 +120,7 @@ class SolicitudSeeder extends Seeder
             'id_firma' => null,
             'id_usuario' => 'dietetica'
         ]);
-       
+
 
 
 

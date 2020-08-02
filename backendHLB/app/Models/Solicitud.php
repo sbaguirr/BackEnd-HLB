@@ -37,4 +37,19 @@ class Solicitud extends Model
     {
         return $this->belongsTo('App\Models\User', 'id_usuario');
     }
+
+    public function firmas_electronicas()
+    {
+        return $this->hasOne('App\Models\FirmasElectronicas', 'id');
+    }
+
+    // Relación: Solicitud - AtencionSolicitud (1 - M)
+    public function atencion_solicitudes()
+    {
+        return $this->hasMany('App\Models\AtencionSolicitud', 'id_solicitud');
+    }
+
+    public static function contar_pendientes(){
+        return Solicitud::where('estado', 'P')->get()->count();
+    }
 }
