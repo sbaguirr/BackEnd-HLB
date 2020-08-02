@@ -74,5 +74,11 @@ class EmpleadoSeeder extends Seeder
             'apellido' => 'Muñoz',
             'id_departamento' => '8'
         ]);
+        Empleado::create([
+            'cedula' => '1589635781',
+            'nombre' => 'Fernando',
+            'apellido' => 'Alvarado',
+            'id_departamento' => '2'
+        ]);
     }
 }

@@ -74,5 +74,11 @@ class UserSeeder extends Seeder
             'id_rol' => 3,
             'cedula' => '1589635784'
         ]);
+        User::create([
+            'username' => 'finanzas',
+            'password' => bcrypt('finanzas'),
+            'id_rol' => 5,
+            'cedula' => '1589635781'
+        ]);
     }
 }

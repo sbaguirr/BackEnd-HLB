@@ -16,10 +16,15 @@ use Illuminate\Http\Request;
 
 
     Route::post('register', 'UserController@register');
+    Route::post('registrar_user_web', 'UserController@registrar_user_web');
     Route::post('login', 'UserController@login');
     Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
     Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
     Route::get('/mostrar_usuario_det/{username}', 'UserController@mostrar_usuario_det');
+    Route::get('/get_users', 'UserController@get_users');
+    Route::put('/editar_user_web', 'UserController@editar_user_web');
+    
+
 
 
 /*API Correo*/

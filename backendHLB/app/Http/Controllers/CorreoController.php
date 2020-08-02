@@ -43,10 +43,10 @@ class CorreoController extends Controller
     {
         $mail = Correo::find($request->get('id')); #id del correo
         try{
-        $mail->correo= $request->get('correo');
-        $mail->contrasena= $request->get('contrasena');
-        $mail->estado= $request->get('estado');
-        $mail->save();  
+            $mail->correo= $request->get('correo');
+            $mail->contrasena= $request->get('contrasena');
+            $mail->estado= $request->get('estado');
+            $mail->save();  
         return response()->json(['log' => 'Correo actualizado satisfactoriamente'], 200);    
         }catch(QueryException $e){
             $error_code = $e->errorInfo[1];

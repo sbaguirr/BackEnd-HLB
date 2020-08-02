@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -41,7 +42,7 @@ class UserController extends Controller
     }
 
     public function mostrar_usuario_det($username){
-        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','users.id_rol','empleados.id_departamento')
+        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','users.id_rol','empleados.id_departamento','users.created_at')
         ->join('empleados','empleados.cedula','=','users.cedula')
         ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
         ->join('roles','roles.id_rol','=','users.id_rol')
@@ -147,6 +148,106 @@ class UserController extends Controller
         ]); */
         $token = JWTAuth::fromUser($user);
         return response()->json(['log' => 1]);
+    }
+
+    public function editar_user_web(Request $request){
+        $validator = Validator::make($request->all(), [
+            'cedula' => 'required',
+            'nombre' => 'required',
+            'apellido' => 'required',
+            'id_departamento' => 'required',
+            'username' => 'required|string|max:255',
+            'password' => 'required|string',
+            'id_rol' => 'required',
+            'old_cedula'=>'required',
+            'old_user'=>'required'
+        ]);
+
+        $comprobacion_cedula = $this->existe_cedula($request->get('cedula'))->count();
+        $comprobacion_usuario = $this->existe_usuario($request->get('username'))->count();
+
+        if ($comprobacion_cedula > 0 && $comprobacion_usuario > 0 && $request->get('cedula') != $request->get('old_cedula') && $request->get('username') != $request->get('old_user')){
+            return response()->json(['log' => 'La cedula y el usuario ingresados ya existen!'], 400);
+        }else if($comprobacion_cedula > 0 && $request->get('cedula') != $request->get('old_cedula') ){
+            return response()->json(['log' => 'La cedula ingresada ya existe'], 400);
+        }else if($comprobacion_usuario > 0 && $request->get('username') != $request->get('old_user')){
+            return response()->json(['log' => 'EL usuario ingresado ya existe'], 400);
+        }
+        if($validator->fails()){
+            return response()->json(['log' => 'Los datos enviados estan incompletos o no son correctos'], 400);
+        }
+        DB::beginTransaction();
+        try{
+            Empleado::Where("cedula", '=', $request->get('old_cedula'))->update(['cedula' => $request->get('cedula'), 'nombre' => $request->get('nombre'), 'apellido' => $request->get('apellido'), 'id_departamento' => $request->get('id_departamento')]);
+            User::Where("username", '=', $request->get('old_user'))->update(['username' => $request->get('username'), 'id_rol' => $request->get('id_rol'), 'password' => $request->get('password')]);
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json(['log' => $e], 400); 
+        }
+
+
+    }
+
+    public function registrar_user_web(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'cedula' => 'required',
+            'nombre' => 'required',
+            'apellido' => 'required',
+            'id_departamento' => 'required',
+            'username' => 'required|string|max:255',
+            'password' => 'required|string',
+            'id_rol' => 'required',
+        ]);
+
+        $comprobacion_cedula = $this->existe_cedula($request->get('cedula'))->count();
+        $comprobacion_usuario = $this->existe_usuario($request->get('username'))->count();
+
+        if ($comprobacion_cedula > 0 && $comprobacion_usuario > 0){
+            return response()->json(['log' => 'La cedula y el usuario ingresados ya existen!'], 400);
+        }else if($comprobacion_cedula > 0){
+            return response()->json(['log' => 'La cedula ingresada ya existe'], 400);
+        }else if($comprobacion_usuario > 0){
+            return response()->json(['log' => 'EL usuario ingresado ya existe'], 400);
+        }
+        if($validator->fails()){
+            return response()->json(['log' => 'Los datos enviados estan incompletos o no son correctos'], 400);
+        }
+        DB::beginTransaction();
+        try {
+            $empleado = new Empleado();
+            $empleado ->cedula=$request->get('cedula');
+            $empleado ->nombre=$request->get('nombre');
+            $empleado ->apellido=$request->get('apellido');
+            $empleado ->id_departamento=$request->get('id_departamento');
+            $empleado->save();
+    
+            $user = new User();
+            $user ->username=$request->get('username');
+            $user ->password=Hash::make($request->get('password'));
+            $user ->id_rol=$request->get('id_rol');
+            $user ->cedula=$request->get('cedula');
+            $user->save();
+
+            $token = JWTAuth::fromUser($user);
+
+            DB::commit();
+            return response()->json(['log' => 'exito'], 200);
+        }catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['log' => $e], 400);
+        }
+    }
+
+    public function get_users(){
+        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','users.id_rol','empleados.id_departamento','users.created_at','departamentos.nombre as departamento', 'roles.nombre as rol', 'organizaciones.bspi_punto')
+        ->join('empleados','empleados.cedula','=','users.cedula')
+        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
+        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
+        ->join('roles','roles.id_rol','=','users.id_rol')
+        ->get();
     }
 
     public function getAuthenticatedUser()

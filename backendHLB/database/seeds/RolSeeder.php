@@ -26,5 +26,8 @@ class RolSeeder extends Seeder
         Rol::create([
             'nombre' => 'Pasante'
         ]);
+        Rol::create([
+            'nombre' => 'Finanzas'
+        ]);
     }
 }
