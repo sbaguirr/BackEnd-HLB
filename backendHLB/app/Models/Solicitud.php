@@ -52,4 +52,10 @@ class Solicitud extends Model
     public static function contar_pendientes(){
         return Solicitud::where('estado', 'P')->get()->count();
     }
+
+    // Relación: Empleado - Correo (1 - M)
+    public function mantenimiento()
+    {
+        return $this->hasMany('App\Models\Mantenimiento', 'id_solicitud');
+    }
 }

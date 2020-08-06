@@ -35,7 +35,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'password', 'id_rol', 'cedula', 'created_at'
+        'password', 'id_rol', 'cedula', 'created_at', 'device_token'
         //'name', 'email', 'password',
     ];
 
@@ -108,6 +108,12 @@ class User extends Authenticatable implements JWTSubject
     public function atencion_solicitudes(){
         return $this->hasMany('App\Models\AtencionSolicitud', 'id_usuario');
     }
+
+     // Relación: Empleado - Correo (1 - M)
+     public function mantenimiento()
+     {
+         return $this->hasMany('App\Models\Mantenimiento', 'username');
+     }
 }
 
 

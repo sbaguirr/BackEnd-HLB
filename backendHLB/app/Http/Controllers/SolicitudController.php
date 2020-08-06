@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Events\Notificar;
 use App\Models\Solicitud;
+use App\Models\User;
 use Illuminate\Http\Request;
 use DateTime;
 
@@ -61,7 +62,18 @@ class SolicitudController extends Controller
         return response()->json($solicitud,200);
     }
 
-    
+
+    /**Servicio auxiliar para el envio de notificaciones móviles.
+     * Obtener el token generado por el frontend para cada usuario que ha iniciado sesion
+     */
+    private function obtener_tokens(){
+        return  User::select('device_token')
+        ->join('roles','users.id_rol','=','roles.id_rol')
+        ->whereIn('roles.nombre', ['administrador', 'soporte tecnico'])
+        ->get()
+        ->pluck('device_token');
+    }
+   
 
     public function mostrar_solicitudes(){
         return Solicitud::SelectRaw('solicitudes.*, empleados.nombre, empleados.apellido')

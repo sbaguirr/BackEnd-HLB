@@ -105,4 +105,11 @@ class Equipo extends Model
         return $this->belongsTo('App\Models\Marca', 'id_marca');
     }
 
-}
+    
+    // Relación: Empleado - Correo (1 - M)
+    public function mantenimiento()
+    {
+        return $this->hasMany('App\Models\Mantenimiento', 'id_equipo');
+    }
+
+    }
