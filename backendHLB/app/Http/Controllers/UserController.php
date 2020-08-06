@@ -166,4 +166,15 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
+     /** Servicio relacionado a la creación de notificaciones en la aplicación Móvil.
+     * Cada vez que un usuario inicie sesión se deberá actualizar el token.
+     */
+    public function actualizar_token(Request $request){
+        $usuario= $request->get("username");
+        $token_device= $request->get("token");
+        $user = User::find($usuario);
+        $user->device_token = $token_device;
+        $user->save();
+    }
+
 }

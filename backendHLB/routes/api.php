@@ -113,6 +113,10 @@ use Illuminate\Http\Request;
 
 
 
+/*API para notificaciones móviles */
+    Route::put('actualizar_token', 'UserController@actualizar_token');
+
+
 
 
 
