@@ -129,8 +129,9 @@ use Illuminate\Http\Request;
 /*API para notificaciones móviles */
     Route::put('actualizar_token', 'UserController@actualizar_token');
 
-
-
+/*API para mantenimiento */
+    Route::get('solicitudes_en_progreso', 'SolicitudController@solicitudes_en_progreso');
+    Route::post('crear_mantenimiento', 'MantenimientoController@crear_mantenimiento');
 
 
 

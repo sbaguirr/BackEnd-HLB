@@ -18,11 +18,11 @@ class CreateMantenimientosTable extends Migration
             $table->string('titulo');
             $table->string('tipo');
             $table->date('fecha_inicio');
-            $table->date('fecha_fin');
-            $table->string('observacion_falla');
-            $table->string('estado_fisico');
-            $table->string('actividad_realizada');
-            $table->string('observacion');
+            $table->date('fecha_fin')->nullable();
+            $table->string('observacion_falla')->nullable();
+            $table->string('estado_fisico')->nullable();
+            $table->string('actividad_realizada')->nullable();
+            $table->string('observacion')->nullable();
             $table->unsignedBigInteger('id_equipo');
             $table->unsignedBigInteger('id_solicitud')->nullable();
             $table->string('realizado_por')->nullable();

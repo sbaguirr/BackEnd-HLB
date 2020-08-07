@@ -104,4 +104,12 @@ class SolicitudController extends Controller
       $solicitud->save();
     }
 
+
+    public function solicitudes_en_progreso(){
+        return Solicitud::select('id_solicitud', 'id_usuario')
+        ->where('estado', '=', "EP")
+        ->orderBy('created_at','desc')
+        ->get();
+    }
+
 }
