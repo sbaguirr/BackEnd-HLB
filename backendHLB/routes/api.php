@@ -132,6 +132,9 @@ use Illuminate\Http\Request;
 /*API para mantenimiento */
     Route::get('solicitudes_en_progreso', 'SolicitudController@solicitudes_en_progreso');
     Route::post('crear_mantenimiento', 'MantenimientoController@crear_mantenimiento');
+    Route::post('mostrar_mantenimientos', 'MantenimientoController@mostrar_mantenimientos');
+    Route::put('editar_mantenimiento', 'MantenimientoController@editar_mantenimiento');
+    Route::get('mantenimiento_id/{id}', 'MantenimientoController@mantenimiento_id');
 
 
 
