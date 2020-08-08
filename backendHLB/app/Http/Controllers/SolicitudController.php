@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Events\Notificar;
 use App\Models\Solicitud;
+use App\Models\Notificacion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DateTime;
@@ -57,24 +58,13 @@ class SolicitudController extends Controller
         $solicitud->estado = 'P';
         $solicitud->fecha_realizacion = Date('Y-m-d');
         $solicitud->hora_realizacion = Date('H:i:s');
-        $solicitud->save();
-        event(new Notificar($solicitud->id_usuario));  //Cuando se cree una solicitud, se genera el evento web.
-        return response()->json($solicitud,200);
+        if($solicitud->save()){
+            self::notificar_usuarios($solicitud->id_usuario, $solicitud->observacion);
+        }
+     
+        
     }
-
-
-    /**Servicio auxiliar para el envio de notificaciones móviles.
-     * Obtener el token generado por el frontend para cada usuario que ha iniciado sesion
-     */
-    private function obtener_tokens(){
-        return  User::select('device_token')
-        ->join('roles','users.id_rol','=','roles.id_rol')
-        ->whereIn('roles.nombre', ['administrador', 'soporte tecnico'])
-        ->get()
-        ->pluck('device_token');
-    }
-   
-
+  
     public function mostrar_solicitudes(){
         return Solicitud::SelectRaw('solicitudes.*, empleados.nombre, empleados.apellido')
         ->join('users', 'users.username', '=', 'solicitudes.id_usuario')
@@ -111,5 +101,32 @@ class SolicitudController extends Controller
         ->orderBy('created_at','desc')
         ->get();
     }
+
+      /**Servicio auxiliar para el envio de notificaciones móviles.
+     * Obtener el token generado por el frontend para cada usuario que ha iniciado sesion
+     */
+    private function obtener_tokens(){
+     return User::select('device_token')
+        ->join('roles','users.id_rol','=','roles.id_rol')
+        ->whereIn('roles.nombre', ['administrador', 'soporte tecnico'])
+        ->where('device_token','<>',null)
+        ->get()
+        ->pluck('device_token')
+        ->toArray();
+    }
+
+    private function notificar_via_fcm($titulo, $cuerpo){
+        $deviceTokens= self::obtener_tokens();
+        if(!empty($deviceTokens)){
+            $notificacion= new Notificacion();
+            $notificacion->varios_dispositivos($deviceTokens, $titulo, $cuerpo);
+        } 
+    } 
+
+    private function notificar_usuarios($realizado_por, $cuerpo){
+         $titulo=  $realizado_por . " ha realizado una nueva solicitud";
+         self::notificar_via_fcm($titulo, $cuerpo); //Notificacion móvil
+         event(new Notificar($realizado_por));  //Cuando se cree una solicitud, se genera el evento web.
+        } 
 
 }

@@ -143,8 +143,6 @@ use Illuminate\Http\Request;
 
 
 
-
-
 /*-------------WEB ROUTES-------------*/
 
 /* API Empleados */
