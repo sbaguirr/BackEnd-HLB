@@ -42,7 +42,7 @@ class RouterController extends Controller
         $equipo = new Equipo();
         $router = new Router();   
 
-        $equipo->fecha_registro = $request->get('fecha_registro');
+        $equipo->fecha_registro = Date('Y-m-d H:i:s');
         $equipo->estado_operativo = $request->get('estado_operativo');
         $equipo->codigo = $request->get('codigo');
         $equipo->tipo_equipo = $request->get('tipo_equipo');
@@ -158,7 +158,7 @@ class RouterController extends Controller
     {
       $equipo = Equipo::find($request->id_equipo); 
       $ip_anterior= $equipo->ip; 
-      $equipo->fecha_registro = $request->get('fecha_registro');      
+      $equipo->fecha_registro = Date('Y-m-d H:i:s');      
       $equipo->estado_operativo = $request->get('estado_operativo');
       $equipo->codigo = $request->get('codigo');
       $equipo->tipo_equipo = $request->get('tipo_equipo');
