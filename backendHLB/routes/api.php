@@ -137,7 +137,7 @@ use Illuminate\Http\Request;
     Route::get('mantenimiento_id/{id}', 'MantenimientoController@mantenimiento_id');
 
 
-
+    Route::get('obtener_tokens', 'SolicitudController@obtener_tokens');
 
 
 

@@ -105,7 +105,7 @@ class SolicitudController extends Controller
       /**Servicio auxiliar para el envio de notificaciones móviles.
      * Obtener el token generado por el frontend para cada usuario que ha iniciado sesion
      */
-    private function obtener_tokens(){
+    public function obtener_tokens(){
      return User::select('device_token')
         ->join('roles','users.id_rol','=','roles.id_rol')
         ->whereIn('roles.nombre', ['administrador', 'soporte tecnico'])
@@ -125,8 +125,12 @@ class SolicitudController extends Controller
 
     private function notificar_usuarios($realizado_por, $cuerpo){
          $titulo=  $realizado_por . " ha realizado una nueva solicitud";
+         try{
          self::notificar_via_fcm($titulo, $cuerpo); //Notificacion móvil
          event(new Notificar($realizado_por));  //Cuando se cree una solicitud, se genera el evento web.
+        }catch(Exception $e){
+            return  response()->json(['log' => $e]);
         } 
+    }
 
 }
