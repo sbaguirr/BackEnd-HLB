@@ -78,7 +78,7 @@ class AtencionSolicitudController extends Controller
 
         $name = $request->file('image_name')->getClientOriginalName();
 
-        $image_name = $request->file('image_name')->getRealPath();;
+        $image_name = $request->file('image_name')->getRealPath();
 
         Cloudder::upload($image_name, null);
 

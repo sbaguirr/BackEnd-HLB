@@ -183,6 +183,7 @@ use Illuminate\Http\Request;
     Route::get('resumen-bajas','EquipoController@resumen_bajas');
     Route::get('info_extra/{id_equipo}','EquipoController@info_extra');
     Route::get('listado_codigos','EquipoController@listado_codigos');
+    
 
 /* API DetalleEquipo */
     Route::get('listar_so','DetalleEquipoController@listar_so');
@@ -223,5 +224,6 @@ use Illuminate\Http\Request;
     Route::get('mostrar_solicitudes', 'SolicitudController@mostrar_solicitudes');
     Route::get('mostrar_solicitudes/{id_user}', 'SolicitudController@mostrar_solicitudes_user');
 
-
+/* API IMPORT */
+    Route::post('masivo_equipos','ImportController@reg_masivo_equipos');
 
