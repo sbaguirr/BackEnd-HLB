@@ -1124,7 +1124,6 @@ class EquipoController extends Controller
                 "nombre_pc"=>$request->get('general_fields')['nombre_pc'],
                 "usuario_pc"=>$request->get('general_fields')['usuario_pc'],
                 "so"=>$request->get('so_fields')['so'],
-                // "office"=>$request->get('so_fields')['office'],
                 "tipo_so"=>$request->get('so_fields')['tipo_so'],
                 "services_pack"=>$request->get('so_fields')['sp1'],
                 "licencia"=>$request->get('so_fields')['licencia']
@@ -1162,27 +1161,6 @@ class EquipoController extends Controller
                 $id = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',$request->key)->get()[0]["id"];
                 ProgramaEquipo::find($id)->delete();
             }
-            // $lista = array();
-            // $office = ProgramaEquipo::select('id_programa')->where('id_equipo','=',$computador->id_equipo)->get("id_programa");
-            // for ( $i=0; $i<count($office); $i++ ){
-            //     array_push($lista, $office[$i]["id_programa"]);
-            // }
-            // for ( $i=0; $i<count($request->get('pc-version_office')); $i++ ){
-            //     if (!in_array($request->get('pc-version_office')[$i], $lista)) {
-            //         $id = ProgramaEquipo::select('id')->where('id_programa','=',$request->get('pc-version_office')[$i])
-            //         ->where('id_equipo','=',$computador->id_equipo);
-            //         ProgramaEquipo::find($id)->delete();
-            //     }
-            // }
-            // for ( $i=0; $i<count($lista); $i++ ){
-            //     if (!in_array($lista[$i], $request->get('pc-version_office'))) {
-            //         $programa = new ProgramaEquipo();
-            //         $programa->id_equipo = $computador->id_equipo;
-            //         $programa->id_programa = $lista[$i];
-            //         $programa->fecha_instalacion = Date('Y-m-d H:i:s');
-            //         $programa->save();
-            //     }
-            // }
 
             $marca_proc = $request->get('procesador_fields')['marca_proc'];
             if(!is_numeric($marca_proc)){
@@ -1206,7 +1184,7 @@ class EquipoController extends Controller
                 "dato" => $request->get('procesador_fields')['frec_proc']
             ]);
 
-            foreach($request->except(['step', 'titulo', 'disabled', 'key','marc','general_fields', 'so_fields', 'procesador_fields']) as $clave => $valor){
+            foreach($request->except(['step', 'titulo', 'disabled', 'loading', 'key','marc','general_fields', 'so_fields', 'procesador_fields']) as $clave => $valor){
                 foreach($valor['datos'] as $k => $data){
                     $id_equipo = Equipo::select("id_equipo")->where("componente_principal","=",$request->key)
                     ->where("codigo","=",$data['codigo'])->where("tipo_equipo", "=", $clave)->get();
@@ -1253,7 +1231,7 @@ class EquipoController extends Controller
             $computador->tipo_equipo = 'laptop';
             $computador->id_marca = $request->get('general_fields')['marca'];
             $computador->modelo = $request->get('general_fields')['modelo'];
-            $computador->encargado_registro = 'admin';
+            $computador->encargado_registro = $request->get('general_fields')['encargado_registro'];
             $computador->estado_operativo = $request->get('general_fields')['estado'];
             $computador->descripcion = $request->get('general_fields')['descripcion'];
             $computador->numero_serie = $request->get('general_fields')['nserie'];
@@ -1300,7 +1278,7 @@ class EquipoController extends Controller
             $proc->modelo = $request->get('procesador_fields')['modelo_proc'];
             $proc->numero_serie = $request->get('procesador_fields')['nserie_proc'];
             $proc->descripcion = $request->get('procesador_fields')['descr_proc'];
-            $proc->encargado_registro = 'admin';
+            $proc->encargado_registro = $request->get('general_fields')['encargado_registro'];
             $proc->fecha_registro = Date('Y-m-d H:i:s');
             $proc->estado_operativo = $request->get('general_fields')['estado'];
             $proc->asignado=$request->get('general_fields')['asignar'];
@@ -1320,7 +1298,7 @@ class EquipoController extends Controller
             $frec->id_equipo = $proc->id_equipo;
             $frec->save();
 
-            foreach($request->except(['step', 'titulo', 'disabled', 'key', 'marc', 'general_fields', 'so_fields', 'procesador_fields']) as $clave => $valor){
+            foreach($request->except(['step', 'titulo', 'disabled', 'loading', 'key', 'marc', 'general_fields', 'so_fields', 'procesador_fields']) as $clave => $valor){
                 foreach($valor['datos'] as $k => $data){
                     $comp = new Equipo();
                     $comp->id_marca = $data['marca'];
@@ -1328,7 +1306,7 @@ class EquipoController extends Controller
                     $comp->modelo = $data['modelo'];
                     $comp->numero_serie = $data['nserie'];
                     $comp->descripcion = $data['descr'];
-                    $comp->encargado_registro = 'admin';
+                    $comp->encargado_registro = $request->get('general_fields')['encargado_registro'];
                     $comp->fecha_registro = Date('Y-m-d H:i:s');
                     $comp->estado_operativo = $request->get('general_fields')['estado'];
                     $comp->asignado=$request->get('general_fields')['asignar'];
@@ -1473,7 +1451,7 @@ class EquipoController extends Controller
                 ]);
             }
 
-            foreach($request->except(['step', 'titulo', 'disabled', 'key','general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
+            foreach($request->except(['step', 'titulo', 'disabled', 'loading', 'key','general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
                 if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
                     $marca = $valor['marca'];
                     if(!is_numeric($marca)){
@@ -1493,13 +1471,13 @@ class EquipoController extends Controller
                         $id_equipo1 = Equipo::select("id_equipo")->where("componente_principal","=",$request->key)
                         ->where("codigo","=",$valor['codigo'])->get();
                         DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","numero_slots")->update([
-                            "dato" => $request->get('mainboard')['num_slots']
+                            "dato" => $request->get('memoria_ram')['num_slots']
                         ]);
                         DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","ram_soportada")->update([
-                            "dato" => $request->get('mainboard')['ram_soportada']
+                            "dato" => $request->get('memoria_ram')['ram_soportada']
                         ]);
                         DetalleComponente::where("id_equipo","=",$id_equipo1[0]->id_equipo)->where("campo","=","conexiones_dd")->update([
-                            "dato" => $request->get('mainboard')['conexiones_dd']
+                            "dato" => $request->get('disco_duro')['conexiones_dd']
                         ]);
                     }
                 } else {
@@ -1545,7 +1523,7 @@ class EquipoController extends Controller
             $computador->codigo = $request->get('general')['codigo'];
             $computador->fecha_registro = Date('Y-m-d H:i:s');
             $computador->tipo_equipo = 'desktop';
-            $computador->encargado_registro = 'admin';
+            $computador->encargado_registro = $request->get('general')['encargado_registro'];
             $computador->estado_operativo = $request->get('general')['estado'];
             $computador->descripcion = $request->get('general')['descripcion'];
             $computador->ip = $request->get('general')['ip'];
@@ -1572,7 +1550,7 @@ class EquipoController extends Controller
             $proc->modelo = $request->get('procesador')['modelo_proc'];
             $proc->numero_serie = $request->get('procesador')['nserie_proc'];
             $proc->descripcion = $request->get('procesador')['descr_proc'];
-            $proc->encargado_registro = 'admin';
+            $proc->encargado_registro = $request->get('general')['encargado_registro'];
             $proc->fecha_registro = Date('Y-m-d H:i:s');
             $proc->estado_operativo = $request->get('general')['estado'];
             $proc->asignado=$request->get('general')['asignar'];
@@ -1607,7 +1585,7 @@ class EquipoController extends Controller
                 $falim->modelo = $request->get('fuente_alimentacion')['modelo'];
                 $falim->numero_serie = $request->get('fuente_alimentacion')['nserie'];
                 $falim->descripcion = $request->get('fuente_alimentacion')['descr'];
-                $falim->encargado_registro = 'admin';
+                $falim->encargado_registro = $request->get('general')['encargado_registro'];
                 $falim->fecha_registro = Date('Y-m-d H:i:s');
                 $falim->estado_operativo = $request->get('general')['estado'];
                 $falim->asignado=$request->get('general')['asignar'];
@@ -1615,7 +1593,7 @@ class EquipoController extends Controller
                 $falim->tipo_equipo=$request->get('fuente_alimentacion')['tipo'];
                 $falim->save();
             }
-            foreach($request->except(['step', 'titulo', 'key', 'general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
+            foreach($request->except(['step', 'titulo', 'key', 'loading', 'general', 'so', 'procesador', 'fuente_alimentacion']) as $clave => $valor){
                 if($valor['nombre'] !== 'disco duro' && $valor['nombre'] !== 'memoria RAM'){
                     $component = new Equipo();
                     $component->id_marca = $valor['marca'];
@@ -1623,7 +1601,7 @@ class EquipoController extends Controller
                     $component->modelo = $valor['modelo'];
                     $component->numero_serie = $valor['nserie'];
                     $component->descripcion = $valor['descr'];
-                    $component->encargado_registro = 'admin';
+                    $component->encargado_registro = $request->get('general')['encargado_registro'];
                     $component->fecha_registro = Date('Y-m-d H:i:s');
                     $component->estado_operativo = $request->get('general')['estado'];
                     $component->asignado=$request->get('general')['asignar'];
@@ -1638,19 +1616,19 @@ class EquipoController extends Controller
                     if($clave === 'mainboard'){
                         $num_slots = new DetalleComponente();
                         $num_slots->campo = 'numero_slots';
-                        $num_slots->dato = $request->get('mainboard')['num_slots'];
+                        $num_slots->dato = $request->get('memoria_ram')['num_slots'];
                         $num_slots->id_equipo = $component->id_equipo;
                         $num_slots->save();
 
                         $ram_soport = new DetalleComponente();
                         $ram_soport->campo = 'ram_soportada';
-                        $ram_soport->dato = $request->get('mainboard')['ram_soportada'] . " GB";
+                        $ram_soport->dato = $request->get('memoria_ram')['ram_soportada'] . " GB";
                         $ram_soport->id_equipo = $component->id_equipo;
                         $ram_soport->save();
 
                         $conexiones_dd = new DetalleComponente();
                         $conexiones_dd->campo = 'conexiones_dd';
-                        $conexiones_dd->dato = $request->get('mainboard')['conexiones_dd'];
+                        $conexiones_dd->dato = $request->get('disco_duro')['conexiones_dd'];
                         $conexiones_dd->id_equipo = $component->id_equipo;
                         $conexiones_dd->save();
                     }
@@ -1663,7 +1641,7 @@ class EquipoController extends Controller
                             $comp->modelo = $data['modelo'];
                             $comp->numero_serie = $data['nserie'];
                             $comp->descripcion = $data['descr'];
-                            $comp->encargado_registro = 'admin';
+                            $comp->encargado_registro = $request->get('general')['encargado_registro'];
                             $comp->fecha_registro = Date('Y-m-d H:i:s');
                             $comp->estado_operativo = $request->get('general')['estado'];
                             $comp->asignado=$request->get('general')['asignar'];
