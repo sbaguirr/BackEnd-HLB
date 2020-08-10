@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipo;
+use App\Models\Correo;
 use App\Models\Ip;
 use App\Models\Marca;
 use App\Models\Empleado;
@@ -22,6 +23,8 @@ use DateTime;
 
 class ImportController extends Controller
 {
+
+
     private function empByCedula($cedula)
     {
         $result = Empleado::Where('cedula', '=', trim($cedula))->get();
@@ -32,6 +35,13 @@ class ImportController extends Controller
             return ['err' => 'Existe mas de un empleado con esa identificacion.'];
         }
         return ['cedula' => ($result[0]->cedula)];
+    }
+
+    private function validarEmpAsig($cedula){
+        if(empty($cedula)){
+            return ['err' => 'Debe ingresar una cedula valida de un empleado.'];
+        }
+        return $this->empByCedula($cedula);
     }
 
     private function eqByCodigo($codigo)
@@ -153,20 +163,45 @@ class ImportController extends Controller
         return ['capAlm' => ($l_alm[1]=='MB'?str_replace('MB','Mb',$alm):$alm)];
     }
 
-    private function validarHeadersEquipos($obj){
-        $headers = ['Asignado', 'Codigo', 'Marca', 'Modelo', 'Numero de Serie',
-        'Estado', 'Tipo', 'IP', 'Capacidad Almacenamiento', 'Tipo Almacenamiento', 'Numero de Slots RAM', 'RAM Soportada',
-        'Conexiones para Discos','Nucleos', 'Frecuencia', 'Componente Principal', 'Descripcion'];
+    private function validarHeaders($headers, $obj){
         $index = 0;
         $resp = '';
         while($resp=='' && $index < count($headers)){
             if(!array_key_exists($headers[$index], $obj)){
-                $resp = 'El documento no es valido, la columna '.$headers[$index].' no se encuentra. Descargue el formato guia desde la plataforma.';
+                $resp = 'El documento no es valido, la columna "'.$headers[$index].'" no se encuentra. Descargue el formato guia desde la plataforma.';
             }
             $index++;
         }
         return $resp;
     }
+
+    private function validarHeadersEquipos($obj){
+        $headers = ['Empleado', 'Codigo', 'Marca', 'Modelo', 'Numero de Serie',
+        'Estado', 'Tipo', 'IP', 'Capacidad Almacenamiento', 'Tipo Almacenamiento', 'Numero de Slots RAM', 'RAM Soportada',
+        'Conexiones para Discos','Nucleos', 'Frecuencia', 'Componente Principal', 'Descripcion'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
+    private function validarHeadersCorreo($obj){
+        $headers = ['Empleado', 'Correo', 'Pass'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
+    private function validarCorreo($correo){
+        if(empty($correo)){
+            return ['err'=>'Debe ingresar un correo para el registro.'];
+        }
+        if(!filter_var($correo,FILTER_VALIDATE_EMAIL)){
+            return ['err' => 'El correo ingresado no es valido.'];
+        }
+        $correo = trim($correo);
+        $emails = Correo::Where('correo','=',$correo)->get();
+        if(count($emails)>0){
+            return ['err' => 'El correo ingresado ya existe. Ingrese uno Nuevo.'];
+        }
+        return ['correo' => $correo];
+    }
+
 
     public function reg_masivo_equipos(Request $request)
     {
@@ -176,70 +211,70 @@ class ImportController extends Controller
         for ($i = 0; $i < count($data); $i++) {
             $obj = $data[$i];
 
-            $headers = self::validarHeadersEquipos($obj);
+            $headers = $this->validarHeadersEquipos($obj);
             if($headers!=''){
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
 
-            $tipoEq = self::getTipoEq($obj['Tipo']);
+            $tipoEq = $this->getTipoEq($obj['Tipo']);
             if (array_key_exists('err', $tipoEq)) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoEq['err']]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoEq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             } else {
                 $tipoEq = $tipoEq['tipo_equipo'];
             }
 
             $emp = null;
-            if (!empty($obj['Asignado'])) {
-                $emp = self::empByCedula($obj['Asignado']);
+            if (!empty($obj['Empleado'])) {
+                $emp = $this->empByCedula($obj['Empleado']);
                 if (array_key_exists('err', $emp)) {
-                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err']]]);
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                     continue;
                 } else {
                     $emp = $emp['cedula'];
                 }
             }
 
-            $eq = self::eqByCodigo($obj['Codigo']);
+            $eq = $this->eqByCodigo($obj['Codigo']);
             if (array_key_exists('err', $eq)) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $eq['err']]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $eq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             } else {
                 $eq = $eq['codigo'];
             }
 
-            $estado = self::getEstado($obj['Estado']);
+            $estado = $this->getEstado($obj['Estado']);
             if (array_key_exists('err', $estado)) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err']]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             } else {
                 $estado = $estado['estado'];
             }
 
-            $marca = self::getMarcaByNomb($obj['Marca']);
+            $marca = $this->getMarcaByNomb($obj['Marca']);
             if (array_key_exists('err', $marca)) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err']]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             } else {
                 $marca = $marca['id_marca'];
             }
 
             if (empty($obj['Modelo'])) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido']]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
 
             if (empty($obj['Numero de Serie'])) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido']]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
 
             $ip = null;
             if (!empty($obj['IP'])) {
-                $ip = self::getIPByDir($obj['IP']);
+                $ip = $this->getIPByDir($obj['IP']);
                 if (array_key_exists('err', $ip)) {
-                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err']]]);
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                     continue;
                 } else {
                     $ip = $ip['id_ip'];
@@ -248,9 +283,9 @@ class ImportController extends Controller
 
             $comp = null;
             if (!empty($obj['Componente Principal'])) {
-                $comp = self::compPrinByCod($obj['Componente Principal']);
+                $comp = $this->compPrinByCod($obj['Componente Principal']);
                 if (array_key_exists('err', $comp)) {
-                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $comp['err']]]);
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $comp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                     continue;
                 } else {
                     $comp = $comp['id_equipo'];
@@ -286,17 +321,17 @@ class ImportController extends Controller
                     strcasecmp($equipo->tipo_equipo, "memoria_ram") == 0 ||
                     strcasecmp($equipo->tipo_equipo, "disco_duro") == 0
                 ) {
-                    $tipoAlm = self::tipoAlm($equipo->tipo_equipo, $obj['Tipo Almacenamiento']);
+                    $tipoAlm = $this->tipoAlm($equipo->tipo_equipo, $obj['Tipo Almacenamiento']);
                     if (array_key_exists('err', $tipoAlm)) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoAlm['err']]]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoAlm['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     } else {
                         $tipoAlm = $tipoAlm['tipoAlm'];
                     }
-                    $capAlm = self::capacidadAlm($equipo->tipo_equipo, $obj['Capacidad Almacenamiento']);
+                    $capAlm = $this->capacidadAlm($equipo->tipo_equipo, $obj['Capacidad Almacenamiento']);
                     if (array_key_exists('err', $capAlm)) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $capAlm['err']]]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $capAlm['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     } else {
@@ -315,12 +350,12 @@ class ImportController extends Controller
                     $capacidad->save();
                 } else if (strcasecmp($equipo->tipo_equipo, "procesador") == 0) {
                     if (!is_numeric($obj['Nucleos'])) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de nucleos valido para el procesador']]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de nucleos valido para el procesador', 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     }
                     if (!is_numeric($obj['Frecuencia'])) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar una frecuencia valida para el procesador']]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar una frecuencia valida para el procesador', 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     }
@@ -337,18 +372,18 @@ class ImportController extends Controller
                     $frec->save();
                 } else if(strcasecmp($equipo->tipo_equipo, "tarjeta_madre")==0){
                     if (!is_numeric($obj['Numero de Slots RAM'])) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un Numero Slots Ram valido para la Tarjeta Madre']]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un Numero Slots Ram valido para la Tarjeta Madre', 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     }
                     if (!is_numeric($obj['Conexiones para Discos'])) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de Conexiones para discos valida para la Tarjeta Madre']]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de Conexiones para discos valida para la Tarjeta Madre', 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     }
-                    $ramSop = self::capacidadAlm($equipo->tipo_equipo, $obj['RAM Soportada']);
+                    $ramSop = $this->capacidadAlm($equipo->tipo_equipo, $obj['RAM Soportada']);
                     if (array_key_exists('err', $ramSop)) {
-                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ramSop['err']]]);
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ramSop['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                         DB::rollback();
                         continue;
                     } else {
@@ -375,18 +410,81 @@ class ImportController extends Controller
                 }
                 
                 DB::commit();
-                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'Equipo registrado con exito']]);
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'Equipo registrado con exito', 'key'=>strval($obj['rowNum']).'_C']]);
                 
             } catch (Exception $e) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>$e->errorInfo]]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
                 DB::rollback();
                 continue;
-            } 
+            } catch (QueryException $e) {
+                $error_code = $e->errorInfo[1];
+                if ($error_code == 1062) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'El código del equipo que ha ingresado ya existe', 'key'=>strval($obj['rowNum']).'_E']]);
+                    DB::rollback();
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
+                DB::rollback();
+                continue;
+            }
             
         }
 
         return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
     }
+
+
+    public function reg_masivo_correos(Request $request){
+        $data = $request->get('data');
+        $resp = array();
+        $respSuccess = array();
+        for ($i = 0; $i < count($data); $i++) {
+            $obj = $data[$i];
+
+            $headers = $this->validarHeadersCorreo($obj);
+            if($headers!=''){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            $emp = $this->validarEmpAsig($obj['Empleado']);
+            if (array_key_exists('err', $emp)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $emp = $emp['cedula'];
+            }
+
+            $email = $this->validarCorreo($obj['Correo']);
+            if(array_key_exists('err', $email)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $email['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $email = $email['correo'];
+            }
+
+            try{
+                $mail= new Correo();
+                $mail->correo= $email;
+                $mail->contrasena= trim($obj['Pass']);
+                $mail->estado= "EU";
+                $mail->cedula= $emp;
+                $mail->save();  
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'Correo registrado con exito', 'key'=>strval($obj['rowNum']).'_C']]);    
+            }catch(QueryException $e){
+                $error_code = $e->errorInfo[1];
+                if($error_code == 1062){
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'El correo que ha ingresado ya existe', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } 
+        }
+        
+        return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
+    }
+
 
 
 }
