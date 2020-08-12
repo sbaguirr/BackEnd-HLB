@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
     Route::get('/mostrar_usuario_det/{username}', 'UserController@mostrar_usuario_det');
     Route::get('/get_users', 'UserController@get_users');
     Route::put('/editar_user_web', 'UserController@editar_user_web');
-    
+
 
 
 
@@ -73,7 +73,9 @@ use Illuminate\Http\Request;
     Route::put("editlaptop/{idequipo}","EquipoController@editLaptop");
     Route::put("editdesktop/{idequipo}","EquipoController@editDesktop");
     Route::get('mostrar_equipos_paginado/{size}','EquipoController@mostrar_equipos_paginado');
-	Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
+    Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
+    Route::get('/equipos_codigo/{codigo}','EquipoController@equipos_codigo');
+
     Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{estado?}/{size}', 'EquipoController@filtrar_equipos_paginado');
     Route::put('eliminar_otros_equipos/{id}','EquipoController@eliminar_otros_equipos');
     Route::get('/obtener_otro_equipo_por_id/{id_otro_equipo}','EquipoController@obtener_otro_equipo_por_id');
@@ -121,7 +123,7 @@ use Illuminate\Http\Request;
     Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
     Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
     // Route::post('crear_atencion_solicitud/{request}/{requestFirma}', 'AtencionSolicitudController@crear_atencion_solicitud');
-    
+
     Route::post('crear_atencion_solicitud', 'AtencionSolicitudController@crear_atencion_solicitud');
 
 
@@ -180,7 +182,7 @@ use Illuminate\Http\Request;
     Route::get('resumen-bajas','EquipoController@resumen_bajas');
     Route::get('info_extra/{id_equipo}','EquipoController@info_extra');
     Route::get('listado_codigos','EquipoController@listado_codigos');
-    
+
 
 /* API DetalleEquipo */
     Route::get('listar_so','DetalleEquipoController@listar_so');

@@ -198,6 +198,23 @@ class EquipoController extends Controller
             ->paginate($size);
     }
 
+    public function equipos_codigo($codigo){
+        return Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
+        empleados.apellido,
+         equipos.encargado_registro as encargado, p.codigo as principal,
+         ips.direccion_ip')
+        ->join('marcas', 'marcas.id_marca', '=', 'equipos.id_marca')
+        ->leftjoin('ips','id_ip','=','equipos.ip')
+        ->leftjoin('equipos as p','p.id_equipo','=','equipos.componente_principal')
+        ->leftjoin('empleados','equipos.asignado','=','cedula')
+        ->whereNotIn('equipos.tipo_equipo', ["Impresora","desktop","Router","Laptop","impresora","Desktop","router","Laptop"])
+        //->where('equipos.estado_operativo','<>','B')
+        ->where('equipos.codigo','like',"%".$codigo."%")
+        ->orderBy('equipos.tipo_equipo', 'desc')
+        ->get();
+
+    }
+
     public function filtrar_equipos_paginado($marca, $fecha_asignacion = null, $estado)
     {
         $query = Equipo::SelectRaw('equipos.*, marcas.nombre as marca, empleados.nombre as empleado,
@@ -2098,7 +2115,7 @@ class EquipoController extends Controller
 
     private function router_id_equipo($id_equipo)
     {
-        return Equipo::selectRaw('routers.*, equipos.*, marcas.nombre as marca, 
+        return Equipo::selectRaw('routers.*, equipos.*, marcas.nombre as marca,
         empleados.nombre as empleado, empleados.apellido as apellido, ips.direccion_ip,
          organizaciones.bspi_punto, departamentos.nombre as departamento')
             ->join('routers', 'equipos.id_equipo', '=', 'routers.id_equipo')
