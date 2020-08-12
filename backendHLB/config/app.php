@@ -176,7 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         JD\Cloudder\CloudderServiceProvider::class,
-        LaravelFCM\FCMServiceProvider::class,
+        Kawankoding\Fcm\FcmServiceProvider::class,
     ],
 
     /*
@@ -230,8 +230,7 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'Cloudder' => JD\Cloudder\Facades\Cloudder::class,
-        'FCM'      => LaravelFCM\Facades\FCM::class,
-        'FCMGroup' => LaravelFCM\Facades\FCMGroup::class, 
+        'Fcm' => Kawankoding\Fcm\FcmFacade::class,
     ],
 
 ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mantenimiento;
 use App\Models\Equipo;
+//use App\Models\Recordatorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,6 @@ class MantenimientoController extends Controller
             DB::rollback();
             return response()->json(['log' => $error->getMessage()], 400);
         }
-
     }
 
     private function almacenar_mantenimiento($request, $mantenimiento, $inicio, $fin, $id_equipo)
@@ -101,8 +101,15 @@ class MantenimientoController extends Controller
 
 
         $query = Mantenimiento::select(
-            'mantenimientos.id_mantenimiento', 'equipos.codigo','mantenimientos.tipo','titulo',
-            'realizado_por','equipos.id_equipo','fecha_inicio','estado_operativo','tipo_equipo',
+            'mantenimientos.id_mantenimiento',
+            'equipos.codigo',
+            'mantenimientos.tipo',
+            'titulo',
+            'realizado_por',
+            'equipos.id_equipo',
+            'fecha_inicio',
+            'estado_operativo',
+            'tipo_equipo',
             'codigo'
         )
             ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
@@ -147,9 +154,22 @@ class MantenimientoController extends Controller
     {
         $codigo = $request->get("codigo");
         $query = Equipo::select('codigo', 'tipo_equipo', 'estado_operativo')
-        ->where('equipos.codigo', 'like', "%" . strtolower($codigo) . "%");
+            ->where('equipos.codigo', 'like', "%" . strtolower($codigo) . "%");
         $itemSize = $query->count();
         $query = $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index"));
         return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
+    }
+
+    public function eliminar_mantenimiento($id_mantenimiento)
+    {
+        try{
+           # Elimino el recordatorio asociado
+          // $rec= Recordatorio::where('id_solicitud', $id_mantenimiento);
+          // $rec->delete();
+           $mant= Mantenimiento::find($id_mantenimiento);
+           $mant->delete();
+       }catch(Exception $e){
+           return response()->json(['log'=>$e],400);
+       }
     }
 }
