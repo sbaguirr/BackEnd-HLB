@@ -153,23 +153,27 @@ class MantenimientoController extends Controller
     public function equipos_por_codigo(Request $request)
     {
         $codigo = $request->get("codigo");
-        $query = Equipo::select('codigo', 'tipo_equipo', 'estado_operativo')
-            ->where('equipos.codigo', 'like', "%" . strtolower($codigo) . "%");
-        $itemSize = $query->count();
-        $query = $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index"));
-        return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
+        if (!empty($codigo) && !is_null($codigo)) {
+            $query = Equipo::select('codigo', 'tipo_equipo', 'estado_operativo')
+                ->where('equipos.codigo', 'like', "%" . strtolower($codigo) . "%");
+            $itemSize = $query->count();
+            $query = $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index"));
+            return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
+        } else {
+            return response()->json(["resp" => [], "itemSize" => 0])->header("itemSize", 0);
+        }
     }
 
     public function eliminar_mantenimiento($id_mantenimiento)
     {
-        try{
-           # Elimino el recordatorio asociado
-          // $rec= Recordatorio::where('id_solicitud', $id_mantenimiento);
-          // $rec->delete();
-           $mant= Mantenimiento::find($id_mantenimiento);
-           $mant->delete();
-       }catch(Exception $e){
-           return response()->json(['log'=>$e],400);
-       }
+        try {
+            # Elimino el recordatorio asociado
+            // $rec= Recordatorio::where('id_solicitud', $id_mantenimiento);
+            // $rec->delete();
+            $mant = Mantenimiento::find($id_mantenimiento);
+            $mant->delete();
+        } catch (Exception $e) {
+            return response()->json(['log' => $e], 400);
+        }
     }
 }
