@@ -10,7 +10,7 @@ use App\Models\Ip;
 use App\Models\Empleado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
-use DateTime;
+use Exception;
 
 
 class ImpresoraController extends Controller

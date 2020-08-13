@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use App\Models\Marca;
+use Exception;
 
 class MarcaController extends Controller
 {
