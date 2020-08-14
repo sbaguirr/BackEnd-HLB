@@ -113,8 +113,26 @@ class AtencionSolicitudController extends Controller
     $uploads = FirmasElectronicas::all();
     return response()->json($uploads);
 }
-}
 
+public function info_atencion_solicitud_id($id)
+{
+    $atencion = AtencionSolicitud::select('atencion_solicitudes.observacion', 'firmas_electronicas.image_url')
+    // ->lists('solicitud_equipos.id_equipo')
+        ->join('solicitudes', 'solicitudes.id_solicitud', '=', 'atencion_solicitudes.id_solicitud')
+        ->join('firmas_electronicas', 'firmas_electronicas.id', '=', 'solicitudes.id_firma')
+        // ->join('solicitud_equipos', 'solicitud_equipos.id_solicitud', '=', 'solicitudes.id_solicitud')
+        // ->join('equipos', 'equipos.id_equipo', '=', 'solicitud_equipos.id_equipo')
+        ->where('atencion_solicitudes.id_solicitud', '=', $id)->get()[0];
+        $lista = array();
+        $offic = SolicitudEquipo::where('solicitud_equipos.id_solicitud', '=', $id)->get("id_equipo");
+        for ( $j=0; $j<count($offic); $j++ ){
+            array_push($lista, $offic[$j]["id_equipo"]);
+        }
+        //  for(
+            $atencion["equipos"]=   $lista;  
+        return $atencion;
+}
+}
 
 
 

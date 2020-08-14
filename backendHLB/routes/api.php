@@ -121,11 +121,10 @@ use Illuminate\Http\Request;
     Route::post('filtrar_solicitudes', 'SolicitudController@filtrar_solicitudes');
     Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
     Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
+    Route::get('info_atencion_solicitud_id/{id}', 'AtencionSolicitudController@info_atencion_solicitud_id');
     Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
-    // Route::post('crear_atencion_solicitud/{request}/{requestFirma}', 'AtencionSolicitudController@crear_atencion_solicitud');
-
     Route::post('crear_atencion_solicitud', 'AtencionSolicitudController@crear_atencion_solicitud');
-
+    
 
 
 /*API para notificaciones móviles */
