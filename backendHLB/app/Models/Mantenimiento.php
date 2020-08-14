@@ -48,5 +48,10 @@ class Mantenimiento extends Model
           return $this->belongsTo('App\Models\User', 'username');
       }
 
+      // Relación: Recordatorio - Mantenimiento (1 - 0/1)
+      public function recordatorio()
+      {
+          return $this->hasOne('App\Models\Recordatorio', 'id_recordatorio');
+      }
 
 }

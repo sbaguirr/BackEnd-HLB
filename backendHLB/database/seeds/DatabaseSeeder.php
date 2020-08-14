@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DetalleComponenteSeeder::class);
         $this->call(SolicitudSeeder::class);
         $this->call(MantenimientoSeeder::class);
+        $this->call(RecordatorioSeeder::class);
 
     }
 }
