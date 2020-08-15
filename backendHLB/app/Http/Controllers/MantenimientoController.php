@@ -25,9 +25,9 @@ class MantenimientoController extends Controller
             DB::beginTransaction();
             $mantenimiento = new Mantenimiento();
             $this->almacenar_mantenimiento($request, $mantenimiento, $inicio, $fin, $id_equipo);
-            //$fecha_recordatorio= $request->get('fecha_recordatorio');
-            //$hora_recordatorio= $request->get('hora_recordatorio');
-            //$this->crear_recordatorio($fecha_recordatorio,$hora_recordatorio,$inicio,$mantenimiento->id_mantenimiento);
+            //$fecha_recordatorio = $request->get('fecha_recordatorio');
+            // $hora_recordatorio = $request->get('hora_recordatorio');
+            //$this->crear_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
             DB::commit();
         } catch (Exception $error) {
             DB::rollback();
@@ -46,7 +46,6 @@ class MantenimientoController extends Controller
         $mantenimiento->actividad_realizada = $request->get('actividad_realizada');
         $mantenimiento->observacion = $request->get('observacion');
         $mantenimiento->id_equipo = $id_equipo->id_equipo;
-        $mantenimiento->id_solicitud = $request->get('id_solicitud');
         $mantenimiento->realizado_por = $request->get('realizado_por');
         $mantenimiento->save();
     }
@@ -62,9 +61,9 @@ class MantenimientoController extends Controller
             DB::beginTransaction();
             $mantenimiento = Mantenimiento::find($request->get('id_mantenimiento'));
             $this->almacenar_mantenimiento($request, $mantenimiento, $inicio, $fin, $id_equipo);
-            //$fecha_recordatorio= $request->get('fecha_recordatorio');
-            //$hora_recordatorio= $request->get('hora_recordatorio');
-            //$this->editar_recordatorio($fecha_recordatorio,$hora_recordatorio,$inicio,$mantenimiento->id_mantenimiento);
+            //$fecha_recordatorio = $request->get('fecha_recordatorio');
+            //$hora_recordatorio = $request->get('hora_recordatorio');
+            //$this->editar_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
             DB::commit();
         } catch (Exception $error) {
             DB::rollback();
@@ -73,26 +72,27 @@ class MantenimientoController extends Controller
     }
 
 
-    /*  private function crear_recordatorio($f, $h, $fi, $id)
+   /* private function crear_recordatorio($f, $h, $fi, $id)
     {
         if ($f !== "" && $h !== "") {
             $this->comparar_fechas($fi, $f, "La fecha del recordatorio");
             $recordatorio = new Recordatorio();
-            $recordatorio->fecha = $f;
-            $recordatorio->hora = $h;
+            $recordatorio->fecha_recordatorio = $f;
+            $recordatorio->hora_recordatorio = $h;
+            $recordatorio->estado = 'A';
             $recordatorio->id_mantenimiento = $id;
             $recordatorio->save();
         }
-    } */
+    }*/
 
-    /*  private function editar_recordatorio($f, $h, $fi, $id)
+    /*private function editar_recordatorio($f, $h, $fi, $id)
     {
         if ($f !== "" && $h !== "") {
             $this->comparar_fechas($fi, $f, "La fecha del recordatorio");
-            Recordatorio::Where('id_mantenimiento','=',$id)
-            ->update(['fecha' => $f, 'hora' => $h]);
+            Recordatorio::Where('id_mantenimiento', '=', $id)
+                ->update(['fecha_recordatorio' => $f, 'hora_recordatorio' => $h]);
         }
-    } */
+    }*/
 
     public function mostrar_mantenimientos(Request $request)
     {
@@ -168,12 +168,12 @@ class MantenimientoController extends Controller
     {
         try {
             # Elimino el recordatorio asociado
-            // $rec= Recordatorio::where('id_solicitud', $id_mantenimiento);
-            // $rec->delete();
+            //$rec = Recordatorio::where('id_mantenimiento', $id_mantenimiento);
+            //$rec->delete();
             $mant = Mantenimiento::find($id_mantenimiento);
             $mant->delete();
         } catch (Exception $e) {
-            return response()->json(['log' => $e], 400);
+            return response()->json(['log' => "Ocurrió un error al eliminar el mantenimiento, inténtelo más tarde"], 400);
         }
     }
 }

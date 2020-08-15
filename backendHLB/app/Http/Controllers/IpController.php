@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ip;
-use App\Models\Equipo;
-use App\Models\EstadoEquipo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Database\QueryException;
@@ -84,29 +82,18 @@ class IpController extends Controller
 
     public function crear_ip(Request $request)
     {
-        DB::beginTransaction();
-
-        try {
+         try {
             $ip = new Ip();
-            $dt = new \DateTime();
-            $dt->format('Y-m-d');
 
             $ip->direccion_ip = $request->get('direccion_ip');
             $ip->hostname = $request->get('hostname');
             $ip->subred = $request->get('subred');
-            $ip->estado = $request->get('estado');
+            $ip->estado = "L";
             $ip->fortigate = $request->get('fortigate');
             $ip->observacion = $request->get('observacion');
             $ip->maquinas_adicionales = $request->get('maquinas_adicionales');
-            // $ip->fecha_asignacion = $dt;
-
-            // Estos dos campos se guardan directamente aqui, en el backend debido a que maneja la sesion.
-            $ip->nombre_usuario = '';
-            $ip->encargado_registro = 'admin';
+            $ip->encargado_registro = $request->get('encargado_registro');
             $ip->save();
-            
-            DB::commit();
-
             return Response::json (
                 array (
                     'success' => true,
@@ -161,11 +148,9 @@ class IpController extends Controller
         $ip->direccion_ip=$request->get('direccion_ip');
         $ip->hostname=$request->get('hostname');
         $ip->subred=$request->get('subred');
-        $ip->estado=$request->get('estado');
         $ip->fortigate=$request->get('fortigate');
         $ip->observacion=$request->get('observacion');
         $ip->maquinas_adicionales=$request->get('maquinas_adicionales');
-        $ip->nombre_usuario=$request->get('nombre_usuario');
         $ip->encargado_registro=$request->get('encargado_registro');
         $ip->save();
         }catch(QueryException $e){
