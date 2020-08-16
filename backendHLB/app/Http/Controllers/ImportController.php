@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipo;
 use App\Models\Correo;
 use App\Models\Ip;
+use App\Models\Router;
 use App\Models\Marca;
 use App\Models\Empleado;
 use App\Models\Departamento;
@@ -178,7 +179,7 @@ class ImportController extends Controller
     }
 
     private function validarHeadersEquipos($obj){
-        $headers = ['Empleado', 'Codigo', 'Marca', 'Modelo', 'Numero de Serie',
+        $headers = ['Empleado', 'Codigo', 'Marca', 'Modelo', 'N/S',
         'Estado', 'Tipo', 'IP', 'Capacidad Almacenamiento', 'Tipo Almacenamiento', 'Numero de Slots RAM', 'RAM Soportada',
         'Conexiones para Discos','Nucleos', 'Frecuencia', 'Componente Principal', 'Descripcion'];
         return $this->validarHeaders($headers, $obj);
@@ -191,6 +192,12 @@ class ImportController extends Controller
 
     private function validarHeadersIPs($obj){
         $headers =  ['IP', 'Hostname', 'Subred', 'Fortigate', 'Maquinas Adicionales', 'Observacion'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
+    private function validarHeadersRouters($obj){
+        $headers =  ['Empleado', 'Codigo', 'Marca', 'Modelo', 'N/S',
+        'Estado','Nombre', 'Pass', 'Usuario', 'Clave', 'IP', 'Puerta Enlace', 'Descripcion'];
         return $this->validarHeaders($headers, $obj);
     }
 
@@ -208,6 +215,19 @@ class ImportController extends Controller
             return ['err' => 'El correo ingresado ya existe. Ingrese uno Nuevo.'];
         }
         return ['correo' => $correo];
+    }
+
+    private function validarPassWord($pass){
+        if(empty($pass)){
+            return ['err'=>'Debe ingresar una contraseña valida.'];
+        }
+        $pass = trim(strval($pass));
+        $exp_reg = '/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{5,10}$/';
+        if(!preg_match($exp_reg, $pass)){
+            return ['err' => 'La contraseña debe tener de 5 a 10 caracteres e incluir mayúsculas, minúsculas y números'];
+        }
+        return ['pass' => $pass];
+
     }
 
 
@@ -273,7 +293,7 @@ class ImportController extends Controller
                 continue;
             }
 
-            if (empty(trim(strval($obj['Numero de Serie'])))) {
+            if (empty(trim(strval($obj['N/S'])))) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
@@ -312,7 +332,7 @@ class ImportController extends Controller
                 $equipo->id_marca = $marca;
                 $equipo->asignado = $emp;
                 $equipo->tipo_equipo = $tipoEq;
-                $equipo->numero_serie =  trim(strval($obj['Numero de Serie']));
+                $equipo->numero_serie =  trim(strval($obj['N/S']));
                 $equipo->estado_operativo = $estado;
                 $equipo->componente_principal = $comp;
                 $equipo->encargado_registro = $request->get('encargado_registro');
@@ -369,13 +389,13 @@ class ImportController extends Controller
                     }
                     $nucleos = new DetalleComponente();
                     $nucleos->campo = 'nucleos';
-                    $nucleos->dato = trim($obj['Nucleos']);
+                    $nucleos->dato = intval($obj['Nucleos']);
                     $nucleos->id_equipo = $equipo->id_equipo;
                     $nucleos->save();
 
                     $frec = new DetalleComponente();
                     $frec->campo = 'frecuencia';
-                    $frec->dato = trim($obj['Frecuencia']);
+                    $frec->dato = floatval($obj['Frecuencia']);
                     $frec->id_equipo = $equipo->id_equipo;
                     $frec->save();
                 } else if(strcasecmp($equipo->tipo_equipo, "tarjeta_madre")==0){
@@ -400,7 +420,7 @@ class ImportController extends Controller
 
                     $num_slots = new DetalleComponente();
                     $num_slots->campo = 'numero_slots';
-                    $num_slots->dato = trim($obj['Numero de Slots RAM']);
+                    $num_slots->dato = intval($obj['Numero de Slots RAM']);
                     $num_slots->id_equipo = $equipo->id_equipo;
                     $num_slots->save();
 
@@ -412,7 +432,7 @@ class ImportController extends Controller
 
                     $disc_conect = new DetalleComponente();
                     $disc_conect->campo = 'conexiones_dd';
-                    $disc_conect->dato = trim($obj['Conexiones para Discos']);
+                    $disc_conect->dato = intval($obj['Conexiones para Discos']);
                     $disc_conect->id_equipo = $equipo->id_equipo;
                     $disc_conect->save();
                 }
@@ -431,7 +451,7 @@ class ImportController extends Controller
                     DB::rollback();
                     continue;
                 }
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($obj['rowNum']).'_E']]);
                 DB::rollback();
                 continue;
             }
@@ -471,11 +491,18 @@ class ImportController extends Controller
                 $email = $email['correo'];
             }
 
+            $password = $this->validarPassWord($obj['Pass']);
+            if(array_key_exists('err', $password)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $password['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $password = $password['pass'];
+            }
 
             try{
                 $mail= new Correo();
                 $mail->correo= $email;
-                $mail->contrasena= trim($obj['Pass']);
+                $mail->contrasena= $password;
                 $mail->estado= "EU";
                 $mail->cedula= $emp;
                 $mail->save();  
@@ -486,7 +513,7 @@ class ImportController extends Controller
                     $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'El correo que ha ingresado ya existe', 'key'=>strval($obj['rowNum']).'_E']]);
                     continue;
                 }
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             } 
         }
@@ -531,11 +558,14 @@ class ImportController extends Controller
             return ['err' => 'Debe ingresar un Fortigate valido.'];
         }
         $subred = trim(strval(($subred)));
+        if(!filter_var($subred, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+            return ['err' => 'La subred ingresada no es valida. Formato: [0-255].[0-255].[0-255].[0-255]'];
+        }
         return ['subred' => $subred];
     }
 
     
-    public function reg_masivo_ips(Request $request){
+    public function reg_masivo_dirips(Request $request){
         $data = $request->get('data');
         $resp = array();
         $respSuccess = array();
@@ -582,18 +612,191 @@ class ImportController extends Controller
                 $hostname = $hostname['hostname']; 
             }
 
-            $maquinas = null;
             if(!empty($obj['Maquinas Adicionales']) && !is_numeric($obj['Maquinas Adicionales'])){
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Ingrese un valor valido para las maquinas adicionales.', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
 
-            
-
-
+            DB::beginTransaction();
+            try {
+                $dirip = new Ip();
+                $dirip->direccion_ip = $ip;
+                $dirip->hostname = $hostname;
+                $dirip->subred = $subred;
+                $dirip->estado = "L";
+                $dirip->fortigate = $ftg;
+                $dirip->observacion = trim(strval($obj['Observacion']));
+                $dirip->maquinas_adicionales = empty($obj['Maquinas Adicionales']) ? 0 : intval($obj['Maquinas Adicionales']);
+                $dirip->encargado_registro = $request->get('encargado_registro');
+                $dirip->save();
+                DB::commit();
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'IP registrada con exito', 'key'=>strval($obj['rowNum']).'_C']]);    
+                
+            } catch (QueryException $e) {
+                DB::rollback();
+                $error_code = $e->errorInfo[1];
+                if($error_code == 1062){
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'La direccion IP que ha ingresado ya existe. Por favor ingrese una direccion IP que no exista.', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
 
         }
 
+        return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
+    }
+
+
+    public function reg_masivo_routers(Request $request){
+        $data = $request->get('data');
+        $resp = array();
+        $respSuccess = array();
+
+        for ($i = 0; $i < count($data); $i++){
+            $obj = $data[$i];
+        
+            $headers = $this->validarHeadersRouters($obj);
+            if($headers!=''){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            $emp = null;
+            if (!empty($obj['Empleado'])) {
+                $emp = $this->empByCedula($obj['Empleado']);
+                if (array_key_exists('err', $emp)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $emp = $emp['cedula'];
+                }
+            }
+
+            $eq = $this->eqByCodigo($obj['Codigo']);
+            if (array_key_exists('err', $eq)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $eq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $eq = $eq['codigo'];
+            }
+
+            $estado = $this->getEstado($obj['Estado']);
+            if (array_key_exists('err', $estado)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $estado = $estado['estado'];
+            }
+
+            $marca = $this->getMarcaByNomb($obj['Marca']);
+            if (array_key_exists('err', $marca)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $marca = $marca['id_marca'];
+            }
+            $modelo = trim(strval($obj['Modelo']));
+            if (empty($modelo)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $serie = trim(strval($obj['N/S']));
+            if (empty($serie)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $nomb = trim(strval($obj['Nombre']));
+            if (empty($nomb)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $usuario = trim(strval($obj['Usuario']));
+            if (empty($usuario)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $ip = null;
+            if (!empty($obj['IP'])) {
+                $ip = $this->getIPByDir($obj['IP']);
+                if (array_key_exists('err', $ip)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $ip = $ip['id_ip'];
+                }
+            }
+
+            $password = $this->validarPassWord($obj['Pass']);
+            if(array_key_exists('err', $password)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $password['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $password = $password['pass'];
+            }
+
+            $clave = $this->validarPassWord($obj['Clave']);
+            if(array_key_exists('err', $clave)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $clave['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $clave = $clave['pass'];
+            }
+
+            $enlace = trim(strval(($obj['Puerta Enlace'])));
+            if(!empty($enlace) && !filter_var($enlace, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'La subred ingresada no es valida. Formato: [0-255].[0-255].[0-255].[0-255]', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            DB::beginTransaction();
+            try{
+                $equipo = new Equipo();
+                $router = new Router();   
+        
+                $equipo->fecha_registro = Date('Y-m-d H:i:s');
+                $equipo->estado_operativo = $estado;
+                $equipo->codigo = $eq;
+                $equipo->tipo_equipo = "Router";
+                $equipo->id_marca = $marca;
+                $equipo->modelo = $modelo;
+                $equipo->numero_serie = $serie;
+                $equipo->descripcion = trim(strval($obj['Descripcion']));
+                $equipo->asignado = $emp;
+                $equipo->encargado_registro = $request->get('encargado_registro');
+                $equipo->componente_principal = null;
+                $equipo->ip = $ip;
+                $equipo->save(); 
+        
+                $id_equip = $equipo->id_equipo;
+                $router->id_equipo = $id_equip;
+                $router->nombre = $nomb;
+                $router->pass = $password;
+                $router->puerta_enlace = $enlace;
+                $router->usuario = $usuario;
+                $router->clave = $clave;
+
+                if($ip!==null){
+                    $_ip= Ip::find($ip);
+                    $_ip->estado= "EU";
+                    $_ip->save();
+                }   
+                $router->save();
+                DB::commit();
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'Router registrado con exito', 'key'=>strval($obj['rowNum']).'_C']]);       
+            }catch(QueryException $e){
+                DB::rollback();
+                $error_code = $e->errorInfo[1];
+                if($error_code == 1062){
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'El codigo ingresado ya existe. Por favor ingrese uno que no exista.', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }    
+        }
+        return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
     }
 
 

@@ -84,7 +84,6 @@ class IpController extends Controller
     {
          try {
             $ip = new Ip();
-
             $ip->direccion_ip = $request->get('direccion_ip');
             $ip->hostname = $request->get('hostname');
             $ip->subred = $request->get('subred');

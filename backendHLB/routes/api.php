@@ -224,5 +224,8 @@ use Illuminate\Http\Request;
 
 /* API IMPORT */
     Route::post('masivo_equipos','ImportController@reg_masivo_equipos');
+    Route::post('masivo_dirips','ImportController@reg_masivo_dirips');
     Route::post('masivo_correos','ImportController@reg_masivo_correos');
+    Route::post('masivo_routers','ImportController@reg_masivo_routers');
+    
 
