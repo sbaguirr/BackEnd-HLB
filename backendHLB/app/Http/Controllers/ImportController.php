@@ -27,6 +27,7 @@ class ImportController extends Controller
 
     private function empByCedula($cedula)
     {
+        $cedula = trim(strval($cedula));
         $result = Empleado::Where('cedula', '=', trim($cedula))->get();
         if (count($result)==0) {
             return ['err' => 'El Empleado asignado no esta registrado.'];
@@ -38,19 +39,20 @@ class ImportController extends Controller
     }
 
     private function validarEmpAsig($cedula){
+        
         if(empty($cedula)){
             return ['err' => 'Debe ingresar una cedula valida de un empleado.'];
         }
+        $cedula = trim(strval($cedula));
         return $this->empByCedula($cedula);
     }
 
     private function eqByCodigo($codigo)
     {
-
         if (empty($codigo)) {
             return ['err' => 'Debe ingresar el codigo para registrar el equipo.'];
         }
-        $codigo = strtoupper(trim($codigo));
+        $codigo = strtoupper(trim(strval($codigo)));
         $result = Equipo::Where('codigo', '=', $codigo)->get();
         if (count($result) > 0) {
             return ['err' => 'Ya existe un equipo registrado con ese codigo.'];
@@ -60,7 +62,7 @@ class ImportController extends Controller
 
     private function compPrinByCod($comp)
     {
-        $codigo = strtoupper(trim($comp));
+        $codigo = strtoupper(trim(strval($comp)));
         $result = Equipo::Where('codigo', '=', $codigo)->get();
         if (count($result)==0) {
             return ['err' => 'El componente principal ingresado no existe.'];
@@ -73,7 +75,7 @@ class ImportController extends Controller
         if (empty($estado)) {
             return ['err' => 'Debe ingresar el estado del equipo.'];
         }
-        $estado = strtolower(trim($estado));
+        $estado = strtolower(trim(strval($estado)));
         $lisEst = [
             'operativo' => 'O', 'o' => 'O', 'de baja' => 'B', 'b' => 'B', 'disponible' => 'D', 'd' => 'D', 'en revision' => 'ER', 'er' => 'ER',
             'reparado' => 'R', 'r' => 'R'
@@ -89,8 +91,7 @@ class ImportController extends Controller
         if (empty($tipo)) {
             return ['err' => 'Debe ingresar el estado del equipo.'];
         }
-
-        $tipo = strtolower(trim($tipo));
+        $tipo = strtolower(trim(strval($tipo)));
         $listTipo = [
             'parlantes' => 'Parlantes', 'monitor' => 'Monitor', 'teclado' => 'Teclado', 'cpu' => 'CPU', 'case' => 'case', 'disco duro' => "disco_duro",
             'fuente de poder' => 'fuente_poder', 'fuente poder' => "fuente_poder", 'memoria ram' => 'memoria_ram', 'mouse' => 'Mouse', 'procesador' => 'Procesador', 'regulador' => 'Regulador',
@@ -109,6 +110,7 @@ class ImportController extends Controller
         if (empty($marca)) {
             return ['err' => 'Debe ingresar la arca del equipo.'];
         }
+        $marca = trim(strval($marca));
         $result = Marca::select('id_marca')->where('nombre', '=', strtolower(trim($marca)))->get();
         if (count($result)==0) {
             return ['err' => 'La marca ingresa no existe. Debe registrarla.'];
@@ -118,9 +120,9 @@ class ImportController extends Controller
 
     private function getIPByDir($ip)
     {
-        $ip = trim($ip);
+        $ip = trim(strval($ip));
         $result = IP::Where('direccion_ip', '=', $ip)->get();
-        if (count($result)==0) {
+        if (count($result) == 0) {
             return ['err' => 'La direccion IP ingresada no existe. Debe registrarla.'];
         }
         if ($result[0]->estado == 'EU') {
@@ -134,7 +136,7 @@ class ImportController extends Controller
         if (empty($alm)) {
             return ['err' => 'Debe ingresar un tipo de almacenamiento para este tipo de equipo.'];
         }
-        $alm = strtoupper(trim($alm));
+        $alm = strtoupper(trim(strval($alm)));
         $listDisk = ['SSD', 'HDD'];
         $listRam = ['DDR', 'DDR2', 'DDR3', 'DDR4'];
         if ($tipoEq == 'disco_duro' && !in_array($alm, $listDisk)) {
@@ -151,7 +153,7 @@ class ImportController extends Controller
         if (empty($alm)) {
             return ['err' => 'Debe ingresar '.($tipoEq == 'tarjeta_madre' ? 'la Ram Soportada':'una capacidad almacenamiento').' para este tipo de equipo.'];
         }
-        $alm = strtoupper(trim($alm));
+        $alm = strtoupper(trim(strval($alm)));
         $l_alm = explode(' ', $alm);
         $listTA = ['MB', 'GB', 'TB'];
         if (count($l_alm) != 2) {
@@ -187,16 +189,22 @@ class ImportController extends Controller
         return $this->validarHeaders($headers, $obj);
     }
 
+    private function validarHeadersIPs($obj){
+        $headers =  ['IP', 'Hostname', 'Subred', 'Fortigate', 'Maquinas Adicionales', 'Observacion'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
     private function validarCorreo($correo){
+        
         if(empty($correo)){
             return ['err'=>'Debe ingresar un correo para el registro.'];
         }
-        if(!filter_var($correo,FILTER_VALIDATE_EMAIL)){
+        if(!filter_var($correo, FILTER_VALIDATE_EMAIL)){
             return ['err' => 'El correo ingresado no es valido.'];
         }
-        $correo = trim($correo);
+        $correo = trim(strval($correo));
         $emails = Correo::Where('correo','=',$correo)->get();
-        if(count($emails)>0){
+        if(count($emails) > 0){
             return ['err' => 'El correo ingresado ya existe. Ingrese uno Nuevo.'];
         }
         return ['correo' => $correo];
@@ -260,12 +268,12 @@ class ImportController extends Controller
                 $marca = $marca['id_marca'];
             }
 
-            if (empty($obj['Modelo'])) {
+            if (empty(trim(strval($obj['Modelo'])))) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
 
-            if (empty($obj['Numero de Serie'])) {
+            if (empty(trim(strval($obj['Numero de Serie'])))) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
@@ -288,7 +296,7 @@ class ImportController extends Controller
                     $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $comp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
                     continue;
                 } else {
-                    $comp = $comp['id_equipo'];
+                    $comp = $comp['comp'];
                 }
             }
 
@@ -298,13 +306,13 @@ class ImportController extends Controller
                 $dt = new \DateTime();
                 $dt->format('Y-m-d');
                 $equipo->codigo = $eq;
-                $equipo->modelo = trim($obj['Modelo']);
+                $equipo->modelo = trim(strval($obj['Modelo']));
                 $equipo->fecha_registro = $dt;
-                $equipo->descripcion = trim($obj['Descripcion']);
+                $equipo->descripcion = trim(strval($obj['Descripcion']));
                 $equipo->id_marca = $marca;
                 $equipo->asignado = $emp;
                 $equipo->tipo_equipo = $tipoEq;
-                $equipo->numero_serie = trim($obj['Numero de Serie']);
+                $equipo->numero_serie =  trim(strval($obj['Numero de Serie']));
                 $equipo->estado_operativo = $estado;
                 $equipo->componente_principal = $comp;
                 $equipo->encargado_registro = $request->get('encargado_registro');
@@ -463,6 +471,7 @@ class ImportController extends Controller
                 $email = $email['correo'];
             }
 
+
             try{
                 $mail= new Correo();
                 $mail->correo= $email;
@@ -485,6 +494,107 @@ class ImportController extends Controller
         return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
     }
 
+    private function validarIPNueva($ip){
+
+        if (empty($ip)) {
+            return ['err' => 'Debe ingresar una IP valida.'];
+        }
+        $ip = trim(strval($ip));
+        if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+            return ['err' => 'La direccion IP no es valida. Formato: [0-255].[0-255].[0-255].[0-255]'];
+        }
+        $result = IP::Where('direccion_ip', '=', $ip)->get();
+        if(count($result) > 0){
+            return ['err' => 'La direccion IP ya esta registrada.'];
+        }
+        return ['ip' => $ip];
+    }
+
+    private function validarHostName($host){
+        if(empty($host)){
+            return ['err' => 'Debe ingresar un hostname valido.'];
+        }
+        $host = trim(strval($host));
+        return ['hostname' => $host];
+    }
+
+    private function validarFortigate($ftg){
+        if(empty($ftg)){
+            return ['err' => 'Debe ingresar un Fortigate valido.'];
+        }
+        $ftg = trim(strval($ftg));
+        return ['fortigate' => $ftg];
+    } 
+
+    private function validarSubred($subred){
+        if(empty($subred)){
+            return ['err' => 'Debe ingresar un Fortigate valido.'];
+        }
+        $subred = trim(strval(($subred)));
+        return ['subred' => $subred];
+    }
+
+    
+    public function reg_masivo_ips(Request $request){
+        $data = $request->get('data');
+        $resp = array();
+        $respSuccess = array();
+        for ($i = 0; $i < count($data); $i++){
+            $obj = $data[$i];
+
+            $headers = $this->validarHeadersIPs($obj);
+            if($headers!=''){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            $ip = $this->validarIPNueva($obj['IP']);
+            if(array_key_exists('err', $ip)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            else{
+                $ip = $ip['ip'];
+            }
+
+            $subred = $this->validarSubred($obj['Subred']);
+            if(array_key_exists('err', $subred)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $subred['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $subred = $subred['subred'];
+            }
+
+            $ftg = $this->validarFortigate($obj['Fortigate']);
+            if(array_key_exists('err', $ftg)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ftg['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            else{
+                $ftg = $ftg['fortigate'];
+            }
+
+            $hostname = $this->validarHostName($obj['Hostname']);
+            if(array_key_exists('err',$hostname)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $hostname['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }else{
+                $hostname = $hostname['hostname']; 
+            }
+
+            $maquinas = null;
+            if(!empty($obj['Maquinas Adicionales']) && !is_numeric($obj['Maquinas Adicionales'])){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Ingrese un valor valido para las maquinas adicionales.', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            
+
+
+
+        }
+
+    }
 
 
 }
