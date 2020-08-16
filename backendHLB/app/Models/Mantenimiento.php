@@ -37,12 +37,6 @@ class Mantenimiento extends Model
      }
 
       // Relación: Equipo - Mantenimiento (1 - M)
-      public function solicitud()
-      {
-          return $this->belongsTo('App\Models\Solicitud', 'id_solicitud');
-      }
-
-      // Relación: Equipo - Mantenimiento (1 - M)
       public function usuario()
       {
           return $this->belongsTo('App\Models\User', 'username');

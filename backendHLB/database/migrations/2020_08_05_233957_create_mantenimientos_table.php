@@ -24,18 +24,12 @@ class CreateMantenimientosTable extends Migration
             $table->string('actividad_realizada')->nullable();
             $table->string('observacion')->nullable();
             $table->unsignedBigInteger('id_equipo');
-            $table->unsignedBigInteger('id_solicitud')->nullable();
             $table->string('realizado_por')->nullable();
             $table->timestamps();
 
             $table->foreign('id_equipo')
             ->references('id_equipo')->on('equipos')
             ->onDelete('cascade')
-            ->onUpdate('cascade'); 
-
-            $table->foreign('id_solicitud')
-            ->references('id_solicitud')->on('solicitudes')
-            ->onDelete('set null')
             ->onUpdate('cascade'); 
 
             $table->foreign('realizado_por')

@@ -53,9 +53,4 @@ class Solicitud extends Model
         return Solicitud::where('estado', 'P')->get()->count();
     }
 
-    // Relación: Empleado - Correo (1 - M)
-    public function mantenimiento()
-    {
-        return $this->hasMany('App\Models\Mantenimiento', 'id_solicitud');
-    }
 }

@@ -53,9 +53,11 @@ class MarcaController extends Controller
 
         if (!empty($marca)){
             $query= $query->whereRaw('nombre like ?',["%{$marca}%"]);
+            $itemSize = $query->count();
+            $query->orderBy('nombre', 'asc');
+        }else{
+            $itemSize = 0;
         }
-        $itemSize = $query->count();
-        $query->orderBy('nombre', 'asc');
         return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
     }
 

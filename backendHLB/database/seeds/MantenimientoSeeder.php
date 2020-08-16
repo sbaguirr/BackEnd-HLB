@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Mantenimiento;
+use Illuminate\Support\Facades\DB;
 
 class MantenimientoSeeder extends Seeder
 {
@@ -16,8 +17,8 @@ class MantenimientoSeeder extends Seeder
         Mantenimiento::create([
             'titulo' => 'Dispositivo no prende',
             'tipo' => 'C', //correctivo
-            'fecha_inicio' => '2020-04-15',
-            'fecha_fin' => '2020-04-15',
+            'fecha_inicio' => '2020-05-15',
+            'fecha_fin' => '2020-05-15',
             'observacion_falla' => 'Falla desconocida',
             'estado_fisico' => 'El equipo luce bien en general',
             'actividad_realizada' => 'Se examinó el equipo',
@@ -25,5 +26,46 @@ class MantenimientoSeeder extends Seeder
             'id_equipo' => 59,
             'realizado_por' => 'soporte',
         ]);
+
+        Mantenimiento::create([
+            'titulo' => 'Dispositivo no prende',
+            'tipo' => 'C', //correctivo
+            'fecha_inicio' => '2020-06-15',
+            'fecha_fin' => '2020-06-15',
+            'observacion_falla' => 'Falla desconocida',
+            'estado_fisico' => 'El equipo luce bien en general',
+            'actividad_realizada' => 'Se examinó el equipo',
+            'observacion' => 'Cambiar de ubicación al equipo',
+            'id_equipo' => 8,
+            'realizado_por' => 'soporte',
+        ]);
+
+        Mantenimiento::create([
+            'titulo' => 'Limpieza del equipo',
+            'tipo' => 'P', //correctivo
+            'fecha_inicio' => '2020-07-15',
+            'fecha_fin' => '2020-07-15',
+            'observacion_falla' => 'Falla desconocida',
+            'estado_fisico' => 'El equipo luce bien en general',
+            'actividad_realizada' => 'Se examinó el equipo',
+            'observacion' => 'Cambiar de ubicación al equipo',
+            'id_equipo' => 8,
+            'realizado_por' => 'soporte',
+        ]);
+
+        Mantenimiento::create([
+            'titulo' => 'Problemas de impresión',
+            'tipo' => 'R', //correctivo
+            'fecha_inicio' => '2020-07-10',
+            'fecha_fin' => '2020-07-10',
+            'observacion_falla' => 'Falla desconocida',
+            'estado_fisico' => 'El equipo luce bien en general',
+            'actividad_realizada' => 'Se examinó el equipo',
+            'observacion' => 'Cambiar de ubicación al equipo',
+            'id_equipo' => 8,
+            'realizado_por' => 'soporte',
+        ]);
     }
 }
+/*
+*/
