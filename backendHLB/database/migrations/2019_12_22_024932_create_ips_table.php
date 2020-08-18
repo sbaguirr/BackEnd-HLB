@@ -22,7 +22,6 @@ class CreateIpsTable extends Migration
             $table->ipAddress('fortigate');
             $table->text('observacion')->nullable();
             $table->unsignedTinyInteger('maquinas_adicionales');
-            $table->string('nombre_usuario', 100)->nullable();
             $table->string('encargado_registro', 100);
             $table->timestampsTz(0);
 
