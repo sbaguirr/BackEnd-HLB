@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mantenimiento;
 use App\Models\Equipo;
-//use App\Models\Recordatorio;
+use App\Models\Recordatorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -25,9 +25,9 @@ class MantenimientoController extends Controller
             DB::beginTransaction();
             $mantenimiento = new Mantenimiento();
             $this->almacenar_mantenimiento($request, $mantenimiento, $inicio, $fin, $id_equipo);
-            //$fecha_recordatorio = $request->get('fecha_recordatorio');
-            // $hora_recordatorio = $request->get('hora_recordatorio');
-            //$this->crear_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
+            $fecha_recordatorio = $request->get('fecha_recordatorio');
+            $hora_recordatorio = $request->get('hora_recordatorio');
+            $this->crear_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
             DB::commit();
         } catch (Exception $error) {
             DB::rollback();
@@ -61,9 +61,9 @@ class MantenimientoController extends Controller
             DB::beginTransaction();
             $mantenimiento = Mantenimiento::find($request->get('id_mantenimiento'));
             $this->almacenar_mantenimiento($request, $mantenimiento, $inicio, $fin, $id_equipo);
-            //$fecha_recordatorio = $request->get('fecha_recordatorio');
-            //$hora_recordatorio = $request->get('hora_recordatorio');
-            //$this->editar_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
+            $fecha_recordatorio = $request->get('fecha_recordatorio');
+            $hora_recordatorio = $request->get('hora_recordatorio');
+            $this->editar_recordatorio($fecha_recordatorio, $hora_recordatorio, $inicio, $mantenimiento->id_mantenimiento);
             DB::commit();
         } catch (Exception $error) {
             DB::rollback();
@@ -72,9 +72,9 @@ class MantenimientoController extends Controller
     }
 
 
-   /* private function crear_recordatorio($f, $h, $fi, $id)
+    private function crear_recordatorio($f, $h, $fi, $id)
     {
-        if ($f !== "" && $h !== "") {
+        if (!empty($f) && !empty($h)) {
             $this->comparar_fechas($fi, $f, "La fecha del recordatorio");
             $recordatorio = new Recordatorio();
             $recordatorio->fecha_recordatorio = $f;
@@ -83,16 +83,16 @@ class MantenimientoController extends Controller
             $recordatorio->id_mantenimiento = $id;
             $recordatorio->save();
         }
-    }*/
+    }
 
-    /*private function editar_recordatorio($f, $h, $fi, $id)
+    private function editar_recordatorio($f, $h, $fi, $id)
     {
-        if ($f !== "" && $h !== "") {
+        if (!empty($f) && !empty($h)) {
             $this->comparar_fechas($fi, $f, "La fecha del recordatorio");
             Recordatorio::Where('id_mantenimiento', '=', $id)
                 ->update(['fecha_recordatorio' => $f, 'hora_recordatorio' => $h]);
         }
-    }*/
+    }
 
     public function mostrar_mantenimientos(Request $request)
     {
@@ -123,8 +123,10 @@ class MantenimientoController extends Controller
 
     public function mantenimiento_id($id)
     {
-        return Mantenimiento::selectRaw('mantenimientos.*, equipos.codigo')
+        return Mantenimiento::selectRaw('mantenimientos.*, equipos.codigo, recordatorios.hora_recordatorio
+        ,recordatorios.fecha_recordatorio')
             ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
+            ->leftjoin('recordatorios', 'mantenimientos.id_mantenimiento', '=', 'recordatorios.id_mantenimiento')
             ->where('mantenimientos.id_mantenimiento', $id)
             ->get();
     }
@@ -168,8 +170,8 @@ class MantenimientoController extends Controller
     {
         try {
             # Elimino el recordatorio asociado
-            //$rec = Recordatorio::where('id_mantenimiento', $id_mantenimiento);
-            //$rec->delete();
+            $rec = Recordatorio::where('id_mantenimiento', $id_mantenimiento);
+            $rec->delete();
             $mant = Mantenimiento::find($id_mantenimiento);
             $mant->delete();
         } catch (Exception $e) {

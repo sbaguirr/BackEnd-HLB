@@ -24,14 +24,13 @@ class ImpresoraController extends Controller
         $dt->format('Y-m-d');
     try{
         $equipo ->modelo=$request->get('modelo');
-
         $equipo ->fecha_registro=$dt;
-        $equipo ->codigo=$request->get('codigo');
-        $equipo ->tipo_equipo="Impresora";
+        $equipo ->codigo=strtoupper($request->get('codigo'));
+        $equipo ->tipo_equipo="IMPRESORA";
         $equipo ->descripcion=$request->get('descripcion');
         $equipo ->id_marca=$request->get('id_marca');
         $equipo ->asignado=$request->get('asignado');
-        $equipo ->numero_serie=$request->get('numero_serie');
+        $equipo ->numero_serie=strtoupper($request->get('numero_serie'));
         $equipo ->encargado_registro=$request->get('encargado_registro');
         $equipo ->estado_operativo=$request->get('estado_operativo');
         $equipo ->componente_principal=$request->get('componente_principal');
@@ -96,12 +95,12 @@ class ImpresoraController extends Controller
         $equipo ->modelo=$request->get('modelo');
 
         $equipo ->fecha_registro=$dt;
-        $equipo ->codigo=$request->get('codigo');
-        $equipo ->tipo_equipo="Impresora";
+        $equipo ->codigo=strtoupper($request->get('codigo'));
+        $equipo ->tipo_equipo="IMPRESORA";
         $equipo ->descripcion=$request->get('descripcion');
         $equipo ->id_marca=$request->get('id_marca');
         $equipo ->asignado=$request->get('asignado');
-        $equipo ->numero_serie=$request->get('numero_serie');
+        $equipo ->numero_serie=strtoupper($request->get('numero_serie'));
         $equipo ->encargado_registro=$request->get('encargado_registro');
         $equipo ->estado_operativo=$request->get('estado_operativo');
         $equipo ->componente_principal=$request->get('componente_principal');
@@ -198,15 +197,6 @@ class ImpresoraController extends Controller
         }
     }
 
-    public function buscar_por_fecha($fecha_asignacion)
-    {
-        return Correo::select('empleados.nombre','empleados.apellido','departamentos.nombre as departamento','bspi_punto','correo')
-        ->join('empleados','empleados.cedula','=','correos.cedula')
-        ->join('departamentos','departamentos.id_departamento','=','empleados.id_departamento')
-        ->join('organizaciones','organizaciones.id_organizacion','=','departamentos.id_organizacion')
-        ->whereDate('correos.created_at',$fecha_asignacion)
-        ->get();
-    }
 
     public function mostrar_impresoras_all(){
         return Impresora::select('id_impresora','tipo','tinta','cinta','rodillo','rollo','toner','cartucho','equipos.id_equipo','estado_operativo','codigo','marcas.nombre as marca','modelo','descripcion','numero_serie','encargado_registro','equipos.created_at')
@@ -370,9 +360,8 @@ class ImpresoraController extends Controller
         DB::beginTransaction();
         try{
         $equipo->estado_operativo = $request->get('estado_operativo');
-        $equipo->codigo = $request->get('codigo');
         $equipo->modelo = $request->get('modelo');
-        $equipo->numero_serie = $request->get('numero_serie');
+        $equipo->numero_serie = strtoupper($request->get('numero_serie'));
         $equipo->descripcion = $request->get('descripcion');
         $equipo->encargado_registro = $request->get('encargado_registro');
 
