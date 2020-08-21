@@ -113,7 +113,7 @@ class MantenimientoController extends Controller
             'codigo'
         )
             ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
-            ->where('equipos.codigo', 'like', "%" . strtolower($codigo_equipo) . "%");
+            ->where('equipos.codigo', '=', $codigo_equipo);
 
         $itemSize = $query->count();
         $query->orderBy('mantenimientos.created_at', 'desc');
