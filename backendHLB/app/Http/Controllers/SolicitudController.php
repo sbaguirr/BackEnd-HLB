@@ -38,7 +38,7 @@ class SolicitudController extends Controller
             $query = $query->where('solicitudes.prioridad', $prioridad);
         }
         $itemSize = $query->count();
-        $query->orderBy('solicitudes.created_at', 'desc');
+        $query->orderBy('solicitudes.updated_at', 'desc');
         $query = $query->limit($request->get("page_size"))->offset($request->get("page_size") * $request->get("page_index"));
         return response()->json(["resp" => $query->get(), "itemSize" => $itemSize])->header("itemSize", $itemSize);
     }
