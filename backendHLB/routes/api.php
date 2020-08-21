@@ -121,7 +121,7 @@ use Illuminate\Http\Request;
     Route::post('filtrar_solicitudes', 'SolicitudController@filtrar_solicitudes');
     Route::get('contar_solicitudes', 'SolicitudController@contar_solicitudes');
     Route::get('info_solicitud_id/{id}', 'SolicitudController@info_solicitud_id');
-    Route::get('info_atencion_solicitud_id/{id}/{cedula}', 'AtencionSolicitudController@info_atencion_solicitud_id');    
+    Route::get('info_atencion_solicitud_id/{id}/{cedula}', 'AtencionSolicitudController@info_atencion_solicitud_id');
     Route::get('info_atencion_solicitud_edit/{id}', 'AtencionSolicitudController@info_atencion_solicitud_edit');
     Route::put('cambiar_estado_solicitud/{id}/{estado}', 'SolicitudController@cambiar_estado_solicitud');
     Route::post('crear_atencion_solicitud', 'AtencionSolicitudController@crear_atencion_solicitud');
@@ -143,6 +143,10 @@ use Illuminate\Http\Request;
     Route::get('obtener_tokens', 'SolicitudController@obtener_tokens');
     Route::delete('eliminar_mantenimiento/{id_mantenimiento}', 'MantenimientoController@eliminar_mantenimiento');
 
+/** API para recordatorios */
+    Route::get('/mostrar_recordatorios/{size}','MantenimientoController@mostrar_recordatorios');
+    Route::put('eliminar_recordatorio/{id}','MantenimientoController@eliminar_recordatorio');
+    Route::get('/recordatorio_codigo/{codigo}','MantenimientoController@recordatorio_codigo');
 
 
 
@@ -230,5 +234,5 @@ use Illuminate\Http\Request;
     Route::post('masivo_dirips','ImportController@reg_masivo_dirips');
     Route::post('masivo_correos','ImportController@reg_masivo_correos');
     Route::post('masivo_routers','ImportController@reg_masivo_routers');
-    
+
 

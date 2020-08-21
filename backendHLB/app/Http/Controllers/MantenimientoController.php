@@ -178,4 +178,60 @@ class MantenimientoController extends Controller
             return response()->json(['log' => "Ocurrió un error al eliminar el mantenimiento, inténtelo más tarde"], 400);
         }
     }
+
+        /* Recordatorios */
+        public function mostrar_recordatorios($size)
+        {
+            return Mantenimiento::selectRaw('recordatorios.id_recordatorio,
+                                             recordatorios.hora_recordatorio,
+                                             recordatorios.fecha_recordatorio,
+                                             recordatorios.estado,
+                                             recordatorios.id_mantenimiento,
+                                             recordatorios.created_at,
+                                             mantenimientos.titulo,
+                                             mantenimientos.id_equipo,
+                                             equipos.codigo,
+                                             equipos.tipo_equipo,
+                                             equipos.estado_operativo')
+                ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
+                ->join('recordatorios', 'recordatorios.id_mantenimiento', '=', 'mantenimientos.id_mantenimiento')
+                ->where('recordatorios.estado', 'A')
+                ->orderBy('recordatorios.fecha_recordatorio', 'asc')
+                ->paginate($size);
+        }
+
+        public function eliminar_recordatorio($id,Request $request){
+            DB::beginTransaction();
+            try {
+                Recordatorio::Where('id_recordatorio', '=', $id)->update(['estado' => 'I']);
+                DB::commit();
+                if ($request->get('tipo')==='general'){
+                    return $this-> mostrar_recordatorios($request->get('size'));
+                }
+                if ($request->get('tipo')==='codigo'){
+                    return $this-> impresoras_codigo_paginado($request->get('codigo'),$request->get('size'));
+                }
+            } catch (Exception $e) {
+                DB::rollback();
+                return response()->json(['log' => -1], 400);
+            }
+        }
+
+        public function recordatorio_codigo($codigo){
+            return Mantenimiento::selectRaw('recordatorios.id_recordatorio,
+                                             recordatorios.hora_recordatorio,
+                                             recordatorios.fecha_recordatorio,
+                                             recordatorios.estado,
+                                             recordatorios.id_mantenimiento,
+                                             recordatorios.created_at,
+                                             mantenimientos.titulo,
+                                             equipos.codigo')
+                ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
+                ->join('recordatorios', 'recordatorios.id_mantenimiento', '=', 'mantenimientos.id_mantenimiento')
+                ->where('recordatorios.estado', 'A')
+                ->where('equipos.codigo','like',"%".$codigo."%")
+                ->orderBy('recordatorios.fecha_recordatorio', 'asc')
+                ->get();
+        }
+
 }
