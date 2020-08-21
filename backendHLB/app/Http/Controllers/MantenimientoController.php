@@ -203,7 +203,9 @@ class MantenimientoController extends Controller
         public function eliminar_recordatorio($id,Request $request){
             DB::beginTransaction();
             try {
-                Recordatorio::Where('id_recordatorio', '=', $id)->update(['estado' => 'I']);
+                //Recordatorio::Where('id_recordatorio', '=', $id)->update(['estado' => 'I']);
+                $rec = Recordatorio::where('id_recordatorio', $id);
+                $rec->delete();
                 DB::commit();
                 if ($request->get('tipo')==='general'){
                     return $this-> mostrar_recordatorios($request->get('size'));
