@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipo;
 use App\Models\Correo;
 use App\Models\Ip;
+use App\Models\Impresora;
 use App\Models\Router;
 use App\Models\Marca;
 use App\Models\Empleado;
@@ -109,7 +110,7 @@ class ImportController extends Controller
     private function getMarcaByNomb($marca)
     {
         if (empty($marca)) {
-            return ['err' => 'Debe ingresar la arca del equipo.'];
+            return ['err' => 'Debe ingresar la marca del equipo.'];
         }
         $marca = trim(strval($marca));
         $result = Marca::select('id_marca')->where('nombre', '=', strtolower(trim($marca)))->get();
@@ -198,6 +199,12 @@ class ImportController extends Controller
     private function validarHeadersRouters($obj){
         $headers =  ['Empleado', 'Codigo', 'Marca', 'Modelo', 'N/S',
         'Estado','Nombre', 'Pass', 'Usuario', 'Clave', 'IP', 'Puerta Enlace', 'Descripcion'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
+    private function validarHeadersImpresoras($obj){
+        $headers =  [ 'Empleado', 'Codigo', 'Marca', 'Modelo', 'N/S',
+        'Estado','Tipo', 'IP', 'Componente Principal', 'Tinta', 'Cartucho', 'Toner', 'Rodillo', 'Cinta', 'Rollo/Brazalete' , 'Descripcion'];;
         return $this->validarHeaders($headers, $obj);
     }
 
@@ -697,26 +704,31 @@ class ImportController extends Controller
             } else {
                 $marca = $marca['id_marca'];
             }
+            
+            if (empty($obj['Modelo'])) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
             $modelo = trim(strval($obj['Modelo']));
-            if (empty($modelo)) {
+
+            if (empty($obj['N/S'])) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
             $serie = trim(strval($obj['N/S']));
-            if (empty($serie)) {
+            
+            if (empty($obj['Nombre'])) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
             $nomb = trim(strval($obj['Nombre']));
-            if (empty($nomb)) {
+
+            if (empty($obj['Usuario'])) {
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
             $usuario = trim(strval($obj['Usuario']));
-            if (empty($usuario)) {
-                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
-                continue;
-            }
+
             $ip = null;
             if (!empty($obj['IP'])) {
                 $ip = $this->getIPByDir($obj['IP']);
@@ -744,11 +756,11 @@ class ImportController extends Controller
                 $clave = $clave['pass'];
             }
 
-            $enlace = trim(strval(($obj['Puerta Enlace'])));
-            if(!empty($enlace) && !filter_var($enlace, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+            if(!empty($obj['Puerta Enlace']) && !filter_var($obj['Puerta Enlace'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
                 $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'La subred ingresada no es valida. Formato: [0-255].[0-255].[0-255].[0-255]', 'key'=>strval($obj['rowNum']).'_E']]);
                 continue;
             }
+            $enlace = trim(strval(($obj['Puerta Enlace'])));
 
             DB::beginTransaction();
             try{
@@ -799,5 +811,258 @@ class ImportController extends Controller
         return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
     }
 
+    private function validarTipoImp($tipo){
+        if(empty($tipo)){
+            return ['err' => 'Debe ingresar el tipo de impresora a registrar.'];
+        }
+        $tipo =  strtolower(trim(strval($tipo)));
+        $listTipoImp = [ 'multifuncional' => 'Multifuncional', 'matricial'=>'Matricial','brazalete' => 'Brazalete', 'impresora' => 'Impresora', 'escaner' => 'Escáner','escáner' => 'Escáner' ];
 
+        if (array_key_exists($tipo, $listTipoImp)) {
+            return ['tipo_imp' => $listTipoImp[$tipo]];
+        }
+        return ['err' =>'El tipo de impresora ingresado no es valido.'];
+    }
+
+    private function get_atributos($list, $obj){
+        $count_no_empty = 0;
+        $list_atr = array();
+
+        for($i = 0; $i < count($list); $i++){
+            if(!empty($obj[$list[$i]])){
+                $count_no_empty++;
+                $list_atr = array_merge($list_atr, [$list[$i] => trim(strval($obj[$list[$i]]))]);
+            }else{
+                $list_atr = array_merge($list_atr, [$list[$i] => $obj[$list[$i]]]);
+            }
+        }
+        return ['count_no_empty'=>$count_no_empty, "list_atr"=>$list_atr];
+    }
+
+    private function validarAtributosPorTipoImp($tipo, $obj){
+        if($tipo == 'Multifuncional'){
+            $message_base = 'Las impresoras Multifuncionales deben tener un unico suministro: Tinta, Cartucho o Toner.'.' ';            
+            $resp = $this -> get_atributos(['Tinta', 'Cartucho', 'Toner'], $obj);
+            $list_mult = $resp['list_atr'];
+            $count_no_empty = $resp['count_no_empty'];
+            if($count_no_empty == 0){
+                return ['err' =>$message_base. 'No se ha ingresado ninguno.'];
+            }
+            if($count_no_empty > 1){
+                return ['err' =>$message_base. 'A ingresado mas de uno.'];
+
+            }
+            return ['atributos' => $list_mult];
+            
+        }
+        if($tipo == 'Matricial'){
+            $resp = $this -> get_atributos(['Cinta', 'Cartucho'], $obj);
+            $list_mult = $resp['list_atr'];
+            $count_no_empty = $resp['count_no_empty'];
+
+            if($count_no_empty != 2){
+                return ['err' =>"Las impresoras Matriciales deben poseer obligatoriamente Cinta y Cartucho para poder registrase."];
+            }
+
+            return ['atributos' => $list_mult];
+        }
+        if($tipo == 'Brazalete'){
+            $resp = $this -> get_atributos(["Toner", 'Rollo/Brazalete', 'Cartucho', "Tinta"], $obj);
+            $list_mult = $resp['list_atr'];
+            $count_no_empty = $resp['count_no_empty'];
+
+            if($count_no_empty != 4){
+                return ['err' =>"Las impresoras de Brazalete deben poseer obligatoriamente Toner, Tinta, Rollo/Brazalete y Cartucho para poder registrase."];
+            }
+
+            return ['atributos' => $list_mult];
+        }
+        if($tipo == 'Impresora'){
+            $resp = $this -> get_atributos([ 'Cartucho', "Tinta"], $obj);
+            $list_mult = $resp['list_atr'];
+            $count_no_empty = $resp['count_no_empty'];
+
+            if($count_no_empty != 2){
+                return ['err' =>"Las impresoras deben poseer obligatoriamente Tinta y Cartucho para poder registrase."];
+            }
+
+            return ['atributos' => $list_mult];
+        } 
+        if($tipo == 'Escáner'){
+            $resp = $this -> get_atributos(["Rodillo"], $obj);
+            $list_mult = $resp['list_atr'];
+            $count_no_empty = $resp['count_no_empty'];
+
+            if($count_no_empty != 2){
+                return ['err' =>"Las impresoras deben poseer obligatoriamente Tinta y Cartucho para poder registrase."];
+            }
+
+            return ['atributos' => $list_mult];
+        } 
+
+        return ['err' => 'El tipo de impresora ingresado no es valido.'];
+
+    }
+    
+    public function reg_masivo_impresoras(Request $request){
+        $data = $request->get('data');
+        $resp = array();
+        $respSuccess = array();
+
+        for ($i = 0; $i < count($data); $i++){
+            $obj = $data[$i];
+
+            $headers = $this->validarHeadersImpresoras($obj);
+            if($headers!=''){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            $emp = null;
+            if (!empty($obj['Empleado'])) {
+                $emp = $this->empByCedula($obj['Empleado']);
+                if (array_key_exists('err', $emp)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $emp = $emp['cedula'];
+                }
+            }
+
+            $eq = $this->eqByCodigo($obj['Codigo']);
+            if (array_key_exists('err', $eq)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $eq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $eq = $eq['codigo'];
+            }
+
+            $estado = $this->getEstado($obj['Estado']);
+            if (array_key_exists('err', $estado)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $estado = $estado['estado'];
+            }
+
+            $marca = $this->getMarcaByNomb($obj['Marca']);
+            if (array_key_exists('err', $marca)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $marca = $marca['id_marca'];
+            }
+            
+            if (empty($obj['Modelo'])) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $modelo = trim(strval($obj['Modelo']));
+            
+            if (empty($obj['N/S'])) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $serie = trim(strval($obj['N/S']));
+
+            $tipoImp = $this -> validarTipoImp($obj['Tipo']);
+            if (array_key_exists('err', $tipoImp)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoImp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $tipoImp = $tipoImp['tipo_imp'];
+            }
+
+            $ip = null;
+            if (!empty($obj['IP'])) {
+                $ip = $this->getIPByDir($obj['IP']);
+                if (array_key_exists('err', $ip)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $ip = $ip['id_ip'];
+                }
+            }
+
+            $comp = null;
+            if (!empty($obj['Componente Principal'])) {
+                $comp = $this->compPrinByCod($obj['Componente Principal']);
+                if (array_key_exists('err', $comp)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $comp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $comp = $comp['comp'];
+                }
+            }
+
+            $atributos_tipo = $this->validarAtributosPorTipoImp($tipoImp, $obj);
+            if (array_key_exists('err', $atributos_tipo)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $atributos_tipo['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $atributos_tipo = $atributos_tipo['atributos'];
+            }
+
+            DB::beginTransaction();
+
+            $impresora = new Impresora();
+            $equipo = new Equipo();
+            $dt = new \DateTime();
+            $dt->format('Y-m-d');
+
+            try{
+                $equipo->modelo= $modelo;
+                $equipo->fecha_registro=$dt;
+                $equipo->codigo=$eq;
+                $equipo->tipo_equipo="Impresora";
+                $equipo->descripcion = trim(strval($obj['Descripcion']));
+                $equipo->asignado = $emp;
+                $equipo->encargado_registro = $request->get('encargado_registro');
+                $equipo->id_marca = $marca;
+                $equipo->numero_serie = $serie;
+                $equipo->estado_operativo = $estado;
+                $equipo->componente_principal = $comp;
+                $equipo->ip = $ip;
+                $equipo->save();
+
+                $_id=$equipo->id_equipo;
+                $impresora ->tipo=$tipoImp;
+
+                $impresora->toner = array_key_exists("Toner", $atributos_tipo) ? $atributos_tipo['Toner'] : null;
+                $impresora->tinta = array_key_exists("Tinta", $atributos_tipo) ? $atributos_tipo['Tinta'] : null;
+                $impresora->cartucho = array_key_exists("Cartucho", $atributos_tipo) ? $atributos_tipo['Cartucho'] : null;
+                $impresora ->cinta =  array_key_exists("Cinta", $atributos_tipo) ? $atributos_tipo['Cinta'] : null;
+                $impresora ->rodillo =  array_key_exists("Rodillo", $atributos_tipo) ? $atributos_tipo['Rodillo'] : null;
+                $impresora ->rollo =  array_key_exists('Rollo/Brazalete', $atributos_tipo) ? $atributos_tipo['Rollo/Brazalete'] : null;
+
+                $impresora ->id_equipo=$_id;
+                $impresora->save();
+
+                if($ip!==null){
+                    $_ip= Ip::find($ip);
+                    $_ip->estado= "EU";
+                    $_ip->save();
+                }
+                DB::commit();
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $obj['rowNum'], 'message' => 'Impresora registrada con exito', 'key'=>strval($obj['rowNum']).'_C']]);
+
+            }catch(Exception $e) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error interno. Intentelo mas tarde.', 'key'=>strval($obj['rowNum']).'_E']]);
+                DB::rollback();
+                continue;
+            } catch(QueryException $e) {
+                $error_code = $e->errorInfo[1];
+                if ($error_code == 1062) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'El código del equipo que ha ingresado ya existe', 'key'=>strval($obj['rowNum']).'_E']]);
+                    DB::rollback();
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($obj['rowNum']).'_E']]);
+                DB::rollback();
+                continue;
+            }
+        }
+
+        return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
+    }
 }
