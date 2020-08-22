@@ -1748,22 +1748,22 @@ class EquipoController extends Controller
             $equipo = new Equipo();
             $dt = new \DateTime();
             $dt->format('Y-m-d');
-            $equipo->codigo = $request->get('codigo');
+            $equipo->codigo = strtoupper($request->get('codigo'));
             $equipo->modelo = $request->get('modelo');
             $equipo->fecha_registro = $dt;
             $equipo->descripcion = $request->get('descripcion');
             $equipo->id_marca = $request->get('id_marca');
             $equipo->asignado = $request->get('asignado');
-            $equipo->numero_serie = $request->get('numero_serie');
+            $equipo->numero_serie = strtoupper($request->get('numero_serie'));
             $equipo->estado_operativo = $request->get('estado_operativo');
             $equipo->componente_principal = $request->get('componente_principal');
             $equipo->encargado_registro = $request->get('encargado_registro');
             $equipo->ip = $request->get('ip');
             $tipo = $request->get('tipo_equipo');
             if (strcasecmp($tipo, "otro") == 0) {
-                $equipo->tipo_equipo = $request->get('tipo');
+                $equipo->tipo_equipo = strtoupper($request->get('tipo'));
             } else {
-                $equipo->tipo_equipo = $tipo;
+                $equipo->tipo_equipo = strtoupper($tipo);
             }
 
             $id = $request->get('ip');
@@ -1888,10 +1888,10 @@ class EquipoController extends Controller
 
         DB::beginTransaction();
         try {
-            $equipo->codigo = $request->get('codigo');
+            $equipo->codigo = strtoupper($request->get('codigo'));
             $equipo->modelo = $request->get('modelo');
             $equipo->descripcion = $request->get('descripcion');
-            $equipo->numero_serie = $request->get('numero_serie');
+            $equipo->numero_serie = strtoupper($request->get('numero_serie'));
             $equipo->estado_operativo = $request->get('estado_operativo');
             $equipo->componente_principal = $request->get('componente_principal');
 
@@ -1900,9 +1900,9 @@ class EquipoController extends Controller
             frontend */
             $tipo = $request->get('tipo_equipo');
             if (strcasecmp($tipo, "otro") == 0) {
-                $equipo->tipo_equipo = $request->get('tipo');
+                $equipo->tipo_equipo = strtoupper($request->get('tipo'));
             } else {
-                $equipo->tipo_equipo = $tipo;
+                $equipo->tipo_equipo = strtoupper($tipo);
             }
 
             $marca = $request->get('id_marca');

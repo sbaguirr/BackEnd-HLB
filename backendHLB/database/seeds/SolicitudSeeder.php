@@ -82,20 +82,20 @@ class SolicitudSeeder extends Seeder
             'hora_realizacion' => '12:25:00',
             'fecha_realizacion' => '2020-06-10',
             'observacion' => 'Ninguna',
-            'estado' => 'C',        #Completada
+            'estado' => 'R',        #Rechazada
             'prioridad' => 'CT',    #Critica
             'tipo' => 'ST',         #Servicio Técnico
-            'id_firma' => 7,
+            'id_firma' => null,
             'id_usuario' => 'laboratorio1'
         ]);
         Solicitud::create([
             'hora_realizacion' => '12:30:00',
             'fecha_realizacion' => '2020-06-10',
             'observacion' => 'Ninguna',
-            'estado' => 'C',        #Completada
+            'estado' => 'P',        #Pendiente
             'prioridad' => 'B',     #Baja
             'tipo' => 'AE',         #Asignación de equipo
-            'id_firma' => 8,
+            'id_firma' => null,
             'id_usuario' => 'administracion'
         ]);
 
