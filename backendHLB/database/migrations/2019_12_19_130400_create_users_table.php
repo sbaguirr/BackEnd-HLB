@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->bigInteger('id_rol')->unsigned();
             $table->string('cedula');
+            $table->string('estado')->default('A');
             $table->string('device_token')->nullable();
             $table->timestamps();
 

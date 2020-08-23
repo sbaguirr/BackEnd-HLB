@@ -14,19 +14,21 @@ use Illuminate\Http\Request;
 */
 /*-------------APP ROUTES-------------*/
 
+/*API Control de Imagenes????*/
     Route::post('/upload/images', 'ImageUploadController@uploadImages');
     Route::get('/path_all','ImageUploadController@obtener_rutas');
 
-    Route::post('register', 'UserController@register');
-    Route::post('registrar_user_web', 'UserController@registrar_user_web');
-    Route::post('login', 'UserController@login');
-    Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
+
+/*API Usuario - Autenticacion*/
+    Route::post('/register', 'UserController@register');
+    Route::post('/registrar_user_web', 'UserController@registrar_user_web');
+    Route::post('/login', 'UserController@login');
+    Route::get('/user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');
     Route::get('/obtener_datos_usurios/{username}', 'UserController@obtener_datos_usurios');
     Route::get('/mostrar_usuario_det/{username}', 'UserController@mostrar_usuario_det');
     Route::get('/get_users', 'UserController@get_users');
     Route::put('/editar_user_web', 'UserController@editar_user_web');
-
-
+    Route::put('/delete_user/{username}', 'UserController@delete_user');
 
 
 /*API Correo*/
@@ -37,14 +39,17 @@ use Illuminate\Http\Request;
     Route::put('editar_correo', 'CorreoController@editar_correo');
     Route::put('eliminar_correo/{id_correo}', 'CorreoController@eliminar_correo');
 
+
 /*API Empleado*/
     Route::get('buscar_empleado/{nombreEmpleado}', 'EmpleadoController@buscar_empleado');
     Route::get('empleados_sistemas', 'EmpleadoController@empleados_sistemas');
+
 
 /*API Marcas */
     Route::post('filtrar_marcas', 'MarcaController@filtrar_marcas');
     Route::get('marca_id/{marca_id}', 'MarcaController@marca_id');
     Route::delete('eliminar_marca/{id_marca}', 'MarcaController@eliminar_marca');
+
 
 /*API Organización*/
    Route::get('organizaciones', 'OrganizacionController@mostrar_todos');
@@ -52,6 +57,7 @@ use Illuminate\Http\Request;
    Route::get('mostrar_departamentos','DepartamentoController@mostrar_departamentos');
    Route::get('mostrar_roles','DepartamentoController@mostrar_roles');
    Route::get('mostrar_dep_org','DepartamentoController@org_dpto_all');
+
 
 /*API Routers*/
     Route::get('listar_routers', 'RouterController@listar_router');
@@ -62,6 +68,7 @@ use Illuminate\Http\Request;
     Route::put('eliminar_router/{id}', 'RouterController@eliminar_router');
     Route::post('editar_equipo_router', 'RouterController@editar_equipo_router');
     Route::get('buscar_router_por_id/{id}', 'RouterController@buscar_router_por_id');
+
 
 /* API EQUIPOS */
     Route::post('desktop','EquipoController@crear_Comp_Desktop');
@@ -75,7 +82,6 @@ use Illuminate\Http\Request;
     Route::get('mostrar_equipos_paginado/{size}','EquipoController@mostrar_equipos_paginado');
     Route::get('/equipo_codigo_paginado/{codigo}/{size}','EquipoController@equipo_codigo_paginado');
     Route::get('/equipos_codigo/{codigo}','EquipoController@equipos_codigo');
-
     Route::get('filtrar_equipos_paginado/{marca?}/{fecha_asignacion?}/{estado?}/{size}', 'EquipoController@filtrar_equipos_paginado');
     Route::put('eliminar_otros_equipos/{id}','EquipoController@eliminar_otros_equipos');
     Route::get('/obtener_otro_equipo_por_id/{id_otro_equipo}','EquipoController@obtener_otro_equipo_por_id');
@@ -129,9 +135,9 @@ use Illuminate\Http\Request;
     Route::get('mostrar_codigo_equipos_solicitante/{cedula}', 'AtencionSolicitudController@mostrar_codigo_equipos_solicitante');
 
 
-
 /*API para notificaciones móviles */
     Route::put('actualizar_token', 'UserController@actualizar_token');
+
 
 /*API para mantenimiento */
     Route::get('solicitudes_en_progreso', 'SolicitudController@solicitudes_en_progreso');
@@ -142,6 +148,7 @@ use Illuminate\Http\Request;
     Route::post('equipos_por_codigo', 'MantenimientoController@equipos_por_codigo');
     Route::get('obtener_tokens', 'SolicitudController@obtener_tokens');
     Route::delete('eliminar_mantenimiento/{id_mantenimiento}', 'MantenimientoController@eliminar_mantenimiento');
+
 
 /** API para recordatorios */
     Route::get('/mostrar_recordatorios/{size}','MantenimientoController@mostrar_recordatorios');
@@ -165,6 +172,7 @@ use Illuminate\Http\Request;
     Route::get('listado_marcas', 'MarcaController@listado_marcas');
     Route::post('crear_marca','MarcaController@crear_marca');
     Route::put('editar_marca','MarcaController@editar_marca');
+
 
 /* API Equipo */
     Route::get('mostrar_codigos','EquipoController@mostrar_codigos');
@@ -194,13 +202,13 @@ use Illuminate\Http\Request;
     Route::get('listar_so','DetalleEquipoController@listar_so');
     Route::get('listar_office','DetalleEquipoController@listar_office');
 
+
 /* API IP */
     Route::post('crear_ip','IpController@crear_ip');
     Route::put('editar_ip','IpController@editar_ip');
     Route::get('es_ip_enuso/{ip}','IpController@es_ip_enuso');
     Route::get('ip_id/{id_ip}','IpController@ip_id');
     Route::delete('eliminar_ip/{id_ip}', 'IpController@eliminar_ip');
-
 
 
 /*  API Impresora*/
@@ -213,6 +221,7 @@ use Illuminate\Http\Request;
     Route::get('router_id/{id_equipo}', 'RouterController@router_id');
     Route::post('editar_router', 'RouterController@editar_router');
 
+
 /* API PROGRAMAS */
     Route::get('programas', 'ProgramaInstaladoController@programas');
     Route::get('buscar_programa/{nombre}', 'ProgramaInstaladoController@buscar_programa');
@@ -224,10 +233,12 @@ use Illuminate\Http\Request;
     Route::post('lista_programas_id', 'ProgramaInstaladoController@lista_programas_id');
     Route::get('buscar_programa_id/{id_programa}', 'ProgramaInstaladoController@buscar_programa_id');
 
+
 /* API SOLICITUDES */
     Route::post('crear_solicitud', 'SolicitudController@crear_solicitud');
     Route::get('mostrar_solicitudes', 'SolicitudController@mostrar_solicitudes');
     Route::get('mostrar_solicitudes/{id_user}', 'SolicitudController@mostrar_solicitudes_user');
+
 
 /* API IMPORT */
     Route::post('masivo_equipos','ImportController@reg_masivo_equipos');
