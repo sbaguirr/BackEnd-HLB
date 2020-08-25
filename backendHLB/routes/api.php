@@ -157,8 +157,6 @@ use Illuminate\Http\Request;
     Route::get('/recordatorios_actuales','MantenimientoController@recordatorios_actuales');
     Route::delete('eliminar_recordatorio_actual/{id}','MantenimientoController@eliminar_recordatorio_actual');
 
-
-
 /*-------------WEB ROUTES-------------*/
 
 /* API Empleados */

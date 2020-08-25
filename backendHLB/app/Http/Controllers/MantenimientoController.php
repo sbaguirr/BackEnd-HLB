@@ -275,12 +275,4 @@ class MantenimientoController extends Controller
             }
         }
 
-        public function contar_recordatorios_actuales(){
-
-            $fecha1 = now()->format('Y-m-d');
-            $fecha2 = now()->addDays(90)->format('Y-m-d');
-            $data = Recordatorio::whereBetween('fecha_recordatorio', [$fecha1, $fecha2])->get();
-            return response()->json($data);
-        }
-
 }
