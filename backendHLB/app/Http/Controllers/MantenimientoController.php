@@ -195,7 +195,7 @@ class MantenimientoController extends Controller
                                              equipos.estado_operativo')
                 ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
                 ->join('recordatorios', 'recordatorios.id_mantenimiento', '=', 'mantenimientos.id_mantenimiento')
-                ->where('recordatorios.estado', 'A')
+                //where('recordatorios.estado', 'A')
                 ->orderBy('recordatorios.fecha_recordatorio', 'asc')
                 ->paginate($size);
         }
@@ -230,10 +230,57 @@ class MantenimientoController extends Controller
                                              equipos.codigo')
                 ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
                 ->join('recordatorios', 'recordatorios.id_mantenimiento', '=', 'mantenimientos.id_mantenimiento')
-                ->where('recordatorios.estado', 'A')
+                //->where('recordatorios.estado', 'A')
                 ->where('equipos.codigo','like',"%".$codigo."%")
                 ->orderBy('recordatorios.fecha_recordatorio', 'asc')
                 ->get();
+        }
+
+        public function recordatorios_actuales(){
+
+            $fecha1 = now()->format('Y-m-d');
+            $fecha2 = now()->addDays(90)->format('Y-m-d');
+            $hora1 = now() ->format('H:i:s');
+            $hora2 = now() ->addDays(30) ->format('H:i:s');
+            return Mantenimiento::selectRaw('recordatorios.id_recordatorio,
+                                             recordatorios.hora_recordatorio,
+                                             recordatorios.fecha_recordatorio,
+                                             recordatorios.estado,
+                                             recordatorios.id_mantenimiento,
+                                             recordatorios.created_at,
+                                             mantenimientos.titulo,
+                                             mantenimientos.id_equipo,
+                                             equipos.codigo,
+                                             equipos.tipo_equipo,
+                                             equipos.estado_operativo')
+                ->join('equipos', 'equipos.id_equipo', '=', 'mantenimientos.id_equipo')
+                ->join('recordatorios', 'recordatorios.id_mantenimiento', '=', 'mantenimientos.id_mantenimiento')
+                ->whereBetween('fecha_recordatorio', [$fecha1, $fecha2])
+                ->orderBy('recordatorios.fecha_recordatorio', 'asc')
+                ->get();
+        }
+
+        public function eliminar_recordatorio_actual($id,Request $request){
+            DB::beginTransaction();
+            try {
+                //Recordatorio::Where('id_recordatorio', '=', $id)->update(['estado' => 'I']);
+                $rec = Recordatorio::where('id_recordatorio', $id);
+                $rec->delete();
+                DB::commit();
+                return $this-> recordatorios_actuales();
+
+            } catch (Exception $e) {
+                DB::rollback();
+                return response()->json(['log' => -1], 400);
+            }
+        }
+
+        public function contar_recordatorios_actuales(){
+
+            $fecha1 = now()->format('Y-m-d');
+            $fecha2 = now()->addDays(90)->format('Y-m-d');
+            $data = Recordatorio::whereBetween('fecha_recordatorio', [$fecha1, $fecha2])->get();
+            return response()->json($data);
         }
 
 }

@@ -154,6 +154,8 @@ use Illuminate\Http\Request;
     Route::get('/mostrar_recordatorios/{size}','MantenimientoController@mostrar_recordatorios');
     Route::put('eliminar_recordatorio/{id}','MantenimientoController@eliminar_recordatorio');
     Route::get('/recordatorio_codigo/{codigo}','MantenimientoController@recordatorio_codigo');
+    Route::get('/recordatorios_actuales','MantenimientoController@recordatorios_actuales');
+    Route::delete('eliminar_recordatorio_actual/{id}','MantenimientoController@eliminar_recordatorio_actual');
 
 
 
@@ -246,5 +248,5 @@ use Illuminate\Http\Request;
     Route::post('masivo_correos','ImportController@reg_masivo_correos');
     Route::post('masivo_routers','ImportController@reg_masivo_routers');
     Route::post('masivo_impresoras','ImportController@reg_masivo_impresoras');
-    
+
 
