@@ -1096,9 +1096,9 @@ class ImportController extends Controller
     }
 
     private function validarHeadersLaptops($obj){
-        $headers = [ 'Empleado', 'Codigo','Tipo','Principal', 'Marca', 'Modelo', 'N/S',
-        'Estado',"NombrePC", "UsuarioPC", "SO",
-        "TipoSO", "ServicePack1", "Licencia", 'IP', 'Frecuencia', 'Nucleos', 'RAM Soportada',
+        $headers = ['Empleado', 'Codigo', 'Tipo', 'Principal', 'Marca', 'Modelo', 'N/S',
+        'Estado', "NombrePC", "UsuarioPC", "SO",
+        "TipoSO", "ServicePack1", "Licencia", 'IP', 'Frecuencia', 'Nucleos', 'Tipo RAM Soportada', 'RAM Soportada',
         'Slots RAM', 'Capacidad Almacenamiento', 'Tipo Almacenamiento', 'Descripcion'];
         return $this->validarHeaders($headers, $obj);
     }
