@@ -140,7 +140,6 @@ class UserController extends Controller
             'apellido' => 'required',
             'id_departamento' => 'required',
             'username' => 'required|string|max:255',
-            'password' => 'required|string',
             'id_rol' => 'required',
             'old_cedula'=>'required',
             'old_user'=>'required'
