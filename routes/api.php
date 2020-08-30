@@ -246,5 +246,6 @@ use Illuminate\Http\Request;
     Route::post('masivo_correos','ImportController@reg_masivo_correos');
     Route::post('masivo_routers','ImportController@reg_masivo_routers');
     Route::post('masivo_impresoras','ImportController@reg_masivo_impresoras');
+    Route::post('masivo_laptops','ImportController@reg_masivo_laptops');
 
 

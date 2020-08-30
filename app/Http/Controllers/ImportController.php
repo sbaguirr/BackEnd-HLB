@@ -54,7 +54,7 @@ class ImportController extends Controller
         if (empty($codigo)) {
             return ['err' => 'Debe ingresar el codigo para registrar el equipo.'];
         }
-        $codigo = strtoupper(trim(strval($codigo)));
+        $codigo = (trim(strval($codigo)));
         $result = Equipo::Where('codigo', '=', $codigo)->get();
         if (count($result) > 0) {
             return ['err' => 'Ya existe un equipo registrado con ese codigo.'];
@@ -96,7 +96,7 @@ class ImportController extends Controller
         $tipo = strtolower(trim(strval($tipo)));
         $listTipo = [
             'parlantes' => 'Parlantes', 'monitor' => 'Monitor', 'teclado' => 'Teclado', 'cpu' => 'CPU', 'case' => 'case', 'disco duro' => "disco_duro",
-            'fuente de poder' => 'fuente_poder', 'fuente poder' => "fuente_poder", 'memoria ram' => 'memoria_ram', 'mouse' => 'Mouse', 'procesador' => 'Procesador', 'regulador' => 'Regulador',
+            'fuente de poder' => 'fuente_poder', 'fuente poder' => "fuente_poder", 'memoria ram' => 'memoria_ram', 'mouse' => 'Mouse' ,'procesador' => 'procesador', 'regulador' => 'Regulador',
             'ups' => 'UPS', 'trajeta de red' => 'tarjeta_red', 'tarjeta red' => 'tarjeta_red', 'fuentepoder' => "fuente_poder", 'memoriaram' => 'memoria_ram', 'discoduro' => "disco_duro",
             'tarjetared' => 'tarjeta_red', 'tarjeta madre' => 'tarjeta_madre', 'tarjetamadre' => 'tarjeta_madre', 'mainboard' => 'tarjeta_madre', 'main board' => 'tarjeta_madre'
         ];
@@ -147,22 +147,32 @@ class ImportController extends Controller
         if ($tipoEq == 'memoria_ram' && !in_array($alm, $listRam)) {
             return ['err' => 'El tipo de almacenamiento ingresado no es valido. Memoria RAM: DDR - DDR2 - DDR3 - DDR4.'];
         }
+        if (($tipoEq == 'laptop' || $tipoEq == 'desktop') && !in_array($alm, $listRam)) {
+            return ['err' => 'El Tipo RAM Soportada ingresada no es valida. Tipo RAM Soportada: DDR - DDR2 - DDR3 - DDR4.'];
+        }
         return ['tipoAlm' => $alm];
     }
 
     private function capacidadAlm($tipoEq, $alm)
     {
         if (empty($alm)) {
-            return ['err' => 'Debe ingresar '.($tipoEq == 'tarjeta_madre' ? 'la Ram Soportada':'una capacidad almacenamiento').' para este tipo de equipo.'];
+            return ['err' => 'Debe ingresar '.($tipoEq == 'tarjeta_madre' || $tipoEq == 'laptop' ? 'la Ram Soportada':'una capacidad almacenamiento').' para este tipo de equipo.'];
         }
         $alm = strtoupper(trim(strval($alm)));
         $l_alm = explode(' ', $alm);
         $listTA = ['MB', 'GB', 'TB'];
+        $listTM = 'GB';
         if (count($l_alm) != 2) {
-            return ['err' => 'Debe ingresar una '.($tipoEq == 'tarjeta_madre' ? 'Ram Soportada':'capacidad almacenamiento').' valida. Ejemplo: 2 GB'];
+            return ['err' => 'Debe ingresar una '.($tipoEq == 'tarjeta_madre' || $tipoEq == 'laptop' ? 'Ram Soportada':'capacidad almacenamiento').' valida. Ejemplo: 2 GB'];
         }
-        if (!is_numeric($l_alm[0]) || !in_array($l_alm[1], $listTA)) {
-            return ['err' => 'Debe ingresar una '.($tipoEq == 'tarjeta_madre' ? 'Ram Soportada':'capacidad almacenamiento').' valida. Ejemplo: 2 GB'];
+        if($tipoEq == 'tarjeta_madre' || $tipoEq == 'laptop' ){
+            if (!is_numeric($l_alm[0]) || $l_alm[1] != $listTM) {
+                return ['err' => 'Debe ingresar una Ram Soportada valida. Ejemplo: 2 GB'];
+            }
+        }else{
+            if (!is_numeric($l_alm[0]) || !in_array($l_alm[1], $listTA)) {
+                return ['err' => 'Debe ingresar una capacidad almacenamiento valida. Ejemplo: 2 GB - 1000 Mb'];
+            }
         }
         return ['capAlm' => ($l_alm[1]=='MB'?str_replace('MB','Mb',$alm):$alm)];
     }
@@ -1065,4 +1075,467 @@ class ImportController extends Controller
 
         return response()->json(['sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
     }
+
+    private function validarTipoEqLD($tipo, $listTipo){
+        if (empty($tipo)) {
+            return ['err' => 'Debe ingresar el estado del equipo.'];
+        }
+        $tipo = strtolower(trim(strval($tipo)));
+        if (array_key_exists($tipo, $listTipo)) {
+            return ['tipo_equipo' => $listTipo[$tipo]];
+        }
+        return ['err' => 'El tipo de equipo ingresado no es valido para este inventario.'];
+    }
+
+    private function validarTipoEqLaptop($tipo){
+        $listTipo = [
+            'disco duro' => "disco_duro", 'laptop'=>'laptop', 'Laptop' => 'laptop',  'memoria ram' => 'memoria_ram', 
+            'procesador' => 'procesador', 'memoriaram' => 'memoria_ram', 'discoduro' => "disco_duro"
+        ];
+        return $this->validarTipoEqLD($tipo, $listTipo);
+    }
+
+    private function validarHeadersLaptops($obj){
+        $headers = [ 'Empleado', 'Codigo','Tipo','Principal', 'Marca', 'Modelo', 'N/S',
+        'Estado',"NombrePC", "UsuarioPC", "SO",
+        "TipoSO", "ServicePack1", "Licencia", 'IP', 'Frecuencia', 'Nucleos', 'RAM Soportada',
+        'Slots RAM', 'Capacidad Almacenamiento', 'Tipo Almacenamiento', 'Descripcion'];
+        return $this->validarHeaders($headers, $obj);
+    }
+
+    
+    public function reg_masivo_laptops(Request $request){
+        $data = $request->get('data');
+        $resp = array();
+        $respSuccess = array();
+        $laptops = array();
+        $componentes = array();
+        
+
+        for ($i = 0; $i < count($data); $i++){
+            $obj = $data[$i];
+
+            $headers = $this->validarHeadersLaptops($obj);
+            if($headers!=''){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $headers, 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+
+            $eq = $this->eqByCodigo($obj['Codigo']);
+            if (array_key_exists('err', $eq)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $eq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $eq = $eq['codigo'];
+                $obj['Codigo'] = $eq;
+            }
+
+            $tipoEq = $this->validarTipoEqLaptop($obj['Tipo']);
+            if (array_key_exists('err', $tipoEq)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoEq['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $tipoEq = $tipoEq['tipo_equipo'];
+                $obj['Tipo'] = $tipoEq;
+            }
+
+            $estado = $this->getEstado($obj['Estado']);
+            if (array_key_exists('err', $estado)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $estado = $estado['estado'];
+                $obj['Estado'] = $estado;
+            }
+
+            $marca = $this->getMarcaByNomb($obj['Marca']);
+            if (array_key_exists('err', $marca)) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $estado['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            } else {
+                $marca = $marca['id_marca'];
+                $obj['Marca'] = $marca;
+            }
+            
+            if (empty($obj['Modelo'])) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un modelo de equipo valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $modelo = trim(strval($obj['Modelo']));
+            $obj['Modelo'] = $modelo;
+            
+            if (empty($obj['N/S'])) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de serie valido', 'key'=>strval($obj['rowNum']).'_E']]);
+                continue;
+            }
+            $serie = trim(strval($obj['N/S']));
+            $obj['N/S'] = $serie;
+
+            if($tipoEq == 'laptop'){
+                $emp = null;
+                if (!empty($obj['Empleado'])) {
+                    $emp = $this->empByCedula($obj['Empleado']);
+                    if (array_key_exists('err', $emp)) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $emp['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                        continue;
+                    } else {
+                        $emp = $emp['cedula'];
+                    }
+                }
+                $obj['Empleado'] = $emp;
+
+                $ip = null;
+                if (!empty($obj['IP'])) {
+                    $ip = $this->getIPByDir($obj['IP']);
+                    if (array_key_exists('err', $ip)) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ip['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                        continue;
+                    } else {
+                        $ip = $ip['id_ip'];
+                    }
+                }
+                $obj['IP'] = $ip;
+
+                if (empty($obj['SO'])) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un Sistema Operativo para la Laptop', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $so = trim(strval($obj['SO']));
+                $obj['SO'] = $so;
+
+                $service =  !is_numeric($obj['ServicePack1']) ? '' : trim(strval($obj['ServicePack1']));
+                if ($service != '1' && $service != '0') {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Los valores permitidos para Services Pack 1 son 0 o 1', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['ServicePack1'] = $service;
+
+                $licencia = !is_numeric($obj['Licencia']) ? '' : trim(strval($obj['Licencia']));
+                if ($licencia != '1' && $licencia != '0') {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Los valores permitidos para la Licencia son 0 o 1' , 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['Licencia'] = $licencia;
+
+                $tiposo = empty($obj['TipoSO']) ? '' : trim(strval($obj['TipoSO']));
+                if ($tiposo != '32 Bits' && $tiposo != '64 Bits') {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Los valores permitidos para la el Tipo de Sistema Operativo son 32 Bits o 64 Bits', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['TipoSO'] = $tiposo;
+
+                if (!is_numeric($obj['Slots RAM'])) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un Numero Slots Ram valido para la Tarjeta Madre', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['Slots RAM'] = intval($obj['Slots RAM']);
+
+                $ramSop = $this->capacidadAlm($tipoEq, $obj['RAM Soportada']);
+                if (array_key_exists('err', $ramSop)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $ramSop['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $ramSop = $ramSop['capAlm'];
+                    $obj['RAM Soportada'] = $ramSop;
+                }
+
+                if (empty($obj['NombrePC'])) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un nombre valido para la Laptop.', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['NombrePC'] = trim(strval($obj['NombrePC']));
+
+                if (empty($obj['UsuarioPC'])) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un usuario valido para la Llaptop.', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                $obj['UsuarioPC'] = trim(strval($obj['UsuarioPC']));
+
+                $tipoAlm = $this->tipoAlm($tipoEq, $obj['Tipo RAM Soportada']);
+                if (array_key_exists('err', $tipoAlm)) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoAlm['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                } else {
+                    $tipoAlm = $tipoAlm['tipoAlm'];
+                    $obj['Tipo RAM Soportada'] = $tipoAlm;
+                }
+
+                $laptops = array_merge($laptops, [$obj]);
+            }
+            else{
+                if(empty($obj['Principal'])){
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar el codigo de la laptop a la cual se asignara el componente del registro en el campo "Principal"', 'key'=>strval($obj['rowNum']).'_E']]);
+                    continue;
+                }
+                if($tipoEq == 'procesador'){
+                    if (!is_numeric($obj['Nucleos'])) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar un numero de nucleos valido para el procesador', 'key'=>strval($obj['rowNum']).'_E']]);
+                        DB::rollback();
+                        continue;
+                    }
+                    if (!is_numeric($obj['Frecuencia'])) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => 'Debe ingresar una frecuencia valida para el procesador', 'key'=>strval($obj['rowNum']).'_E']]);
+                        DB::rollback();
+                        continue;
+                    }
+                }
+                if($tipoEq == 'memoria_ram' || $tipoEq == 'disco_duro' ){
+                    $tipoAlm = $this->tipoAlm($tipoEq, $obj['Tipo Almacenamiento']);
+                    if (array_key_exists('err', $tipoAlm)) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $tipoAlm['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                        continue;
+                    } else {
+                        $tipoAlm = $tipoAlm['tipoAlm'];
+                        $obj['Tipo Almacenamiento'] = $tipoAlm;
+                    }
+                    $capAlm = $this->capacidadAlm($tipoEq, $obj['Capacidad Almacenamiento']);
+                    if (array_key_exists('err', $capAlm)) {
+                        $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $obj['rowNum'], 'message' => $capAlm['err'], 'key'=>strval($obj['rowNum']).'_E']]);
+                        continue;
+                    } else {
+                        $capAlm = $capAlm['capAlm'];
+                        $obj['Capacidad Almacenamiento'] = $capAlm;
+                    }
+                }  
+                $componentes = array_merge($componentes, [$obj]);
+            }  
+        }
+
+        // $lap_cop = array();
+        // $comp_cop = array();
+        for ($l = 0; $l < count($laptops); $l++){
+            $k = array();
+            $laptop = &$laptops[$l];
+            $cod = $laptop['Codigo'];
+
+            $cods_dup = array();
+            $cods = [$cod];
+            
+            $tipoUP = strtoupper(str_replace('_', ' ', $laptop['Tipo'])); 
+            $laptop['eq_error'] = false;
+            $index_group = '[ '.strval($laptop['rowNum']).' -> '.$tipoUP.' ]';
+           
+            for ($j = 0; $j < count($componentes); $j++){
+                $componente = &$componentes[$j];
+
+                $cod_comp = $componente['Codigo'];
+                if(!in_array($cod_comp , $cods)){
+                    $cods = array_merge($cods,[$cod_comp]);
+                }else{
+                    $cods_dup = array_merge($cods_dup,[$cod_comp]);
+                }
+
+                if($componente['Principal'] ==  $laptop['Codigo']){
+                    $componente['eq_error'] = false;
+                    $tipoUP_comp = strtoupper(str_replace('_', ' ', $componente['Tipo'])); 
+                    $index_group = $index_group.'--'.'[ '.strval($componente['rowNum']).' -> '.$tipoUP_comp.' ]';
+                    $k = array_merge($k,[$componente]);
+                }
+                
+                //$comp_cop = array_merge($comp_cop,[$componente]);
+            }
+
+            $laptop['componentes'] = $k;
+            $laptop['index_group'] = $index_group;
+            $laptop['cods_dup'] = null;
+            if(count($cods_dup) != 0){
+                $laptop['cods_dup'] = 'Los codigos: '.implode(',',$cods_dup).' se encuentran duplicados.';
+            }
+
+           // $lap_cop = array_merge($lap_cop,[$laptop]);
+        }
+
+        // $laptops = $lap_cop;
+        // $componentes = $comp_cop;
+
+
+       // return response()->json(['log'=>[$laptops, $componentes]],500);
+
+        for ($i = 0; $i < count($laptops); $i++){
+            $laptop = &$laptops[$i];
+
+            if($laptop['cods_dup'] != null){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => $laptop['cods_dup'], 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }            
+            
+            $comp = $laptop['componentes'];
+            $procesador = array_filter($comp, function ($var) { return $var['Tipo'] == 'procesador'; });
+            $discos = array_filter($comp, function ($var) { return $var['Tipo'] == 'disco_duro'; });
+            $rams = array_filter($comp, function ($var) { return $var['Tipo'] == 'memoria_ram'; });
+
+            if(count($procesador) == 0){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'No se encontro un registro valido correspondiente al procesador para esta laptop.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            if(count($procesador) > 1){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'Solo se puede asignar un registro valido correspondiente al procesador para esta laptop.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            if(count($discos) == 0){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'No se encontro un registro valido correspondiente al disco duro para esta laptop. Se debe ingresar al menos uno.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            if(count($rams) == 0){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'No se encontro un registro valido correspondiente a la memoria ram para esta laptop. Se debe ingresar al menos una.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            if(count($rams) > intval($laptop['Slots RAM'])){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'La cantidad de registros correspondientes a la memoria ram excede el numero de slots que posee esta laptop.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            $ramTotal = 0;
+            $TRS_eq = 0;
+            $_eq = [];
+            foreach($rams as $ram){
+                $l_ram = explode(' ', $ram['Capacidad Almacenamiento']);
+                $val = $l_ram[1] == 'Mb' ? intval($l_ram[0])/1024 : intval($l_ram[0]);
+                $ramTotal += $val;
+
+                if($ram['Tipo Almacenamiento'] == $laptop['Tipo RAM Soportada']){
+                    $TRS_eq++;
+                }else{
+                    $_eq = array_merge($_eq,[$ram['rowNum']]);
+                }
+
+            }
+
+            if($TRS_eq != count($rams)){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'Los registros correspondientes a las memorias rams ubicados en: '.implode(',',$_eq). ', poseen un Tipo diferente al soportado por la Laptop.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            if($ramTotal > intval($laptop['RAM Soportada'])){
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' => 'La capacidad total de los registros correspondientes a la memoria ram excede la capacidad de ram soportada por esta laptop.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                continue;
+            }
+
+            DB::beginTransaction();
+            try {
+                $computador = new Equipo();
+                $computador->codigo = $laptop['Codigo'];
+                $computador->fecha_registro = Date('Y-m-d H:i:s');
+                $computador->tipo_equipo = $laptop['Tipo'];;
+                $computador->id_marca = $laptop['Marca'];;
+                $computador->modelo = $laptop['Modelo'];;
+                $computador->encargado_registro = $request->get('encargado_registro');
+                $computador->estado_operativo = $laptop['Estado'];
+                $computador->descripcion = trim(strval($laptop['Descripcion']));
+                $computador->numero_serie = $laptop['N/S'];
+                $computador->ip = $laptop['IP'];
+                $computador->asignado = $laptop['Empleado'];
+                $computador->save();
+
+                if($laptop['IP']!==null){
+                    $_ip= Ip::find($laptop['IP']);
+                    $_ip->estado= "EU";
+                    $_ip->save();
+                }
+
+                $num_slots = new DetalleComponente();
+                $num_slots->campo = 'numero_slots';
+                $num_slots->dato = $laptop['Slots RAM'];
+                $num_slots->id_equipo = $computador->id_equipo;
+                $num_slots->save();
+
+                $ram_soport = new DetalleComponente();
+                $ram_soport->campo = 'ram_soportada';
+                $ram_soport->dato = $laptop['RAM Soportada'];
+                $ram_soport->id_equipo = $computador->id_equipo;
+                $ram_soport->save();
+
+                $detEq = new DetalleEquipo();
+                $detEq->nombre_pc = $laptop['NombrePC'];
+                $detEq->usuario_pc = $laptop['UsuarioPC'];
+                $detEq->so = $laptop['SO'];
+                $detEq->tipo_so = $laptop['TipoSO'];
+                $detEq->services_pack = $laptop['ServicePack1'];
+                $detEq->licencia = $laptop['Licencia'];
+                $detEq->id_equipo = $computador->id_equipo;
+                $detEq->save();
+
+                foreach($comp as $x){
+
+                    $_comp = new Equipo();
+                    $_comp->id_marca = $x['Marca'];
+                    $_comp->codigo = $x['Codigo'];
+                    $_comp->modelo = $x['Modelo'];
+                    $_comp->numero_serie = $x['N/S'];
+                    $_comp->descripcion = trim(strval($x['Descripcion']));
+                    $_comp->encargado_registro = $request->get('encargado_registro');
+                    $_comp->fecha_registro = Date('Y-m-d H:i:s');
+                    $_comp->estado_operativo = $x['Estado'];
+                    $_comp->asignado = $laptop['Empleado'];
+                    $_comp->componente_principal = $computador->id_equipo;
+                    $_comp->tipo_equipo = $x['Tipo'];
+                    $_comp->save();
+
+                    if (
+                        strcasecmp($_comp->tipo_equipo, "memoria_ram") == 0 ||
+                        strcasecmp($_comp->tipo_equipo, "disco_duro") == 0
+                    ) {
+                        
+                        $tipo = new DetalleComponente();
+                        $tipo->campo = 'tipo';
+                        $tipo->dato = $x['Tipo Almacenamiento'];
+                        $tipo->id_equipo = $_comp->id_equipo;
+                        $tipo->save();
+    
+                        $capacidad = new DetalleComponente();
+                        $capacidad->campo = 'capacidad';
+                        $capacidad->dato = $x['Capacidad Almacenamiento'];
+                        $capacidad->id_equipo = $_comp->id_equipo;
+                        $capacidad->save();
+                    } else if (strcasecmp($_comp->tipo_equipo, "procesador") == 0) {
+                        
+                        $nucleos = new DetalleComponente();
+                        $nucleos->campo = 'nucleos';
+                        $nucleos->dato = intval($x['Nucleos']);
+                        $nucleos->id_equipo = $_comp->id_equipo;
+                        $nucleos->save();
+    
+                        $frec = new DetalleComponente();
+                        $frec->campo = 'frecuencia';
+                        $frec->dato = floatval($x['Frecuencia']);
+                        $frec->id_equipo = $_comp->id_equipo;
+                        $frec->save();
+                    }
+                }
+                DB::commit();
+                $respSuccess = array_merge($respSuccess, [['estado' => 'C', 'rowNum' => $laptop['index_group'], 'message' => 'Laptop registrada con exito', 'key'=>strval($laptop['rowNum']).'_C']]);
+
+            } catch (Exception $e) {
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['index_group'], 'message' =>'Error interno. Intentelo mas tarde.', 'key'=>strval($laptop['rowNum']).'_E']]);
+                DB::rollback();
+                continue;
+            } catch (QueryException $e) {
+                $error_code = $e->errorInfo[1];
+                if ($error_code == 1062) {
+                    $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['rowNum'], 'message' =>'El código de la laptop que ha ingresado ya existe', 'key'=>strval($laptop['rowNum']).'_E']]);
+                    DB::rollback();
+                    continue;
+                }
+                $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $laptop['rowNum'], 'message' =>'Error Interno ('. strval($e->errorInfo[1]).'): '.strval($e->errorInfo[2]), 'key'=>strval($laptop['rowNum']).'_E']]);
+                DB::rollback();
+                continue;
+            }
+
+        }
+
+        $comp_err = array_filter($componentes, function ($var) { return $var['eq_error']; });
+
+        foreach($comp_err as $err){
+            $resp = array_merge($resp, [['estado' => 'E', 'rowNum' => $err['rowNum'], 'message' =>'No se encontro registro valido perteneciente a una Laptop al cual se puediera agregar este componente.', 'key'=>strval($err['rowNum']).'_E']]);
+        }
+
+        return response()->json(['log'=>[$laptops,$componentes],'sheetName'=>$request->get('sheetName'), 'success'=>$respSuccess, 'errors'=>$resp, 'encargado_registro'=>$request->get('encargado_registro'), 'fileName'=>$request->get('fileName')], 200);
+
+    }
+    
+
 }
