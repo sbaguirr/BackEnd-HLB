@@ -31,6 +31,31 @@ class UserController extends Controller
         return response()->json(['token'=>compact('token')['token'],'user'=>$user], 200);
     }
 
+    public function cambiar_password(Request $request){
+        $usr = $this->obtener_datos_ced($request->get('cedula'));
+        if(count($usr) == 0){
+            return response()->json([ 'log' => 'No se encontro usuario registrado con la cedula ingresada.' ], 400);
+        }
+
+        $usuario = $usr[0];
+        if($usuario->estado == 'I'){
+            return response()->json(['log'=>'El usuario ingresado está inactivo y no puede acceder al sistema.','user'=>$usuario], 401);
+        } 
+
+        $usuario->password = Hash::make($request->get('password'));
+        $usuario->save();
+        return response()->json(['log'=>'La contraseña se ha actualizado. Puede iniciar sesion.','user'=>$usuario], 200);
+
+    }
+
+
+    private function obtener_datos_ced($cedula){
+        return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','roles.nombre as rol','users.estado')
+        ->join('empleados','empleados.cedula','=','users.cedula')
+        ->join('roles','roles.id_rol','=','users.id_rol')
+        ->where('empleados.cedula','=',$cedula)
+        ->get();
+    }
 
     public function obtener_datos_usurios($username){
         return User::select('users.username','users.cedula','empleados.nombre','empleados.apellido','roles.nombre as rol','users.estado')
@@ -136,8 +161,13 @@ class UserController extends Controller
         }
         DB::beginTransaction();
         try{
+            $usr = ['username' => $request->get('username'), 'estado'=>$request->get('estado'), 'id_rol' => $request->get('id_rol')];
+            if(!empty($request->get('password'))){
+                $usr =  array_merge($usr, ['password' => Hash::make($request->get('password'))]);
+            }
             Empleado::Where("cedula", '=', $request->get('old_cedula'))->update(['cedula' => $request->get('cedula'), 'nombre' => $request->get('nombre'), 'apellido' => $request->get('apellido'), 'id_departamento' => $request->get('id_departamento')]);
-            User::Where("username", '=', $request->get('old_user'))->update(['username' => $request->get('username'), 'estado'=>$request->get('estado'), 'id_rol' => $request->get('id_rol'), 'password' => Hash::make($request->get('password'))]);
+            User::Where("username", '=', $request->get('old_user'))->update($usr);
+          
             DB::commit();
             return response()->json(['log' => 'exito'], 200);
         }catch(Exception $e){

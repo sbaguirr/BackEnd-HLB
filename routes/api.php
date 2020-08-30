@@ -29,6 +29,7 @@ use Illuminate\Http\Request;
     Route::get('/get_users', 'UserController@get_users');
     Route::put('/editar_user_web', 'UserController@editar_user_web');
     Route::put('/delete_user/{username}', 'UserController@delete_user');
+    Route::put('/cambiar_password', 'UserController@cambiar_password');
 
 
 /*API Correo*/
