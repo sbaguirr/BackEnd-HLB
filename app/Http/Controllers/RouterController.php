@@ -75,11 +75,11 @@ class RouterController extends Controller
 
             $equipo->fecha_registro = Date('Y-m-d H:i:s');
             $equipo->estado_operativo = $request->get('estado_operativo');
-            $equipo->codigo = strtoupper($request->get('codigo'));
-            $equipo->tipo_equipo = strtoupper($request->get('tipo_equipo'));
+            $equipo->codigo = $request->get('codigo');
+            $equipo->tipo_equipo =$request->get('tipo_equipo');
             $equipo->id_marca = $request->get('id_marca');
             $equipo->modelo = $request->get('modelo');
-            $equipo->numero_serie = strtoupper($request->get('numero_serie'));
+            $equipo->numero_serie = $request->get('numero_serie');
             $equipo->descripcion = $request->get('descripcion');
             $equipo->asignado = $request->get('asignado');
             $equipo->encargado_registro = $request->get('encargado_registro');
@@ -234,11 +234,11 @@ class RouterController extends Controller
         $ip_anterior = $equipo->ip;
         $equipo->fecha_registro = Date('Y-m-d H:i:s');
         $equipo->estado_operativo = $request->get('estado_operativo');
-        $equipo->codigo = strtoupper($request->get('codigo'));
-        $equipo->tipo_equipo = strtoupper($request->get('tipo_equipo'));
+        $equipo->codigo =$request->get('codigo');
+        $equipo->tipo_equipo =$request->get('tipo_equipo');
         $equipo->id_marca = $request->get('id_marca');
         $equipo->modelo = $request->get('modelo');
-        $equipo->numero_serie = strtoupper($request->get('numero_serie'));
+        $equipo->numero_serie =$request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->asignado = $request->get('asignado');
         $equipo->encargado_registro = $request->get('encargado_registro');
@@ -287,8 +287,8 @@ class RouterController extends Controller
         $ip_anterior = $equipo->ip;
         $equipo->fecha_registro = $request->get('fecha_registro');
         $equipo->estado_operativo = $request->get('estado_operativo');
-        $equipo->codigo = strtoupper($request->get('codigo'));
-        $equipo->tipo_equipo = strtoupper($request->get('tipo_equipo'));
+        $equipo->codigo = $request->get('codigo');
+        $equipo->tipo_equipo =$request->get('tipo_equipo');
         $equipo->id_marca = $request->get('id_marca');
         $equipo->modelo = $request->get('modelo');
         $equipo->numero_serie = $request->get('numero_serie');

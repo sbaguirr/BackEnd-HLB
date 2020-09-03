@@ -25,12 +25,12 @@ class ImpresoraController extends Controller
     try{
         $equipo ->modelo=$request->get('modelo');
         $equipo ->fecha_registro=$dt;
-        $equipo ->codigo=strtoupper($request->get('codigo'));
-        $equipo ->tipo_equipo="IMPRESORA";
+        $equipo ->codigo=$request->get('codigo');
+        $equipo ->tipo_equipo="Impresora";
         $equipo ->descripcion=$request->get('descripcion');
         $equipo ->id_marca=$request->get('id_marca');
         $equipo ->asignado=$request->get('asignado');
-        $equipo ->numero_serie=strtoupper($request->get('numero_serie'));
+        $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->encargado_registro=$request->get('encargado_registro');
         $equipo ->estado_operativo=$request->get('estado_operativo');
         $equipo ->componente_principal=$request->get('componente_principal');
@@ -95,12 +95,12 @@ class ImpresoraController extends Controller
         $equipo ->modelo=$request->get('modelo');
 
         $equipo ->fecha_registro=$dt;
-        $equipo ->codigo=strtoupper($request->get('codigo'));
-        $equipo ->tipo_equipo="IMPRESORA";
+        $equipo ->codigo=$request->get('codigo');
+        $equipo ->tipo_equipo="Impresora";
         $equipo ->descripcion=$request->get('descripcion');
         $equipo ->id_marca=$request->get('id_marca');
         $equipo ->asignado=$request->get('asignado');
-        $equipo ->numero_serie=strtoupper($request->get('numero_serie'));
+        $equipo ->numero_serie=$request->get('numero_serie');
         $equipo ->encargado_registro=$request->get('encargado_registro');
         $equipo ->estado_operativo=$request->get('estado_operativo');
         $equipo ->componente_principal=$request->get('componente_principal');
@@ -361,7 +361,7 @@ class ImpresoraController extends Controller
         try{
         $equipo->estado_operativo = $request->get('estado_operativo');
         $equipo->modelo = $request->get('modelo');
-        $equipo->numero_serie = strtoupper($request->get('numero_serie'));
+        $equipo->numero_serie = $request->get('numero_serie');
         $equipo->descripcion = $request->get('descripcion');
         $equipo->encargado_registro = $request->get('encargado_registro');
 
