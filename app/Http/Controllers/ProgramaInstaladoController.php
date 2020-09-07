@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class ProgramaInstaladoController extends Controller
 {
     public function programas(){
-        return ProgramaInstalado::all();;
+        return ProgramaInstalado::all();
     }
 
     public function filtrar_programas(Request $request){

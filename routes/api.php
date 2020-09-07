@@ -250,4 +250,10 @@ use Illuminate\Http\Request;
     Route::post('masivo_laptops','ImportController@reg_masivo_laptops');
     Route::post('masivo_desktops','ImportController@reg_masivo_desktops');
 
+/** API DASHBOARD */
+    Route::get('obtener_numero_total_equipos', 'DashboardController@obtener_numero_total_equipos');
+    Route::get('obtener_numero_total_ips', 'DashboardController@obtener_numero_total_ips');
+    Route::get('obtener_numero_total_marcas', 'DashboardController@obtener_numero_total_marcas');
+    Route::get('obtener_numero_total_programas', 'DashboardController@obtener_numero_total_programas');
+    Route::get('mostrar_solicitudes_dashboard', 'DashboardController@mostrar_solicitudes_dashboard');
 
