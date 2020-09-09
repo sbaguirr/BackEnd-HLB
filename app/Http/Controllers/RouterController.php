@@ -70,7 +70,7 @@ class RouterController extends Controller
     public function crear_equipo_router(Request $request)
     {
         try {
-            if(Equipo::where('codigo', '=', $request->get('codigo'))->exists()){
+            if(Equipo::where('codigo', 'like', "%" . strtolower($request->get('codigo')) . "%")->exists()){
                 return response()->json(['log'=>'El código ingresado ya existe'], 500);
             }
             $equipo = new Equipo();
