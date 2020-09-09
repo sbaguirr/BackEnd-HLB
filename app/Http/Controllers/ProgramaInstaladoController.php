@@ -77,15 +77,14 @@ class ProgramaInstaladoController extends Controller
     
     public function crear_programa(Request $request){
         try{
-            $existe_nombre = ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists();
-            $existe_codigo = ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
-                                Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists();
-            $existe_nombre_codigo = $existe_codigo && $existe_nombre;
-            if($existe_nombre_codigo){
+            if(ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists() 
+            && (ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
+            Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists())){
                 return response()->json(['log'=>'El código y nombre del programa ingresado ya existen'], 500);
-            }else if($existe_codigo){
+            }else if(ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
+            Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists()){
                 return response()->json(['log'=>'El código del programa ingresado ya existe'], 500);
-            }else if ($existe_nombre){
+            }else if (ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists()){
                 return response()->json(['log'=>'El nombre del programa ingresado ya existe'], 500);
             }else{
                 $programa = new ProgramaInstalado();
