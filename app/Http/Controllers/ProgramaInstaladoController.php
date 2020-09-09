@@ -77,9 +77,9 @@ class ProgramaInstaladoController extends Controller
     
     public function crear_programa(Request $request){
         try{
-            $existe_nombre = ProgramaInstalado::where('nombre','like', strtolower($request->get('nombre')))->exists();
-            $existe_codigo = ProgramaInstalado::where('codigo', 'like', strtolower($request->get('codigo')))->exists() || 
-                                Equipo::where('codigo','like', strtolower($request->get('codigo')))->exists();
+            $existe_nombre = ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists();
+            $existe_codigo = ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
+                                Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists();
             $existe_nombre_codigo = $existe_codigo && $existe_nombre;
             if($existe_nombre_codigo){
                 return response()->json(['log'=>'El código y nombre del programa ingresado ya existen'], 500);
@@ -87,16 +87,17 @@ class ProgramaInstaladoController extends Controller
                 return response()->json(['log'=>'El código del programa ingresado ya existe'], 500);
             }else if ($existe_nombre){
                 return response()->json(['log'=>'El nombre del programa ingresado ya existe'], 500);
+            }else{
+                $programa = new ProgramaInstalado();
+                $programa->codigo = $request->get('codigo');
+                $programa->nombre = $request->get('nombre');
+                $programa->version = $request->get('version');
+                $programa->editor = $request->get('editor');
+                $programa->encargado_registro = $request->get('encargado_registro');
+                $programa->observacion = $request->get('observacion');
+                $programa->save();
+                return response()->json(['log' => 'Programa registrado satisfactoriamente'], 200); 
             }
-            $programa = new ProgramaInstalado();
-            $programa->codigo = $request->get('codigo');
-            $programa->nombre = $request->get('nombre');
-            $programa->version = $request->get('version');
-            $programa->editor = $request->get('editor');
-            $programa->encargado_registro = $request->get('encargado_registro');
-            $programa->observacion = $request->get('observacion');
-            $programa->save();
-            return response()->json(['log' => 'Programa registrado satisfactoriamente'], 200); 
         }catch(QueryException $e){
             $error_code = $e->errorInfo[1];
             if($error_code == 1062){
