@@ -76,15 +76,10 @@ class ProgramaInstaladoController extends Controller
     }
     
     public function crear_programa(Request $request){
-        try{
-            if(ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists() 
-            && (ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
-            Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists())){
-                return response()->json(['log'=>'El código y nombre del programa ingresado ya existen'], 500);
-            }else if(ProgramaInstalado::where('codigo', 'like', '%'.strtolower($request->get('codigo')).'%')->exists() || 
-            Equipo::where('codigo','like', '%'.strtolower($request->get('codigo')).'%')->exists()){
-                return response()->json(['log'=>'El código del programa ingresado ya existe'], 500);
-            }else if (ProgramaInstalado::where('nombre','like', '%'.strtolower($request->get('nombre')).'%')->exists()){
+        if((ProgramaInstalado::where('codigo', 'like', $request->get('codigo'))->exists())){
+            return response()->json(['log'=>'El código del programa ingresado ya existe'], 500);
+        }else{
+            if (ProgramaInstalado::where('nombre','like', $request->get('nombre'))->exists()){
                 return response()->json(['log'=>'El nombre del programa ingresado ya existe'], 500);
             }else{
                 $programa = new ProgramaInstalado();
@@ -97,12 +92,6 @@ class ProgramaInstaladoController extends Controller
                 $programa->save();
                 return response()->json(['log' => 'Programa registrado satisfactoriamente'], 200); 
             }
-        }catch(QueryException $e){
-            $error_code = $e->errorInfo[1];
-            if($error_code == 1062){
-                return response()->json(['log'=>'El programa ingresado ya existe'],500);
-            }
-            return response()->json(['log'=>$e],500);        
         }
     }
 
