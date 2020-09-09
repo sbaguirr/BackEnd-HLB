@@ -38,76 +38,37 @@ class ProgramaInstaladoController extends Controller
     }
 
     public function lista_programas_id(Request $request){
-        // DB::beginTransaction();
-        // try{
         $nuevos = array();
         $a_eliminar = array();
-        // $office = ProgramaEquipo::select('id_programa')->where('id_equipo','=',94)->get("id_programa");
-        // for ( $i=0; $i<count($office); $i++ ){
-        //     array_push($lista, $office[$i]["id_programa"]);
-        // }
-        
-
         $office = $request->get("pc-version_office");
-        // ProgramaEquipo::select('id_programa')->where('id_equipo','=',99)->get("id_programa");
-        // for ( $i=0; $i<count($office); $i++ ){
-        //     array_push($lista1, $office[$i]);
-        // }
         $lista = array();
-            $offic = ProgramaEquipo::select('id_programa')->where('id_equipo','=',99)->get("id_programa");
-            for ( $j=0; $j<count($offic); $j++ ){
-                array_push($lista, $offic[$j]["id_programa"]);
-            }
-
-            $id = ProgramaEquipo::select('id')->where('id_programa','=',$office[1])->where('id_equipo','=',99)->get()[0]["id"];
+        $offic = ProgramaEquipo::select('id_programa')->where('id_equipo','=',99)->get("id_programa");
+        for ( $j=0; $j<count($offic); $j++ ){
+            array_push($lista, $offic[$j]["id_programa"]);
+        }
+        $id = ProgramaEquipo::select('id')->where('id_programa','=',$office[1])->where('id_equipo','=',99)->get()[0]["id"];
         for ( $i=0; $i<count($office); $i++ ){
-            // array_push($l, $office[$i]);
-                if ((!in_array($office[$i], $lista,true))) {
-                // $id=1000;
-                // }else{
-                    // $id=19858964000; 
-                    
+            if ((!in_array($office[$i], $lista,true))) {
                 array_push($nuevos, $office[$i]);    
-                // $id1 = ProgramaEquipo::select('id')->where('id_programa','=',$office[$i])->where('id_equipo','=',99)->get()[0]["id"];
-                // ProgramaEquipo::find($id1)->delete();
-                }
             }
-        
+        }
         for ( $i=0; $i<count($lista); $i++ ){
             if (!in_array($lista[$i], $office,true)) {
-                    // $id=1000;
-                    
-                    array_push($a_eliminar, $lista[$i]); 
-                    // }else{
-                    //     $id=19858964000; 
-                           
-                    // $id1 = ProgramaEquipo::select('id')->where('id_programa','=',$office[$i])->where('id_equipo','=',99)->get()[0]["id"];
-                    // ProgramaEquipo::find($id1)->delete();
-                    }
-                // $programa = new ProgramaEquipo();
-                // $programa->id_equipo = $id_equipo;
-                // $programa->id_programa = $lista[$i];
-                // $programa->fecha_instalacion = Date('Y-m-d H:i:s');
-                // $programa->save();
+                array_push($a_eliminar, $lista[$i]); 
             }
-        
-            for ($i=0; $i<count($nuevos); $i++){
-                $programa = new ProgramaEquipo();
-                $programa->id_equipo = 99;
-                $programa->id_programa = $nuevos[$i];
-                $programa->fecha_instalacion = Date('Y-m-d H:i:s');
-                $programa->save();
-            }
-            for ($i=0; $i<count($a_eliminar); $i++){
-                $id1 = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',99)->get()[0]["id"];
-                ProgramaEquipo::find($id1)->delete();
-            }
-        // DB::commit();
-            return response()->json(['log' => 'exito'], 200);
-        // } catch (Exception $e) {
-        //     DB::rollback();
-        //     return response()->json(['log' => $e], 400);
-        // }
+        }
+        for ($i=0; $i<count($nuevos); $i++){
+            $programa = new ProgramaEquipo();
+            $programa->id_equipo = 99;
+            $programa->id_programa = $nuevos[$i];
+            $programa->fecha_instalacion = Date('Y-m-d H:i:s');
+            $programa->save();
+        }
+        for ($i=0; $i<count($a_eliminar); $i++){
+            $id1 = ProgramaEquipo::select('id')->where('id_programa','=',$a_eliminar[$i])->where('id_equipo','=',99)->get()[0]["id"];
+            ProgramaEquipo::find($id1)->delete();
+        }
+        return response()->json(['log' => 'exito'], 200);
     }
 
     public function editores_programa(){
@@ -116,6 +77,17 @@ class ProgramaInstaladoController extends Controller
     
     public function crear_programa(Request $request){
         try{
+            $existe_nombre = ProgramaInstalado::where('nombre','like', "%" . strtolower($request->get('nombre')) . "%")->where('id_programa', '<>', $request->get('id_programa'))->exists();
+            $existe_codigo = ProgramaInstalado::where('codigo', '=', $request->get('codigo'))->exists() || 
+                                Equipo::where('codigo', '=', $request->get('codigo'))->exists();
+            $existe_nombre_codigo = $existe_codigo && $existe_nombre;
+            if($existe_nombre_codigo){
+                return response()->json(['log'=>'El código y nombre del programa ingresado ya existen'], 500);
+            }else if($existe_codigo){
+                return response()->json(['log'=>'El código del programa ingresado ya existe'], 500);
+            }else if ($existe_nombre){
+                return response()->json(['log'=>'El nombre del programa ingresado ya existe'], 500);
+            }
             $programa = new ProgramaInstalado();
             $programa->codigo = $request->get('codigo');
             $programa->nombre = $request->get('nombre');
@@ -136,6 +108,9 @@ class ProgramaInstaladoController extends Controller
 
     public function editar_programa(Request $request){
         try{
+            if(ProgramaInstalado::where('nombre', '=', $request->get('nombre'))->where('id_programa', '<>', $request->get('id_programa'))->exists()){
+                return response()->json(['log'=>'El nombre del programa ingresado ya existe'], 500);
+            }
             $programa = ProgramaInstalado::find($request->get('id_programa')); 
             $programa->nombre= $request->get('nombre');
             $programa->version= $request->get('version');
@@ -143,13 +118,13 @@ class ProgramaInstaladoController extends Controller
             $programa->observacion= $request->get('observacion');
             $programa->save();
             return response()->json(['log' => 'Programa actualizado satisfactoriamente'], 200); 
-         } catch(QueryException $e){
-                $error_code = $e->errorInfo[1];
-                if($error_code == 1062){
-                    return response()->json(['log'=>'El programa ingresado ya existe'],500);
-                }
-                return response()->json(['log'=>$e],500);        
-            } 
+        } catch(QueryException $e){
+            $error_code = $e->errorInfo[1];
+            if($error_code == 1062){
+                return response()->json(['log'=>'El programa ingresado ya existe'],500);
+            }
+            return response()->json(['log'=>$e],500);        
+        } 
     }
 
     public function eliminar_programa($id_programa){
