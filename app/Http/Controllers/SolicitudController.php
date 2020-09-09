@@ -27,7 +27,7 @@ class SolicitudController extends Controller
         $query = Solicitud::selectRaw('*');
 
         if (strcasecmp($estado, "O") == 0) {
-            $query = $query->where('solicitudes.estado', $filtro_estado)->orWhere('solicitudes.estado', "R");
+            $query = $query->where('solicitudes.estado', $filtro_estado);
             if (!empty($fecha_realizacion)) {
                 $query = $query->whereDate('solicitudes.fecha_realizacion', $fecha_realizacion);
             }
