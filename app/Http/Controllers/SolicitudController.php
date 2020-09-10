@@ -112,7 +112,7 @@ class SolicitudController extends Controller
     /**Servicio auxiliar para el envio de notificaciones móviles.
      * Obtener el token generado por el frontend para cada usuario que ha iniciado sesion
      */
-    public function obtener_tokens()
+    private function obtener_tokens()
     {
         return User::select('device_token')
             ->join('roles', 'users.id_rol', '=', 'roles.id_rol')

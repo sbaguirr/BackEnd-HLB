@@ -147,7 +147,6 @@ use Illuminate\Http\Request;
     Route::put('editar_mantenimiento', 'MantenimientoController@editar_mantenimiento');
     Route::get('mantenimiento_id/{id}', 'MantenimientoController@mantenimiento_id');
     Route::post('equipos_por_codigo', 'MantenimientoController@equipos_por_codigo');
-    Route::get('obtener_tokens', 'SolicitudController@obtener_tokens');
     Route::delete('eliminar_mantenimiento/{id_mantenimiento}', 'MantenimientoController@eliminar_mantenimiento');
 
 
